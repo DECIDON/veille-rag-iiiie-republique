@@ -9,7 +9,7 @@ Toujours privilégier ces sources primaires (la veille les a vérifiées le 21/1
   Le pipeline complet, licences vérifiées. Use for : tout arbitrage d'indexation et de retrieval.
 - [Veille interne : axe 2 — interface web](../axe2-interface-web.md)
   Plateformes, UI, serving, licences. Use for : choix du front et de la couche d'intégration.
-- [Synthèse de veille](../SYNTHESE.md)
+- [Synthèse de veille](../README.md)
   Réponse courte + stack de référence + décisions recommandées. Use for : remettre une notion dans son contexte.
 
 ### Axe 1 — données

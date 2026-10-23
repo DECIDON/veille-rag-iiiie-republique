@@ -17,12 +17,12 @@
   <p>Une <strong>facette</strong> est la colonne de compteurs que l'on affiche à gauche d'un moteur de recherche : « Sénat (4 212) · Chambre (9 017) », par date, par orateur… Elle est calculée par le moteur d'index, par exemple avec les <code>aggs</code> d'OpenSearch ou un <code>GROUP BY</code> SQL. Le résultat est <strong>déterministe</strong> : à index égal et à filtre égal, la réponse est la même à chaque clic, sans coût de calcul. Les interfaces de référence de l'AN et du Sénat fonctionnent exactement de cette façon, et c'est ce qu'une interface construite sur <strong>Searchkit</strong> (Apache-2.0, interface React pour OpenSearch) reproduirait.</p>
 
   <h2>Le text-to-SQL, et pourquoi la veille s'en méfie</h2>
-  <p>Le text-to-SQL traduit une question en langage naturel en requête SQL (Vanna, WrenAI). La perspective est tentante pour les comptages, mais elle est statistiquement dangereuse : le benchmark officiel cité par la veille (arXiv 2601.08778) mesure jusqu'à <strong>62,8 % d'erreur</strong> même pour les meilleurs systèmes sur les questions complexes. Pour un service destiné à des historiens, un comptage faux <em>vraisemblable</em> est pire qu'une absence de réponse. La veille en déduit une règle (<a href="../../SYNTHESE.md">SYNTHESE §4</a>) : les facettes reposent sur des agrégations déterministes, et le LLM n'entre <strong>jamais</strong> dans le compteur.</p>
+  <p>Le text-to-SQL traduit une question en langage naturel en requête SQL (Vanna, WrenAI). La perspective est tentante pour les comptages, mais elle est statistiquement dangereuse : le benchmark officiel cité par la veille (arXiv 2601.08778) mesure jusqu'à <strong>62,8 % d'erreur</strong> même pour les meilleurs systèmes sur les questions complexes. Pour un service destiné à des historiens, un comptage faux <em>vraisemblable</em> est pire qu'une absence de réponse. La veille en déduit une règle (<a href="../../README.md">README §4</a>) : les facettes reposent sur des agrégations déterministes, et le LLM n'entre <strong>jamais</strong> dans le compteur.</p>
   <p>Le text-to-SQL garde une place, <em>en complément</em> : il peut répondre à des questions ad hoc de comptage sur les tables de métadonnées, à condition que <strong>le SQL généré soit affiché</strong> (une pratique visible chez Vanna et Wren) pour que le chercheur audite la requête avant de croire le chiffre.</p>
 
   <div class="qa">
     <p class="q">Où vivent les données des facettes ?</p>
-    <p class="r">Elles vivent dans l'<em>index unique</em> de la leçon <a href="0004-bases-vectorielles-quantification.html">0004</a>, et jamais dans un second magasin de données parallèle qui dériverait. OpenSearch agrège et recherche ; pgvector joint les vecteurs aux tables de métadonnées (le choix des frameworks reposait déjà là-dessus, ainsi que sur le pattern « serveur MCP en lecture seule » d'<em>EU Parliament Monitor</em>, SYNTHESE §5 ; MCP, <em>Model Context Protocol</em>, est un protocole d'interface entre les outils et les modèles).</p>
+    <p class="r">Elles vivent dans l'<em>index unique</em> de la leçon <a href="0004-bases-vectorielles-quantification.html">0004</a>, et jamais dans un second magasin de données parallèle qui dériverait. OpenSearch agrège et recherche ; pgvector joint les vecteurs aux tables de métadonnées (le choix des frameworks reposait déjà là-dessus, ainsi que sur le pattern « serveur MCP en lecture seule » d'<em>EU Parliament Monitor</em>, README §5 ; MCP, <em>Model Context Protocol</em>, est un protocole d'interface entre les outils et les modèles).</p>
   </div>
 
   <div class="retenir"><strong>À retenir.</strong> Compter est une agrégation déterministe sur l'index ; le LLM ne compte pas. Le text-to-SQL n'intervient qu'en complément, pour les questions ad hoc, et il affiche alors le SQL qu'il a produit.</div>
@@ -44,7 +44,7 @@
   </div>
 
   <footer class="nav">
-    <p><strong>Source principale :</strong> <a href="../../SYNTHESE.md">votre veille, SYNTHESE §4</a> ; benchmark : <a href="https://arxiv.org/abs/2601.08778">arXiv 2601.08778</a>.</p>
+    <p><strong>Source principale :</strong> <a href="../../README.md">votre veille, README §4</a> ; benchmark : <a href="https://arxiv.org/abs/2601.08778">arXiv 2601.08778</a>.</p>
     <p><a href="0010-licences-pieges.html">→ Leçon suivante : le labyrinthe des licences</a></p>
     <p class="followup">Un point flou ? Demandez à l'agent dans OpenCode.</p>
   </footer>

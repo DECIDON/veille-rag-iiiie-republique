@@ -3,7 +3,7 @@
 ## Préférences utilisateur
 - Langue du cours : **français** (comme la veille).
 - Hiérarchie imposée : **Axe 1 — les données** puis **Axe 2 — l'interface web** ; les leçons suivent l'ordre du pipeline de l'axe 1 et la structure de l'axe 2.
-- Tout doit être ancré sur les trois fichiers de veille à la racine (`../axe1-donnees.md`, `../axe2-interface-web.md`, `../SYNTHESE.md`) : ne jamais affirmer un fait licence/taille hors de ces sources ou de leurs URLs premières, sinon citer la source.
+- Tout doit être ancré sur les trois fichiers de veille à la racine (`../axe1-donnees.md`, `../axe2-interface-web.md`, `../README.md`) : ne jamais affirmer un fait licence/taille hors de ces sources ou de leurs URLs premières, sinon citer la source.
 - Périmètre choisi par l'utilisateur : **notions techniques** derrière les deux axes. Pas d'OCR, pas d'entraînement de modèles.
 - Règle de rédaction (22/10) : phrases complètes, pas de style télégraphique ; définir tout terme technique ou anglicisme à sa première occurrence. Relire les leçons existantes dans ce sens au fil de l'eau.
 - Règle de rédaction (22/10, précision de l'utilisateur) : pas de tournures elliptiques ni de métaphores familières (« il meurt deux fois », « les pavés gagnent », « un cran bouge », « harnais », « frilosité », « et personne d'autre ») ; sujet + verbe conjugué partout, y compris dans les listes et les encadrés ; chaque phrase doit se comprendre isolément.

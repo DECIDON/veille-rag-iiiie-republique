@@ -11,7 +11,7 @@ Le projet doit arbitrer une stack RAG open source (axe 1 : données, axe 2 : int
 
 ## Constraints
 - Deux axes imposés comme hiérarchie du cours : Axe 1 — données ; Axe 2 — interface web.
-- Tout est ancré sur la veille existante (`../axe1-donnees.md`, `../axe2-interface-web.md`, `../SYNTHESE.md`) et ses sources primaires ; langue d'apprentissage : français.
+- Tout est ancré sur la veille existante (`../axe1-donnees.md`, `../axe2-interface-web.md`, `../README.md`) et ses sources primaires ; langue d'apprentissage : français.
 - Leçons courtes (≤ 15 min chacune), une notion = une leçon.
 
 ## Out of scope
