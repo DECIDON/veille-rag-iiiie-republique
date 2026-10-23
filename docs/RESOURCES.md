@@ -5,11 +5,11 @@ Toujours privilégier ces sources primaires (la veille les a vérifiées le 21/1
 ## Connaissances (Knowledge)
 
 ### Point de départ
-- [Veille interne : axe 1 — la face données](axe1-donnees.md)
+- [Veille interne : axe 1 — la face données](veille/axe1-donnees.md)
   Le pipeline complet, licences vérifiées. Use for : tout arbitrage d'indexation et de retrieval.
-- [Veille interne : axe 2 — interface web](axe2-interface-web.md)
+- [Veille interne : axe 2 — interface web](veille/axe2-interface-web.md)
   Plateformes, UI, serving, licences. Use for : choix du front et de la couche d'intégration.
-- [Synthèse de veille](README.md)
+- [Synthèse de veille](https://github.com/DECIDON/veille-rag-iiiie-republique/blob/main/README.md)
   Réponse courte + stack de référence + décisions recommandées. Use for : remettre une notion dans son contexte.
 
 ### Axe 1 — données

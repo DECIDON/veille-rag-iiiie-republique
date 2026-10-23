@@ -23,7 +23,7 @@
   <h2>En CPU, on repense l'expérience d'usage au lieu de la réduire</h2>
   <div class="qa">
     <p class="q">Pourquoi la variante CPU recommande « l'UX retrieval-first » et un mode « sans LLM » ?</p>
-    <p class="r">Parce que sur CPU, tout fonctionne <em>sauf la génération</em> : l'encodage et le rerank tournent sur CPU avec des modèles de 0,6 B au plus, mais un petit LLM ajoute des dizaines de secondes de latence et ne sert surtout qu'à reformuler. Le service rend alors d'abord la recherche hybride, les facettes et les extraits surlignés, de façon déterministe et auditable ; la synthèse par LLM devient une simple option. Cf. <a href="../axe1-donnees.md">axe1 §5 et §8</a>.</p>
+    <p class="r">Parce que sur CPU, tout fonctionne <em>sauf la génération</em> : l'encodage et le rerank tournent sur CPU avec des modèles de 0,6 B au plus, mais un petit LLM ajoute des dizaines de secondes de latence et ne sert surtout qu'à reformuler. Le service rend alors d'abord la recherche hybride, les facettes et les extraits surlignés, de façon déterministe et auditable ; la synthèse par LLM devient une simple option. Cf. <a href="../veille/axe1-donnees.md">axe1 §5 et §8</a>.</p>
   </div>
 
   <div class="retenir"><strong>À retenir.</strong> L'API compatible OpenAI est la seule interface qui compte. La quantification Q4 descend à environ 0,5 octet par paramètre. Un MoE 30B-A3B se paie comme un modèle de 3 B actifs. En CPU, on sert la recherche en premier.</div>
@@ -45,7 +45,7 @@
   </div>
 
   <footer class="nav">
-    <p><strong>Source principale :</strong> <a href="../axe1-donnees.md">votre veille, axe 1 §5</a> ; <a href="https://docs.vllm.ai/en/latest/getting_started/installation/cpu.html">vLLM — backend CPU</a>.</p>
+    <p><strong>Source principale :</strong> <a href="../veille/axe1-donnees.md">votre veille, axe 1 §5</a> ; <a href="https://docs.vllm.ai/en/latest/getting_started/installation/cpu.html">vLLM — backend CPU</a>.</p>
     <p><a href="0007-turnkey-vs-stack-composee.html">→ Axe 2, leçon 0007 : turnkey ou stack composée</a></p>
     <p class="followup">Un point flou ? Demandez à l'agent dans OpenCode.</p>
   </footer>

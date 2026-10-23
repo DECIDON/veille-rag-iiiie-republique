@@ -4,8 +4,8 @@
 
 **Date de la veille : 21 octobre 2026.** Méthode : sources primaires exclusivement (dépôts Git + fichiers LICENSE bruts, documentations officielles, cartes de modèles, arXiv, API Gallica/BnF, journaux officiels des données). Deux rapports détaillés complètent cette synthèse :
 
-- [axe1-donnees.md](axe1-donnees.md) — pipeline de bout en bout : post-OCR → chunking → embeddings → base vectorielle → rerank → génération.
-- [axe2-interface-web.md](axe2-interface-web.md) — plateformes RAG prêtes à l'emploi, interfaces sur mesure, serving, licences.
+- [axe1-donnees.md](docs/veille/axe1-donnees.md) — pipeline de bout en bout : post-OCR → chunking → embeddings → base vectorielle → rerank → génération.
+- [axe2-interface-web.md](docs/veille/axe2-interface-web.md) — plateformes RAG prêtes à l'emploi, interfaces sur mesure, serving, licences.
 - Matériaux annexes (session parallèle, non reproduits ici) : deep-dive Sampo-UI / EclaiRAGe / précédents parlementaires / fiabilité text-to-SQL **et** sources du corpus (Gallica, IIIF, volumétrie) — conclusions reprises §5, identifiées comme telles.
 
 ---

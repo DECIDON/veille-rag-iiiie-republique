@@ -33,7 +33,7 @@ data/vecteurs/cache.jsonl
 top-5 interventions citées (page JO) + rappel de la séance parent
    │  6 · évaluer         recall@k et MRR sur data/questions/QUERIES.md
    │  7 · générer (bonus) Ollama (MIT) + Qwen3-4B : synthèse qui ne cite que les extraits fournis</code></pre>
-  <p class="note">Briques et licences : exactement la variante CPU du §8 de <a href="../axe1-donnees.md">votre veille</a> (sentence-transformers Apache-2.0, bge-m3 MIT, Qdrant Apache-2.0, bge-reranker-v2-m3 Apache-2.0, Ollama MIT, Qwen Apache-2.0). Le passage GPU ne toucherait que deux constantes (Qwen3-Embedding-8B, Qwen3-Reranker-8B), et son bien-fondé se chiffre d'abord — leçon <a href="0011-atelier-enrichissement.html">0011</a>.</p>
+  <p class="note">Briques et licences : exactement la variante CPU du §8 de <a href="../veille/axe1-donnees.md">votre veille</a> (sentence-transformers Apache-2.0, bge-m3 MIT, Qdrant Apache-2.0, bge-reranker-v2-m3 Apache-2.0, Ollama MIT, Qwen Apache-2.0). Le passage GPU ne toucherait que deux constantes (Qwen3-Embedding-8B, Qwen3-Reranker-8B), et son bien-fondé se chiffre d'abord — leçon <a href="0011-atelier-enrichissement.html">0011</a>.</p>
 
   <h2>Étape 0 — Installation et configuration</h2>
   <p>Prérequis : Python 3.10 ou plus récent, Docker (pour Qdrant), environ 8 Go de RAM libres et ~4 Go de disque pour les deux modèles (bge-m3 et le reranker téléchargés au premier appel réel, mis en cache dans <code>~/.cache/huggingface</code>).</p>
@@ -115,7 +115,7 @@ python -m atelier generer "que dit ferry sur l'ecole primaire ?"</code></pre>
   </div>
 
   <footer class="nav">
-    <p><strong>Code et tests :</strong> <a href="../ateliers/axe1-pipeline/README.md">docs/ateliers/axe1-pipeline/</a> — <strong>sources :</strong> <a href="../axe1-donnees.md">veille axe 1 §8</a> (pipeline de référence), <a href="https://huggingface.co/BAAI/bge-m3">carte bge-m3</a>, <a href="https://huggingface.co/BAAI/bge-reranker-v2-m3">carte bge-reranker-v2-m3</a>, <a href="https://qdrant.tech/documentation/concepts/hybrid-search/">fusion hybride Qdrant</a>.</p>
+    <p><strong>Code et tests :</strong> <a href="../ateliers/axe1-pipeline/README.md">docs/ateliers/axe1-pipeline/</a> — <strong>sources :</strong> <a href="../veille/axe1-donnees.md">veille axe 1 §8</a> (pipeline de référence), <a href="https://huggingface.co/BAAI/bge-m3">carte bge-m3</a>, <a href="https://huggingface.co/BAAI/bge-reranker-v2-m3">carte bge-reranker-v2-m3</a>, <a href="https://qdrant.tech/documentation/concepts/hybrid-search/">fusion hybride Qdrant</a>.</p>
     <p><a href="0005-retrieval-hybride-rerank.html">← Retour utile : leçon 0005 (l'entonnoir que vous venez de monter)</a></p>
     <p class="followup">Déposez votre corpus dans <code>data/corpus/</code> au format indiqué, puis revenez dans OpenCode : la prochaine session remplit <code>data/questions/QUERIES.md</code> ensemble, et les scores de l'étape 6 deviennent la base de vos arbitrages.</p>
   </footer>
