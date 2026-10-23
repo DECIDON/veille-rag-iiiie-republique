@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leçon 0007 — Plateformes turnkey ou stack composée ?</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body>
+  <p class="crumbs"><a href="../index.html">Plan du cours</a> · <a href="0006-serving-llm-cpu.html">← 0006</a> · <a href="../reference/glossaire.html">Glossaire</a></p>
+  <p class="badge axe2">Axe 2 — L'interface web · leçon 7/10</p>
+  <h1>Plateformes turnkey ou stack composée ?</h1>
+  <p class="gagne">À la fin de cette leçon, vous saurez expliquer pourquoi la synthèse commence par « il n'existe aucune solution tout-en-un », et ce que ce verdict impose concrètement.</p>
+
+  <h2>Deux mondes</h2>
+  <ul>
+    <li><strong>Plateformes turnkey</strong> (prêtes à l'emploi) : RAGFlow, Dify, Open WebUI, Onyx, AnythingLLM, Kotaemon — tout est livré, à savoir le chat, l'indexation, les comptes et les citations. Le gain représente plusieurs semaines d'interface économisées. La contrepartie structurelle est que <strong>elles recopient le corpus dans leur propre index</strong>.</li>
+    <li><strong>Stack composée</strong> : on assemble des briques sous licence permissive — Qdrant, pgvector ou OpenSearch (leçon <a href="0004-bases-vectorielles-quantification.html">0004</a>) — et l'on met Chainlit ou Next.js devant. L'index externalisé reste <em>notre</em> source de vérité, et l'interface n'y accède qu'en <strong>lecture seule</strong>.</li>
+  </ul>
+
+  <h2>Le « gap » confirmé par la veille</h2>
+  <div class="qa">
+    <p class="q">Quelle combinaison aucune plateforme ne propose-t-elle, alors que le cahier des charges l'exige ?</p>
+    <p class="r">La combinaison qu'exige le cahier des charges tient en quatre conditions : un <strong>index externe en lecture seule, des facettes déterministes, des citations avec lien profond et un LLM local</strong>. Les plateformes turnkey ré-indexent tout chez elles (Onyx le fait explicitement) : notre pipeline d'indexation (axe 1) deviendrait un simple fournisseur de données de leur moteur. Les moteurs facetés purs, eux, n'embarquent pas de RAG. C'est le sens du titre de la synthèse §1 : assemblage de briques. Réf. <a href="../../SYNTHESE.md">SYNTHESE.md §1 et §4</a>.</p>
+  </div>
+
+  <h2>Les pièges cachés derrière « open source »</h2>
+  <ul>
+    <li><strong>Modèle open-core</strong> (noyau libre, extensions payantes) : Onyx est MIT hors du répertoire <code>ee/</code>, et ce que l'on ajoute dans ce répertoire est payant — le SSO (authentification unique), le RBAC (droits d'accès par rôle) et le whitelabel (marque blanche, c'est-à-dire le droit de masquer la marque de l'éditeur) ; LiteLLM a de même son répertoire <code>enterprise/</code>. Il faut toujours ouvrir le LICENSE <em>et</em> lister les répertoires avant de bâtir dessus (leçon <a href="0010-licences-pieges.html">0010</a>).</li>
+    <li><strong>Projets morts ou détournés</strong> : Verba est archivé, Quivr a pivoté hors du RAG, et R2R n'a pas de commit récent ; une licence propre ne suffit donc pas, il faut un mainteneur actif.</li>
+  </ul>
+  <p>La position médiane retenue par la veille est la suivante : <strong>Chainlit</strong> (Apache-2.0, française, OIDC intégré — le protocole d'authentification unique OpenID Connect —, éléments « sources » natifs) permet de livrer vite, puis la bascule vers <strong>Next.js</strong> intervient quand l'expérience d'usage facettée devient critique. <strong>RAGFlow</strong> sert de banc d'essai pour valider le besoin avant d'écrire la moindre interface.</p>
+
+  <div class="retenir"><strong>À retenir.</strong> Une plateforme turnkey offre une interface toute faite, mais elle retient l'index en otage. Le projet veut un index externe en lecture seule : il s'oriente donc vers une stack composée, en commençant par Chainlit puis en basculant vers Next.js, et il garde les plateformes turnkey comme banc d'essai.</div>
+
+  <h2>Vérifiez que c'est acquis</h2>
+  <div class="quiz" data-answer="1">
+    <p class="quiz-q">1. Quel défaut structurel partagent les plateformes turnkey du tableau ?</p>
+    <button class="quiz-opt">Elles recopient le corpus dans leur index</button>
+    <button class="quiz-opt">Elles exigent un GPU pour fonctionner</button>
+    <button class="quiz-opt">Elles interdisent les modèles hébergés localement</button>
+    <p class="quiz-fb">L'index leur appartient : nos facettes, nos arK, notre pipeline d'indexation deviennent secondaires. C'est exactement ce que le projet refuse de céder.</p>
+  </div>
+  <div class="quiz" data-answer="2">
+    <p class="quiz-q">2. Que cache le statut « MIT » de Onyx quand on a besoin du SSO ?</p>
+    <button class="quiz-opt">Une clause de marque à respecter</button>
+    <button class="quiz-opt">Des fonctionnalités dans <code>ee/</code> payantes</button>
+    <button class="quiz-opt">Une interdiction multi-tenant cachée</button>
+    <p class="quiz-fb">En open-core, le noyau est MIT, mais les répertoires <code>ee/</code> sont sous licence enterprise : le SSO/SAML, le RBAC fin, les analytics et le whitelabel en sortent. (La clause de marque est celle d'Open WebUI, et le multi-tenant est celui de Dify/FastGPT — leçon 0010.)</p>
+  </div>
+
+  <footer class="nav">
+    <p><strong>Source principale :</strong> <a href="../../axe2-interface-web.md">votre veille, axe 2 §1 et §7</a> ; <a href="https://github.com/onyx-dot-app/onyx/blob/main/LICENSE">Onyx — LICENSE (MIT hors ee/)</a>.</p>
+    <p><a href="0008-provenance-ark-iiif.html">→ Leçon suivante : provenance, arK &amp; IIIF</a></p>
+    <p class="followup">Un point flou ? Demandez à l'agent dans OpenCode.</p>
+  </footer>
+</body>
+</html>

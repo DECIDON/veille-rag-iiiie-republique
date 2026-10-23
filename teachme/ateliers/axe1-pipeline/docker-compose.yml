@@ -1,0 +1,16 @@
+# Qdrant mono-nœud (Apache-2.0) — la base vectorielle de la variante CPU (§8).
+# Démarrage : docker compose up -d   |   Arrêt : docker compose down -v
+# Données dans un volume nommé (géré par Docker, jamais commité).
+services:
+  qdrant:
+    image: qdrant/qdrant:latest
+    ports:
+      - "6333:6333"   # HTTP + dashboard : http://localhost:6333/dashboard
+      - "6334:6334"   # gRPC (inutilisé ici)
+    volumes:
+      - qdrant_storage:/qdrant/storage
+    environment:
+      QDRANT__TELEMETRY_ENABLED: "false"
+
+volumes:
+  qdrant_storage:

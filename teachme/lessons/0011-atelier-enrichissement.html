@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leçon 0011 — Atelier enrichissement : théoriser à quel prix</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body>
+  <p class="crumbs"><a href="../index.html">Plan du cours</a> · <a href="0009-facettes-vs-text-to-sql.html">← 0009 (facettes)</a> · <a href="../reference/glossaire.html">Glossaire</a></p>
+  <p class="badge axe1">Axe 1 — Les données · atelier</p>
+  <h1>Atelier enrichissement : théoriser à quel prix</h1>
+  <p class="gagne">À la fin de cet atelier, vous disposerez d'un chiffrage mesuré (et non supposé) d'une politique d'enrichissement pour l'échantillon 1889–1893, et vous prendrez une décision argumentée : thème par séance, thème par intervention, ou aucune thématisation.</p>
+
+  <div class="retenir"><strong>Cadre rappel (leçon 0001, questions du 22/10).</strong> Une métadonnée dérivée (thème, résumé) vit en <em>champ indexé du record d'intervention</em>, est produite par un <em>étage dédié versionné</em> entre normalisation et embedding, et s'affiche <em>étiquetée comme machine</em>. Le présent atelier tranche la seule question ouverte : <strong>combien cela coûte, et à quel niveau on le fait</strong>.</div>
+
+  <h2>Le vrai arbitrage : un coût par appel, et non par octet</h2>
+  <p>Le budget d'enrichissement ne se compte pas en Go mais en <strong>appels de génération</strong> : c'est l'objection exacte de la veille contre RAPTOR (<a href="https://arxiv.org/abs/2401.18059">arXiv 2401.18059</a>, axe 1 §2) — « son indexation fait résumer tout le corpus par un LLM ». Le nombre d'appels est la variable sur laquelle tout se joue :</p>
+  <pre><code>coût_total ≈ N_unités × (tokens_in + tokens_out) / débit_mesuré
+
+N_interventions (variantes CPU ~15 M de chunks)  → 15 M d'appels
+N_séances (MVP 1 législature, ~10 k pages)       → quelques milliers d'appels
+                              ⇒ un facteur 100–1 000 selon le niveau choisi</code></pre>
+  <p class="note">Du côté de la veille, on trouve l'objection de coût, la variante « résumés par séance générés une seule fois » et la correction LLM « ciblée sur les pages chaudes ». Le reste est une extrapolation que vous devez valider : le calcul d'appels ci-dessus, le vocabulaire JO et les seuils de l'étape 3.</p>
+
+  <h2>Deux leviers à activer avant même d'évoquer le matériel</h2>
+  <ul>
+    <li><strong>Le niveau.</strong> On résume <em>par séance</em> (au niveau parent) plutôt que par intervention : le champ vit dans le record parent, les enfants l'héritent à l'affichage, et vous divisez ainsi le nombre d'appels par le nombre moyen d'interventions par séance. C'est la variante « soft » que la veille oppose à RAPTOR.</li>
+    <li><strong>Le moteur.</strong> Par ordre de coût croissant, on obtient d'abord la règle ou le lexique, qui sont gratuits mais brutaux ; puis le <em>zero-shot</em> (classification sans exemples d'entraînement) sur les embeddings que l'on a déjà, car bge-m3 sait comparer un chunk à des vecteurs de libellés de thèmes, avec le même modèle et la même passe d'encodage, sans aucune génération ; puis un petit classifieur ; et enfin le LLM génératif. Le zero-shot sur embeddings est l'option CPU par défaut : le thème dérivé coûte une similarité cosinus, et non un token.</li>
+  </ul>
+  <p>La contrepartie du zero-shot est la suivante : il ne produit que des <strong>thèmes</strong> (classification), et non des <strong>résumés</strong> (génération). Un thème n'est exploitable en facettes que s'il repose sur un <strong>vocabulaire contrôlé</strong> : commencez par les rubriques naturelles de l'ordre du jour du JO, et plafonnez la liste à 20–30 valeurs, sinon <code>GROUP BY</code> n'aura rien à grouper (leçon <a href="0009-facettes-vs-text-to-sql.html">0009</a>).</p>
+
+  <h2>Vos six étapes (sur l'échantillon, avant toute décision)</h2>
+  <ol>
+    <li>Constituez l'échantillon : tirez au sort 100 interventions sur la législature 1889–1893, qui est déjà le terrain d'évaluation choisi (SYNTHÈSE §6.1).</li>
+    <li>Bâtissez le vocabulaire : listez les rubriques d'ordre du jour observées, puis fermez la liste à 30 thèmes canoniques au plus, plus la valeur « autre ».</li>
+    <li>Faites deux passes : classez les 100 interventions deux fois, sur deux jours différents ou avec deux modèles si vous disposez d'un GPU ; notez le taux de désaccord, car s'il dépasse 25 %, le vocabulaire est trop fin et il faut fusionner à nouveau des catégories.</li>
+    <li>Mesurez le débit : relevez les tokens/s réels de votre moteur de génération sur <em>votre</em> machine, et Ollama suffit pour cela ; une seule mesure honnête vaut mieux que cent extrapolations.</li>
+    <li>Extrapolatez aux trois niveaux (intervention, séance, pages chaudes seules) avec la formule ci-dessus, et placez chaque variante dans le budget d'indexation hors-ligne de l'axe 1 : « plusieurs jours CPU » est déjà accepté pour l'encodage, et l'enrichissement ne doit pas démultiplier ce délai.</li>
+    <li>Décidez et écrivez l'ADR (Architectural Decision Record, une note de décision datée) : le niveau retenu, le vocabulaire figé, et le champ <code>enrichissement: {modele, version, date}</code> dans le JSON canonique ; sans cela, l'arbitrage sera refait à chaque sprint.</li>
+  </ol>
+
+  <h2>Vérifiez que c'est acquis</h2>
+  <div class="quiz" data-answer="1">
+    <p class="quiz-q">1. Pourquoi un champ « thème » exige-t-il un vocabulaire contrôlé ?</p>
+    <button class="quiz-opt">Les facettes agrègent des valeurs finies connues</button>
+    <button class="quiz-opt">Les résumés libres s'indexent mal en français</button>
+    <button class="quiz-opt">Les thèmes ouverts gonflent beaucoup les vecteurs</button>
+    <p class="quiz-fb">Une facette est un <code>GROUP BY</code> : sans jeu fini de valeurs, chaque version de « budget »/« Budgets »/« finances » devient sa propre catégorie. Le résumé libre reste utile, mais il constitue du texte cherchable, et non un compteur.</p>
+  </div>
+  <div class="quiz" data-answer="2">
+    <p class="quiz-q">2. Qu'est-ce qui fait d'un résumé par intervention « le problème de RAPTOR » ?</p>
+    <button class="quiz-opt">Sa redondance avec le texte encodé</button>
+    <button class="quiz-opt">Un appel de génération par granulat</button>
+    <button class="quiz-opt">Son incompatibilité avec les arK</button>
+    <p class="quiz-fb">Le coût unitaire est négligeable ; c'est son <em>facteur</em> — un appel par chunk indexé — qui fonde l'objection. C'est pourquoi le levier « niveau » est décisif : le résumé par séance garde le même coût unitaire mais divise le facteur par la taille des séances.</p>
+  </div>
+
+  <footer class="nav">
+    <p><strong>Source principale :</strong> <a href="https://arxiv.org/abs/2401.18059">RAPTOR (arXiv 2401.18059)</a> — l'archétype de l'enrichissement dont l'indexation coûte plus que la requête ; retour concret : <a href="../../axe1-donnees.md">votre veille, axe 1 §2 et §6.4-6.5</a>.</p>
+    <p><a href="0003-embeddings-dense-sparse.html">← Retour utile : leçon 0003 (ce que sait faire bge-m3 sans générer)</a></p>
+    <p class="followup">Ramenez vos chiffres (désaccord, tokens/s) à l'agent dans OpenCode : la leçon sera mise à jour en conséquence, et l'ADR est le prochain livrable.</p>
+  </footer>
+</body>
+</html>

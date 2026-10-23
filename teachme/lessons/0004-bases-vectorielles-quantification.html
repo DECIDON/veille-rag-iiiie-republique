@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leçon 0004 — Où vivent les vecteurs : base vectorielle, filtres, quantification</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body>
+  <p class="crumbs"><a href="../index.html">Plan du cours</a> · <a href="0003-embeddings-dense-sparse.html">← 0003</a> · <a href="../reference/glossaire.html">Glossaire</a></p>
+  <p class="badge axe1">Axe 1 — Les données · leçon 4/6</p>
+  <h1>Où vivent les vecteurs : base vectorielle, filtres, quantification</h1>
+  <p class="gagne">À la fin de cette leçon, vous saurez refaire vous-même le calcul qui établit qu'une machine de 64 Go suffit, et vous saurez dire pourquoi ce calcul est fragile.</p>
+
+  <h2>Rechercher des voisins, pas des lignes</h2>
+  <p>Avec 15 millions de vecteurs, comparer la requête à <em>tous</em> les vecteurs devient impossible dans un temps de réponse exploitable. Les bases vectorielles utilisent la recherche <strong>ANN</strong> (<em>approximate nearest neighbor</em>, recherche approchée des plus proches voisins), qui repose chez Qdrant sur des graphes <strong>HNSW</strong> (Hierarchical Navigable Small World, un réseau de voisinages organisé en plusieurs niveaux) : on accepte de rater quelques voisins pour répondre en millisecondes. Une contrepartie rarement dite : un ANN <em>approché</em> doit être évalué et non supposé parfait, et c'est pourquoi la veille prévoit une évaluation interne (leçon <a href="0005-retrieval-hybride-rerank.html">0005</a>).</p>
+
+  <h2>Le filtre : « Chambre, 1880-1900, orateur X »</h2>
+  <p>Le vrai pouvoir d'un historien n'est pas la similarité, c'est la restriction. Toutes les bases du marché filtrent les candidats sur les métadonnées, <strong>avant ou après</strong> l'ANN : Qdrant indexe un <em>payload</em> (un objet JSON joint à chaque vecteur, <a href="https://qdrant.tech/documentation/concepts/payload/">documentation Qdrant</a>), pgvector offre le SQL complet (<a href="https://github.com/pgvector/pgvector/blob/master/README.md">README pgvector</a> ; les <em>iterative index scans</em>, ou balayages itératifs d'index, ciblent précisément le cas « ANN + WHERE restrictif »), et OpenSearch applique les filtres booléens de Lucène. Le choix entre Qdrant, PostgreSQL+pgvector et OpenSearch se rejoue sur les <strong>facettes</strong> : on retient pgvector si les jointures SQL dominent, et OpenSearch si les agrégations analytiques lourdes deviennent centrales.</p>
+
+  <h2>La quantification : diviser la mémoire par 4 ou par 32</h2>
+  <p>Un vecteur float32 de 1 024 dimensions occupe 4,1 Ko. La <strong>quantification</strong> comprime chaque composante : le format <strong>int8</strong> (entier signé sur 1 octet) divise la mémoire par 4 avec une perte minime, et le format <strong>binaire</strong> la divise par 32, au prix d'un <em>rescore</em> (un re-classement exact des premiers candidats à partir des vecteurs complets). Voir la <a href="https://qdrant.tech/documentation/quantization/">documentation de Qdrant</a>. Refaisons le calcul de la veille :</p>
+  <pre><code>~30 Go texte ⇒ ~15 M chunks
+15 M × 4,1 Ko        ≈ 60 Go de vecteurs bruts (fp32)
+÷4  (int8)           ≈ 15 Go   ← tenant sur une machine 64 Go
+÷32 (binaire+rescore)≈  2 Go</code></pre>
+  <p class="note">La veille appelle ici à la vigilance : ces chiffres sont des <strong>extrapolations linéaires</strong>. Recalibrez-les sur l'échantillon d'une législature (1889–1893) avant d'acheter la machine.</p>
+  <p class="note">Et Elasticsearch ? Il est techniquement compétitif, mais la veille l'écarte pour une raison de <strong>licence</strong> (SSPL/Elastic-2.0, cf. leçon <a href="0010-licences-pieges.html">0010</a>) ; son fork <strong>OpenSearch</strong> est sous licence Apache-2.0.</p>
+
+  <div class="retenir"><strong>À retenir.</strong> L'ANN est une recherche de voisinage approché, donc une recherche qui s'évalue. Le filtre sur métadonnées est la fonction la plus décisive pour un historien. La quantification int8 fait tenir 60 Go de vecteurs dans environ 15 Go, et ces chiffres restent à recalibrer sur un échantillon.</div>
+
+  <h2>Vérifiez que c'est acquis</h2>
+  <div class="quiz" data-answer="1">
+    <p class="quiz-q">1. Que fait la quantification int8 d'un vecteur float32 ?</p>
+    <button class="quiz-opt">Elle divise sa mémoire par quatre</button>
+    <button class="quiz-opt">Elle divise sa dimension par quatre</button>
+    <button class="quiz-opt">Elle divise son erreur par quatre</button>
+    <p class="quiz-fb">Chaque composante passe de 4 octets à 1 octet : le vecteur devient quatre fois plus petit et ses dimensions restent inchangées. La perte de précision est petite, et le rescore la compense.</p>
+  </div>
+  <div class="quiz" data-answer="2">
+    <p class="quiz-q">2. Pourquoi pgvector est-il un choix défendable face à Qdrant ici ?</p>
+    <button class="quiz-opt">Car il indexe aussi les images IIIF</button>
+    <button class="quiz-opt">Car le SQL joint facettes et vecteurs</button>
+    <button class="quiz-opt">Car il quantifie mieux que Qdrant</button>
+    <p class="quiz-fb">Le corpus et ses métadonnées vivent dans les mêmes tables : les facettes viennent des jointures et des `GROUP BY` (leçon 0009), les sauvegardes deviennent triviales, et un seul composant suffit là où deux seraient nécessaires.</p>
+  </div>
+
+  <footer class="nav">
+    <p><strong>Source principale :</strong> <a href="../../axe1-donnees.md">votre veille, axe 1 §4</a> ; <a href="https://qdrant.tech/documentation/quantization/">Qdrant — quantification</a>.</p>
+    <p><a href="0005-retrieval-hybride-rerank.html">→ Leçon suivante : hybride, RRF, rerank</a></p>
+    <p class="followup">Un point flou ? Demandez à l'agent dans OpenCode.</p>
+  </footer>
+</body>
+</html>

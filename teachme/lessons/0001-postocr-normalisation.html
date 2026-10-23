@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leçon 0001 — Post-OCR : normaliser sans trahir le texte</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body>
+  <p class="crumbs"><a href="../index.html">Plan du cours</a> · <a href="../reference/glossaire.html">Glossaire</a></p>
+  <p class="badge axe1">Axe 1 — Les données · leçon 1/6</p>
+  <h1>Post-OCR : normaliser sans trahir le texte</h1>
+  <p class="gagne">Gagné à la fin : expliquer pourquoi la première brique du pipeline n'est ni un framework RAG ni un modèle, mais un étage de normalisation qui produit un JSON canonique par intervention.</p>
+
+  <h2>Le problème : l'OCR laisse des traces</h2>
+  <p>Le corpus est déjà OCRisé (l'OCR est hors périmètre), mais un <em>Journal officiel</em> du XIXᵉ s.OCR-isé arrive sale : accents instables, apostrophes typographiques variées, césures par trait d'union en fin de ligne, artefacts de colonnes. Or tout ce qui est encodé différemment de ce que l'utilisateur tapera ne sera <strong>jamais retrouvé</strong>, ni par le moteur lexical, ni par l'embedding.</p>
+
+  <h2>Le geste technique : Unicode NFKD + règles + dictionnaires</h2>
+  <p>Un même « é » peut exister en plusieurs suites d'octets (caractère composé, ou « e » + accent combinant). La normalisation Unicode — <code>str.normalize('NFKD')</code> en Python — réduit ces variantes à une forme de référence. Ça ne couvre que l'encodage : pour le reste (orthographe d'époque, « eussent » là où l'on écrirait « auraient »…), la veille est formelle — <strong>aucun modèle public de post-correction OCR français n'existe</strong> ; on traite par <strong>règles + dictionnaires d'alias</strong> (nom canonique ↔ graphies observées), pas par un modèle. Les variantes d'orateurs deviennent des <em>métadonnées filtrables</em>, pas du texte à corriger.</p>
+
+  <h2>La règle d'or : ne jamais écraser l'original</h2>
+  <div class="qa">
+    <p class="q">Pourquoi deux colonnes de texte, <code>text_brut</code> et <code>text_normalise</code> ?</p>
+    <p class="r">Parce que les deux consommateurs n'ont pas les mêmes besoins. BM25 (la recherche lexicale, cf. <a href="0005-retrieval-hybride-rerank.html">leçon 0005</a>) et l'<strong>authenticité des citations</strong> scientifiques exigent le texte d'origine ; l'embedding, lui, préfère la version nettoyée. PostgreSQL (colonnes multiples) comme Qdrant/OpenSearch (champs nommés multiples) permettent de stocker les deux. Voir <a href="../../axe1-donnees.md">axe1-donnees.md §1.1</a>.</p>
+  </div>
+  <p>Le produit de cet étage est un <strong>format JSON canonique par intervention</strong> — la granularité de base de tout le pipeline :</p>
+  <pre><code>{
+  "id": "senat-1885-06-14-s001-i042",
+  "date": "1885-06-14", "chambre": "senat", "session": "1885",
+  "orateur": {"nom": "Victor Hugo"},
+  "text_brut": "…", "text_normalise": "…",
+  "page_jo": 612
+}</code></pre>
+  <p>Date, chambre, orateur, page du JO y vivent <em>dans les métadonnées</em> : c'est ce qui rendra possibles les facettes et les citations avec lien profond (<a href="0009-facettes-vs-text-to-sql.html">leçon 0009</a>, <a href="0008-provenance-ark-iiif.html">leçon 0008</a>).</p>
+  <div class="qa">
+    <p class="q">Objection légitime : une intervention isolée n'a de sens que rattachée aux autres. Pourquoi ce format « par intervention » alors ?</p>
+    <p class="r">Parce que « par intervention » est la granularité d'<em>indexation</em>, pas l'unité de <em>sens</em>. Le lien est déjà dans le record — la clé de séance dans l'<code>id</code>, le rang de parole (<code>i042</code>) — et il se matérialise plus loin, au retrieval : on cherche le granulat, on restitue la séance parent (<a href="0002-chunking-parent-document.html">leçon 0002</a>). Contrepartie assumée de l'enregistrement atomique : un batch idempotent ne réencode que ce qui a changé — un JSON « séance fourre-tout » rendrait tout recalcul solidaire. Les anaphores inter-interventions (« comme vient de le dire M. X »), elles, relèvent des patterns de contexte (fenêtre, agentique, graphe de suites de parole), pas du format de stockage.</p>
+  </div>
+  <p class="note">Et les outils « tout fait » (Docling MIT, Tika, Unstructured) ? Utiles pour la <em>forme</em> et le chunking structurel, mais la veille conclut qu'il n'existe aucun outil dédié aux débats du XIXᵉ : l'étage de normalisation est <strong>maison</strong>, en Python pur.</p>
+
+  <div class="retenir"><strong>À retenir.</strong> Normaliser pour chercher, jamais pour réécrire : <code>text_brut</code> pour citer, <code>text_normalise</code> pour encoder, alias en métadonnées.</div>
+
+  <h2>Vérifiez que c'est acquis</h2>
+  <div class="quiz" data-answer="1">
+    <p class="quiz-q">1. Pourquoi conserver le texte OCR non corrigé à côté du texte normalisé ?</p>
+    <button class="quiz-opt">Citations authentiques et recherche lexicale intactes</button>
+    <button class="quiz-opt">Index plus petit et embeddings plus rapides</button>
+    <button class="quiz-opt">Sauvegarde facile et reprise du traitement</button>
+    <p class="quiz-fb">Exactement : <code>text_brut</code> nourrit BM25 et garantit des citations verbatim ; seule la version normalisée passe dans l'embedding. La taille d'index et les sauvegardes sont des effets de bord, pas la raison.</p>
+  </div>
+  <div class="quiz" data-answer="2">
+    <p class="quiz-q">2. Comment la veille recommande-t-elle de traiter les variantes orthographiques des noms d'orateurs ?</p>
+    <button class="quiz-opt">Par un modèle de correction fine-tuné français</button>
+    <button class="quiz-opt">Par des dictionnaires d'alias en métadonnées</button>
+    <button class="quiz-opt">Par post-correction LLM sur tout le corpus</button>
+    <p class="quiz-fb">Règles + dictionnaires (nom canonique ↔ graphies observées), stockés en métadonnées filtrables. La correction LLM n'est documentée que <em>ciblée</em>, sur les « pages chaudes » — jamais systématique sur tout le corpus.</p>
+  </div>
+
+  <footer class="nav">
+    <p><strong>Source principale :</strong> <a href="../../axe1-donnees.md">votre veille, axe 1 §1</a> ; côté outils : <a href="https://arxiv.org/abs/2408.09869">Docling, rapport technique (arXiv 2408.09869)</a>.</p>
+    <p><a href="0002-chunking-parent-document.html">→ Leçon suivante : chunker par intervention</a></p>
+    <p class="followup">Un point flou ? Revenez dans OpenCode et demandez à l'agent — c'est votre professeur, il peut aussi creuser une source avec vous.</p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leçon 0005 — Le socle : hybride BM25 + vectoriel, fusion RRF, rerank</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body>
+  <p class="crumbs"><a href="../index.html">Plan du cours</a> · <a href="0004-bases-vectorielles-quantification.html">← 0004</a> · <a href="../reference/glossaire.html">Glossaire</a></p>
+  <p class="badge axe1">Axe 1 — Les données · leçon 5/6</p>
+  <h1>Le socle : hybride BM25 + vectoriel, fusion RRF, rerank</h1>
+  <p class="gagne">À la fin de cette leçon, vous saurez expliquer l'architecture en entonnoir à deux étages que la veille appelle « le socle recommandé », ainsi que les deux métriques qui la jugent.</p>
+
+  <h2>Pourquoi un seul chercheur ne suffit pas</h2>
+  <p>Deux familles se corrigent l'une l'autre. La première est <strong>BM25</strong>, la fonction de score lexicale de Lucène (aperçu détaillé dans la leçon <a href="0003-embeddings-dense-sparse.html">0003</a>) : elle est forte sur une expression exacte comme « loi de Jules Ferry » et elle échoue sur une paraphrase. La seconde est la recherche <strong>vectorielle</strong> : elle est forte sur le sens, mais faible sur un terme rare mal reconnu par l'OCR. Faire tourner les deux en parallèle, c'est la <strong>recherche hybride</strong> ; sur un corpus OCR bruité et riche en noms propres, le lexical n'est pas décoratif, il est décisif.</p>
+
+  <h2>Fusionner : RRF, la mise en commun par le rang</h2>
+  <p>BM25 note en unités arbitraires, et le cosinus note entre 0 et 1 : additionner leurs scores n'a pas de sens robuste. <strong>RRF</strong> (<em>reciprocal rank fusion</em>, fusion par rang inverse) ne regarde que la <em>position</em> dans chaque liste : un chunk bien classé par les deux moteurs remonte. C'est la méthode native des piles citées : OpenSearch propose un <a href="https://docs.opensearch.org/latest/search-plugins/neural-search/hybrid-search/">pipeline hybride</a>, Qdrant une <a href="https://qdrant.tech/documentation/concepts/hybrid-search/">fusion RRF/DBSF</a>, et Weaviate une option <code>rankedFusion</code>.</p>
+
+  <h2>Le rerank : l'entonnoir se referme</h2>
+  <div class="qa">
+    <p class="q">Pourquoi faire passer un <em>reranker</em> (cross-encoder) sur les ~50 premiers résultats seulement ?</p>
+    <p class="r">Un modèle d'embedding compare la requête et le chunk <em>séparément</em> : leurs vecteurs ont été pré-calculés, et c'est ce qui rend la recherche rapide. Un cross-encoder, par exemple <a href="https://huggingface.co/BAAI/bge-reranker-v2-m3">bge-reranker-v2-m3</a> (Apache-2.0, utilisable sur CPU) ou Qwen3-Reranker, lit <strong>la requête et le chunk ensemble</strong> ; le résultat est bien plus précis, mais le coût devient prohibitif sur 15 M chunks. C'est ce raisonnement qui fonde l'entonnoir : la recherche hybride large cherche d'abord le rappel, puis le rerank sur un échantillon apporte la précision.</p>
+  </div>
+
+  <h2>Le juge : recall@k et nDCG, sur 200 Q&amp;R internes</h2>
+  <p>Le <strong>recall@k</strong> répond à une question : sur les k premiers résultats, ai-je retrouvé la (ou les) bonne(s) source(s) ? La <strong>nDCG</strong> (<em>normalized discounted cumulative gain</em>) pose la même question en tenant compte de <em>l'ordre</em> des résultats. Parce que le corpus est hors distribution (leçon <a href="0003-embeddings-dense-sparse.html">0003</a>), les classements publics (<em>leaderboards</em>) ne jugent pas le XIXᵉ siècle : la veille impose donc environ 200 questions-réponses annotées en interne, rejouées à chaque changement d'embeddings.</p>
+
+  <div class="retenir"><strong>À retenir.</strong> L'entonnoir déroule quatre étages : la recherche hybride cherche le rappel, la fusion RRF combine les listes par le rang, le rerank apporte la précision, et le document parent fournit le contexte. Le système se juge par recall@k et nDCG sur des questions-réponses annotées en interne, et non par un classement public.</div>
+
+  <h2>Vérifiez que c'est acquis</h2>
+  <div class="quiz" data-answer="3">
+    <p class="quiz-q">1. Pourquoi la fusion RRF préfère le rang à la note brute ?</p>
+    <button class="quiz-opt">Car les notes des moteurs sont incomparables</button>
+    <button class="quiz-opt">Car les rangs sont toujours calculables vite</button>
+    <button class="quiz-opt">Car la note du gagnant cache les perdants</button>
+    <p class="quiz-fb">BM25 et le cosinus n'ont pas la même échelle : additionner leurs scores n'aurait aucun sens robuste. Les rangs, eux, se combinent proprement, et RRF n'a aucun paramètre à régler.</p>
+  </div>
+  <div class="quiz" data-answer="1">
+    <p class="quiz-q">2. Que mesure le recall@10 d'une recherche ?</p>
+    <button class="quiz-opt">Si les bonnes sources sont dans les dix premiers</button>
+    <button class="quiz-opt">Si les dix premiers sont bien ordonnés entre eux</button>
+    <button class="quiz-opt">Si dix requêtes sur cent trouvent quoi que ce soit</button>
+    <p class="quiz-fb">Le recall@k mesure si la vérité terrain est <em>présente</em> dans le top-k (l'ordre compte en nDCG, pas en recall). C'est la mesure du premier étage de l'entonnoir : si le rerank ne peut pas rattraper un chunk absent du top-50, tout est perdu en aval.</p>
+  </div>
+
+  <footer class="nav">
+    <p><strong>Source principale :</strong> <a href="../../axe1-donnees.md">votre veille, axe 1 §6.2 et §8</a> ; <a href="https://docs.opensearch.org/latest/search-plugins/neural-search/hybrid-search/">OpenSearch — hybrid search (RRF)</a>.</p>
+    <p><a href="0006-serving-llm-cpu.html">→ Leçon suivante : générer sans GPU</a></p>
+    <p class="followup">Un point flou ? Demandez à l'agent dans OpenCode.</p>
+  </footer>
+</body>
+</html>

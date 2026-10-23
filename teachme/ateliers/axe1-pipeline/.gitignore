@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+.pytest_cache/
+qdrant_storage/
+data/normalise/
+data/enfants/
+data/parents/
+data/vecteurs/
+data/eval/

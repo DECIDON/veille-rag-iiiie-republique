@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leçon 0003 — Embeddings : dense, sparse, et les bancs d'essai en français</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body>
+  <p class="crumbs"><a href="../index.html">Plan du cours</a> · <a href="0002-chunking-parent-document.html">← 0002</a> · <a href="../reference/glossaire.html">Glossaire</a></p>
+  <p class="badge axe1">Axe 1 — Les données · leçon 3/6</p>
+  <h1>Embeddings : dense, sparse, et les bancs d'essai en français</h1>
+  <p class="gagne">Gagné à la fin : expliquer d'une phrase ce que fait un embedding, pourquoi bge-m3 change l'architecture, et ce que valeut un leaderboard pour notre corpus.</p>
+
+  <h2>Un vecteur de sens</h2>
+  <p>Un <strong>embedding</strong> transforme un texte en vecteur (une liste de nombres, ex. 1 024 dimensions chez <strong>bge-m3</strong>) : deux passages au sens proche atterrissent à proximité dans cet espace, et on cherche par <em>similarité cosinus</em>. Ça attrape la paraphrase — « le citoyen de Paris a défendu l'amendement » retrouve « un député de la Seine insiste sur la proposition » — ce que la recherche mot-à-mot rate. Ça attrape mal les mots rares et les noms propres : pour un corpus OCR bruité, le lexical reste indispensable — d'abord sous sa forme sans modèle, BM25, puis sous sa forme apprise, le <em>sparse</em>.</p>
+
+  <h2>BM25 : un aperçu du versant lexical</h2>
+  <p>Le versant lexical a un nom : <strong>BM25</strong>, la fonction de score des moteurs de texte (Lucène, le cœur d'OpenSearch). Ce n'est pas un modèle : aucun poids à télécharger ni à entraîner, seulement des statistiques calculées sur le corpus. Trois ingrédients :</p>
+  <ul>
+    <li><strong>La fréquence</strong> — un terme qui revient dans un chunk plaide pour lui, mais avec <em>saturation</em> : dix occurrences ne valent pas dix fois une (c'est le paramètre <code>k1</code>, qu'on règle une fois et qu'on oublie).</li>
+    <li><strong>La rareté</strong> (<em>inverse document frequency</em>, idf : « un terme d'autant plus informatif qu'il court rarement ») — « citoyen » parcourt tout le <em>Journal officiel</em>, « loi de Jules Ferry » n'en parcourt que quelques pages. Le terme rare porte l'information, le terme fréquent presque rien.</li>
+    <li><strong>La longueur</strong> — une intervention de 2 000 tokens accumule plus d'occurrences qu'une de 200 : on normalise donc par la longueur du chunk, sinon les textes les plus longs l'emporteraient systématiquement.</li>
+  </ul>
+  <p>Sur le papier, BM25 convient bien à notre corpus : les noms propres rares et l'orthographe ancienne sont exactement le terrain de l'idf, et la règle de la leçon <a href="0001-postocr-normalisation.html">0001</a> (« ne jamais écraser l'original ») avait BM25 comme premier bénéficiaire — <code>text_brut</code> est conservé pour lui. En pratique, le score échoue dans deux cas : la paraphrase (si la requête n'emploie pas les mêmes termes, BM25 ne trouve rien) et le bruit d'OCR (un terme mal orthographié ne correspond jamais au terme cherché). Le sparse <em>appris</em> — les poids de type BM25 de bge-m3, ou <a href="https://huggingface.co/sparse-encoder/splade-camembert-base-v2">splade-camembert</a> (Apache-2.0), sparse neuronal en français — reprend cette fidélité à la lettre en y ajoutant une tolérance au bruit et une souplesse devant la paraphrase. Pourquoi aucun des deux ne suffit seul, et comment les combiner : leçon <a href="0005-retrieval-hybride-rerank.html">0005</a>.</p>
+  <p class="note">Où BM25 est-il disponible dans la stack ? Nativement chez OpenSearch (Lucène, avec lematisation française) et chez Weaviate (BM25F — à configurer en français, ses mots vides par défaut sont anglais). pgvector ne propose que <code>tsvector</code>, assimilable à du BM25 ; Qdrant n'offre aucun score lexical. C'est pourquoi la veille propose d'y faire tourner bge-m3 en mode sparse : le score lexical y est alors assuré par son équivalent appris, dans le même modèle que le dense.</p>
+
+  <h2>Dense et sparse : deux mémoires, un modèle</h2>
+  <ul>
+    <li><strong>Dense</strong> : vecteur court et plein (1 024 nombres), porte le sens général.</li>
+    <li><strong>Sparse</strong> : un poids par terme dans un vocabulaire géant — un BM25 <em>appris</em>, qui garde la fidélité littérale au terme exact.</li>
+  </ul>
+  <div class="qa">
+    <p class="q">Pourquoi la veille met-elle <a href="https://huggingface.co/BAAI/bge-m3">bge-m3</a> (MIT, 568 M) en tête de la variante CPU ?</p>
+    <p class="r">Il fournit dense <strong>et</strong> sparse (et même ColBERT) <em>dans un seul modèle</em> : la recherche hybride (leçon <a href="0005-retrieval-hybride-rerank.html">0005</a>) devient possible dans Qdrant sans faire tourner un moteur BM25 séparé. Et il tient dans ~1–3 Go de RAM, faisable CPU. Alternative GPU : <a href="https://huggingface.co/Qwen/Qwen3-Embedding-8B">Qwen3-Embedding-8B</a> (Apache-2.0, contexte 32 k, dimensions MRL tronquables à 1 024 pour le stockage).</p>
+  </div>
+
+  <h2>Comment choisir ? Les bancs d'essai — avec méfiance</h2>
+  <p>Les benchmarks de référence : <strong>MTEB</strong> et son pendant multilingue <strong>MMTEB</strong> (<a href="https://arxiv.org/abs/2210.07316">papier</a>, <a href="https://leaderboard.mteb.org/">leaderboard</a>), et <strong>MTEB-French</strong> (25 tâches natives français, <a href="https://arxiv.org/abs/2405.20468">papier 2405.20468</a>) — le papier F-MTEB confirme que les multilingues (E5, BGE) dominent, que des poids fermés (Mistral Embed, Cohere) y brillent mais sont inexploitables chez nous, et que Jina est CC-BY-NC (non commercial). <strong>Mais</strong> : aucun de ces bancs ne contient de français XIXᵉ. Verdict de la veille : le seul juge fiable <em>in fine</em>, c'est une évaluation interne sur ~200 Q&amp;R annotées (leçon <a href="0005-retrieval-hybride-rerank.html">0005</a>) — le leaderboard ne sert qu'à présélectionner.</p>
+  <p class="note">Astuce CPU de la veille : l'encodeur batché en offline via <a href="https://github.com/huggingface/sentence-transformers">sentence-transformers</a> ou <a href="https://github.com/huggingface/text-embeddings-inference">TEI</a> (Apache-2.0, CPU via Candle) ; indexer des dizaines de Go sur CPU prend des jours — c'est du batch hors-ligne, donc acceptable.</p>
+
+  <div class="retenir"><strong>À retenir.</strong> Dense = sens, BM25 = lettre (de simples statistiques du corpus, pas un modèle), sparse appris = lettre tolérante. bge-m3 donne dense + sparse sous MIT, d'où l'hybride sans moteur séparé. Leaderboard = présélection, évaluation interne = verdict.</div>
+
+  <h2>Vérifiez que c'est acquis</h2>
+  <div class="quiz" data-answer="2">
+    <p class="quiz-q">1. Que fournit un embedding « sparse » que le dense ne garantit pas ?</p>
+    <button class="quiz-opt">Une proximité sémantique plus fine</button>
+    <button class="quiz-opt">Un poids appris par terme exact</button>
+    <button class="quiz-opt">Une dimension de vecteur plus grande</button>
+    <p class="quiz-fb">Le sparse pondère les termes eux-mêmes (comme un BM25 appris) : il sauve les noms propres et l'orthographe OCR. Le sens flou, c'est le dense.</p>
+  </div>
+  <div class="quiz" data-answer="3">
+    <p class="quiz-q">2. Pourquoi se méfier du score MTEB d'un modèle pour notre projet ?</p>
+    <button class="quiz-opt">Car les scores MTEB ignorent le français</button>
+    <button class="quiz-opt">Car MTEB ne note que les denseurs géants</button>
+    <button class="quiz-opt">Car le corpus XIXᵉ y est absent totalement</button>
+    <p class="quiz-fb">MTEB-French existe et note des modèles de toutes tailles — mais rien en français du XIXᵉ : notre corpus est « hors distribution ». D'où les 200 Q&amp;R annotées internes.</p>
+  </div>
+  <div class="quiz" data-answer="1">
+    <p class="quiz-q">3. Pourquoi « loi de Jules Ferry » pèse-t-il plus lourd que « question préalable » sous BM25 ?</p>
+    <button class="quiz-opt">Car un terme rare dans le corpus est plus informatif</button>
+    <button class="quiz-opt">Car le moteur connaît la proximité des vecteurs</button>
+    <button class="quiz-opt">Car l'attention du modèle pèse les noms propres</button>
+    <p class="quiz-fb">C'est l'idf, la rareté : BM25 ne connaît ni vecteurs ni attention — il compte les termes et les pèse selon la fréquence à laquelle ils courent dans le corpus. Un terme qui n'y apparaît jamais ne peut rien rapporter : c'est ce qui rend le lexical aveugle à la paraphrase.</p>
+  </div>
+
+  <footer class="nav">
+    <p><strong>Source principale :</strong> <a href="../../axe1-donnees.md">votre veille, axe 1 §1.1, §3, §4 et §6.2</a> ; bancs : <a href="https://leaderboard.mteb.org/benchmark/MTEB(fra,%20v1)">MTEB (fra, v1)</a>.</p>
+    <p><a href="0004-bases-vectorielles-quantification.html">→ Leçon suivante : où vivent les vecteurs</a></p>
+    <p class="followup">Un point flou ? Demandez à l'agent dans OpenCode.</p>
+  </footer>
+</body>
+</html>

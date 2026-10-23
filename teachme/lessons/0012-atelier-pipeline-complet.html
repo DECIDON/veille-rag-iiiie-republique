@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leçon 0012 — Atelier pipeline : du texte OCR à la recherche hybride</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body>
+  <p class="crumbs"><a href="../index.html">Plan du cours</a> · <a href="../ateliers/axe1-pipeline/README.md">Code de l'atelier</a> · <a href="../reference/glossaire.html">Glossaire</a></p>
+  <p class="badge axe1">Axe 1 — Les données · atelier</p>
+  <h1>Atelier pipeline : du texte OCR à la recherche hybride</h1>
+  <p class="gagne">À la fin de cet atelier, vous aurez monté de vos mains, en Python, le pipeline complet de la variante CPU de la veille : un texte OCR entre dans le dossier <code>data/corpus/</code>, une question en sort avec ses citations de page du Journal officiel — et chaque station de ce trajet possède son test automatique.</p>
+
+  <div class="retenir"><strong>Ce que l'atelier met en jeu.</strong> Les six leçons de l'axe 1 deviennent six commandes : normalisation maison (leçon 0001), découpage par intervention avec parent-séance (leçon 0002), encodage dense <em>et</em> sparse par bge-m3 (leçon 0003), indexation Qdrant quantifiée int8 avec filtres de payload (leçon 0004), entonnoir hybride RRF puis rerank cross-encoder (leçon 0005), évaluation par recall@k et MRR sur questions annotées (le seul juge, §6.5 de la synthèse). La génération LLM par Ollama est l'étape bonus, conformément à la leçon 0006 : elle décore un retrieval qui tient déjà seul.</div>
+
+  <h2>Le trajet que vous allez parcourir</h2>
+  <pre><code>data/corpus/*.json  (interventions OCR, votre format d'entrée)
+   │  1 · normaliser      Python pur : NFKD, apostrophes, césures, alias d'orateurs
+   ▼
+data/normalise/interventions.jsonl   (text_brut intact + text_normalise)
+   │  2 · découper        1 intervention = 1 granulat enfant ; 1 séance = 1 parent
+   ▼
+data/enfants/enfants.jsonl  +  data/parents/seances.jsonl
+   │  3 · encoder         BAAI/bge-m3 (MIT, CPU) : vecteurs 1 024 d + sparse appris, en cache
+   ▼
+data/vecteurs/cache.jsonl
+   │  4 · indexer         Qdrant (Apache-2.0) : vecteurs nommés, int8, filtres sur payload
+   ▼
+   │  5 · rechercher      dense ⊕ sparse → fusion RRF → rerank bge-reranker-v2-m3 → parent
+   ▼
+top-5 interventions citées (page JO) + rappel de la séance parent
+   │  6 · évaluer         recall@k et MRR sur data/questions/QUERIES.md
+   │  7 · générer (bonus) Ollama (MIT) + Qwen3-4B : synthèse qui ne cite que les extraits fournis</code></pre>
+  <p class="note">Briques et licences : exactement la variante CPU du §8 de <a href="../../../axe1-donnees.md">votre veille</a> (sentence-transformers Apache-2.0, bge-m3 MIT, Qdrant Apache-2.0, bge-reranker-v2-m3 Apache-2.0, Ollama MIT, Qwen Apache-2.0). Le passage GPU ne toucherait que deux constantes (Qwen3-Embedding-8B, Qwen3-Reranker-8B), et son bien-fondé se chiffre d'abord — leçon <a href="0011-atelier-enrichissement.html">0011</a>.</p>
+
+  <h2>Étape 0 — Installation et configuration</h2>
+  <p>Prérequis : Python 3.10 ou plus récent, Docker (pour Qdrant), environ 8 Go de RAM libres et ~4 Go de disque pour les deux modèles (bge-m3 et le reranker téléchargés au premier appel réel, mis en cache dans <code>~/.cache/huggingface</code>).</p>
+  <pre><code>cd teachme/ateliers/axe1-pipeline
+make venv        # crée .venv et installe requirements.txt (sentence-transformers, qdrant-client, pytest)
+make up          # démarre Qdrant mono-nœud (docker-compose.yml, port 6333, données dans un volume Docker nommé)
+make test        # les tests unitaires doivent passer ici déjà, sans modèle ni service</code></pre>
+  <p>Vérifications de l'étape 0 : <code>.venv/bin/python -m atelier</code> affiche l'aide des sept commandes ; <code>http://localhost:6333/dashboard</code> ouvre le tableau de bord de Qdrant (collection encore absente, c'est normal) ; <code>make test</code> se termine sans échec. Les réglages se font par variables d'environnement (<code>ATELIER_QDRANT_URL</code>, <code>ATELIER_EMBEDDER</code>, <code>ATELIER_RERANKER</code>, <code>OLLAMA_URL</code>, <code>OLLAMA_MODEL</code>) — toutes détaillées dans le <a href="../ateliers/axe1-pipeline/README.md">README de l'atelier</a>.</p>
+  <p class="note"><strong>Le garde-fou hors-ligne.</strong> Une variable <code>ATELIER_EMBEDDER=dummy</code> remplace bge-m3 par un sac de mots déterministe : la même plomberie (cache, indexation, fusion, filtres) roule sans télécharger deux gigaoctets. Elle sert aux tests d'intégration et à un <code>make smoke</code> de bout en bout ; elle ne doit jamais servir à mesurer une qualité de recherche, car ses vecteurs n'ont aucun sens.</p>
+
+  <h2>Le format d'entrée que j'attends de vous</h2>
+  <p>Un fichier JSON (tableau d'objets, ou JSONL) par lot de séances ; un objet = <strong>une intervention</strong>. Le contrat complet est dans <code>data/corpus/README.md</code> ; le voici :</p>
+  <pre><code>{
+  "id": "chambre-1890-01-28-s001-i003",        // unique dans tout le dossier
+  "date": "1890-01-28",                          // AAAA-MM-JJ
+  "chambre": "chambre",                          // "chambre" ou "senat", valeurs stables
+  "session": "1890",
+  "seance": "1",
+  "ordre_du_jour": ["Budget de l'instruction primaire"],
+  "titre_parent": "Suite de la discussion du budget de l'instruction primaire",
+  "orateur": {"nom": "J. Ferry", "role": "ministre…", "groupe": null},
+  "text_brut": "… texte OCR SANS aucun nettoyage …",
+  "page_jo": 245
+}</code></pre>
+  <p>Deux exigences découlent directement des leçons : ne pré-nettoyez rien (les césures, apostrophes et accents instables sont précisément la matière première de l'étape 1, leçon 0001) et gardez <code>page_jo</code>, car la citation de provenance se décide dès l'entrée des données (leçon 0008). Les noms d'orateurs se règlent par le dictionnaire <code>data/corpus/alias_orateurs.json</code> au format <code>{"nom canonique": ["variantes observées"]}</code>. Un mini-corpus fictif de cinq interventions (<code>exemple.json</code>) est fourni pour que tout roule avant vos données réelles.</p>
+
+  <h2>Étape 1 — Normaliser (leçon 0001)</h2>
+  <p>Commande : <code>python -m atelier normaliser</code>. L'étage applique les règles annoncées par la veille : décomposition Unicode NFKD (forme stable qui conserve les accents), unification des apostrophes typographiques et des espaces insécables, rejointoiement des césures OCR (« insti-↵tution » redevient « institution »), aplatissement des blancs ; puis il ajoute <code>orateur.nom_canonique</code> via le dictionnaire d'alias. Il ne touche jamais au <code>text_brut</code>, qui reste la source des citations verbatim.</p>
+  <p><strong>Tester :</strong> <code>pytest tests/test_01_normalisation.py -v</code> — douze tests : apostrophes, césures, guillemets, intégrité de <code>text_brut</code>, alias, refus des enregistrements incomplets et des identifiants dupliqués. <strong>Vérifier :</strong> cinq lignes dans <code>data/normalise/interventions.jsonl</code>, chacune portant les deux versions du texte.</p>
+
+  <h2>Étape 2 — Découper par intervention (leçon 0002)</h2>
+  <p>Commande : <code>python -m atelier chunker</code>. Chaque intervention devient un granulat enfant portant <code>parent_id</code> (la séance, identifiée par chambre + date + séance) ; une intervention dépassant ~1 200 tokens estimés est sous-découpée en fragments numérotés qui partagent le parent — les frontières restent documentairement vraies avant d'être géométriques. La séance entière est reconstituée dans <code>data/parents/seances.jsonl</code>, en verbatim : c'est ce parent qui sera restitué à l'affichage, la leçon 0002 l'exige.</p>
+  <p><strong>Tester :</strong> <code>pytest tests/test_02_chunking.py -v</code> — granulat unique pour une intervention courte, fragments numérotés au-delà du plafond, <em>aucun mot perdu</em> par la découpe, parent regroupant les intervenants. <strong>Vérifier :</strong> cinq enfants et deux parents sur l'exemple.</p>
+
+  <h2>Étape 3 — Encoder dense et sparse (leçon 0003)</h2>
+  <p>Commande : <code>python -m atelier encoder</code>. bge-m3 (MIT, 568 M de paramètres, CPU) produit par granulat un vecteur dense de 1 024 dimensions et un vecteur sparse appris ; la veille retient ce modèle précisément parce qu'un seul encodeur fournit les deux bras de l'hybride. Les vecteurs sont écrits dans un cache local keyed par empreinte (encodeur + texte) : une relance ne recalcule rien — le batch idempotent que la veille réclame pour l'indexation hors-ligne.</p>
+  <p><strong>Tester :</strong> <code>pytest tests/test_03_encodage.py -v</code> (dummy : contrat et idempotence) puis, une fois, <code>pytest -m modele</code> pour valider le contrat sur les vrais poids bge-m3. <strong>Vérifier :</strong> une relance d'<code>encoder</code> affiche <code>0 vecteurs calculés</code>.</p>
+
+  <h2>Étape 4 — Indexer dans Qdrant (leçon 0004)</h2>
+  <p>Commande : <code>python -m atelier indexer</code>. La collection <code>jo_debats</code> est créée avec deux vecteurs nommés (<code>dense</code>, cosinus, quantifié <strong>int8</strong> — la division par 4 de la mémoire de la leçon 0004 ; <code>sparse</code>), et des index de payload sur <code>chambre</code>, <code>orateur</code>, <code>date</code>, <code>session</code>, <code>parent_id</code> : le pouvoir de l'historien est la restriction, et elle doit rester chère à rien. Les identifiants de points sont des UUID dérivés (v5) des identifiants de granulat : réindexer deux fois ne duplique rien.</p>
+  <p><strong>Tester :</strong> <code>pytest -m integration -v</code> (Qdrant requis ; <code>make test-complet</code>) — collection quantifiée et sparse, index de payload présents, compte exact après deux passes. <strong>Vérifier :</strong> le tableau de bord <code>http://localhost:6333/dashboard</code> montre la collection et ses cinq points.</p>
+
+  <h2>Étape 5 — Rechercher : l'entonnoir (leçon 0005)</h2>
+  <p>Commande : <code>python -m atelier rechercher "credit expedition madagascar" --chambre chambre</code>. Deux bras préfetchés (dense, sparse) remontent chacun 50 candidats sous le même filtre de payload ; la fusion <strong>RRF</strong> les combine par le rang (native côté serveur Qdrant, et implémentée côté client dans <code>atelier/fusion.py</code> pour être testable et extensible) ; le cross-encoder <code>bge-reranker-v2-m3</code> ne relit que les 20 survivants et rend le top-5, chaque résultat ramenant sa séance parent.</p>
+  <p><strong>Tester :</strong> <code>pytest tests/test_05_recherche.py -v</code> — la formule RRF, le filtre construit, et (intégration) le bon document retrouvé puis l'exclusion effective de l'autre chambre. <strong>Vérifier à l'œil :</strong> le top-1 de la commande ci-dessus est l'intervention Clemenceau, avec « page JO 248 » et la séance de rattachement.</p>
+
+  <h2>Étape 6 — Évaluer sur questions-réponses (le seul juge)</h2>
+  <p>Commande : <code>python -m atelier evaluer</code>. Le fichier <code>data/questions/QUERIES.md</code> contient le format (une question de recherche, les identifiants d'intervention attendus, des filtres optionnels) et deux questions jouables sur l'exemple. L'évaluation affiche <code>recall@k</code> (la question est-elle rendue dans le top-k ?) et <code>MRR</code> (à quel rang apparaissent les attendus ?), puis la moyenne — les deux métriques de la veille §6.5, nDCG étant ajoutée quand le jeu comptera ses 200 questions.</p>
+  <p><strong>Tester :</strong> <code>pytest tests/test_06_evaluation.py -v</code> — parseur du fichier et métriques sur palmarès fictifs, sans service. <strong>À faire ensemble :</strong> le fichier est un gabarit ; les Q&R du corpus réel s'écriront à quatre mains dans une autre session, car une vérité terrain annotée par un non-historien ne vaut rien (leçon 0005).</p>
+
+  <h2>Étape 7 (bonus) — Générer une synthèse citée (leçon 0006)</h2>
+  <p>Ce n'est pas une étape du socle : la leçon 0006 recommande l'UX « retrieval-first ». Pour la jouer quand même : installez Ollama, tirez un modèle (~5 Go en Q4), et la commande s'insère après le rerank.</p>
+  <pre><code>curl -fsSL https://ollama.com/install | sh     # Ollama (MIT)
+ollama pull qwen3:4b                            # Apache-2.0, ~5 Go en GGUF Q4
+python -m atelier generer "que dit ferry sur l'ecole primaire ?"</code></pre>
+  <p>Le prompt système interdit toute information hors extraits et impose la citation de la page du Journal officiel ; si les extraits ne suffisent pas, le modèle doit répondre <code>INSUFFISANT</code>. <strong>Tester :</strong> <code>pytest -m reseau</code> saute tant qu'Ollama n'est pas joignable, joue l'appel réel dès qu'il l'est. Latence attendue sur CPU seul : plusieurs secondes — ce que la leçon 0006 annonçait ; la recherche, elle, répond en quelques dizaines de millisecondes.</p>
+
+  <h2>Vérifiez que c'est acquis</h2>
+  <div class="quiz" data-answer="1">
+    <p class="quiz-q">1. Pourquoi l'étape 1 conserve-t-elle le texte brut intact à côté du texte normalisé ?</p>
+    <button class="quiz-opt">La recherche lexicale et la citation verbatim l'exigent</button>
+    <button class="quiz-opt">Le calcul des vecteurs denses le demande explicitement</button>
+    <button class="quiz-opt">La fusion RRF des deux bras l'exige également</button>
+    <p class="quiz-fb">Le <code>text_brut</code> ne sert jamais à l'encodage : il fonde la recherche lexicale (dont les termes exacts du XIXᵉ) et garantit des citations verbatim ; le <code>text_normalise</code> seul passe dans l'embedding (leçon 0001, §1.1 de la veille).</p>
+  </div>
+  <div class="quiz" data-answer="1">
+    <p class="quiz-q">2. Pourquoi découper par intervention plutôt que par découpage sémantique automatique ?</p>
+    <button class="quiz-opt">Les frontières éditoriales préexistent dans le document</button>
+    <button class="quiz-opt">Le découpage sémantique est interdit sur CPU</button>
+    <button class="quiz-opt">L'embedding dense ignore systématiquement les noms propres</button>
+    <p class="quiz-fb">Séance, ordre du jour et intervention sont déjà marqués dans le Journal officiel : un découpage automatique redécouvre moins bien ce que le document dit (§2 de la veille). De plus, l'orateur — métadonnée de filtrage — est une propriété de l'intervention, donc la frontière utile est celle de l'intervention.</p>
+  </div>
+  <div class="quiz" data-answer="2">
+    <p class="quiz-q">3. À quoi sert l'encodeur <code>dummy</code> de l'atelier ?</p>
+    <button class="quiz-opt">À mesurer la qualité de recherche hors-ligne</button>
+    <button class="quiz-opt">À vérifier la plomberie sans les poids</button>
+    <button class="quiz-opt">À remplacer bge-m3 en production sur CPU</button>
+    <p class="quiz-fb">Ses vecteurs sont un sac de mots haché sans valeur sémantique : il vérifie cache, indexation, fusion et filtres à coût nul, et rien de plus. Toute mesure de qualité se fait sur bge-m3, et toute décision, sur vos Q&R (§6.5 de la veille).</p>
+  </div>
+
+  <footer class="nav">
+    <p><strong>Code et tests :</strong> <a href="../ateliers/axe1-pipeline/README.md">teachme/ateliers/axe1-pipeline/</a> — <strong>sources :</strong> <a href="../../../axe1-donnees.md">veille axe 1 §8</a> (pipeline de référence), <a href="https://huggingface.co/BAAI/bge-m3">carte bge-m3</a>, <a href="https://huggingface.co/BAAI/bge-reranker-v2-m3">carte bge-reranker-v2-m3</a>, <a href="https://qdrant.tech/documentation/concepts/hybrid-search/">fusion hybride Qdrant</a>.</p>
+    <p><a href="0005-retrieval-hybride-rerank.html">← Retour utile : leçon 0005 (l'entonnoir que vous venez de monter)</a></p>
+    <p class="followup">Déposez votre corpus dans <code>data/corpus/</code> au format indiqué, puis revenez dans OpenCode : la prochaine session remplit <code>data/questions/QUERIES.md</code> ensemble, et les scores de l'étape 6 deviennent la base de vos arbitrages.</p>
+  </footer>
+</body>
+</html>

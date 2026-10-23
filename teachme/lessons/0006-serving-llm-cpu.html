@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leçon 0006 — Générer sans GPU : serving, GGUF, MoE, retrieval-first</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body>
+  <p class="crumbs"><a href="../index.html">Plan du cours</a> · <a href="0005-retrieval-hybride-rerank.html">← 0005</a> · <a href="../reference/glossaire.html">Glossaire</a></p>
+  <p class="badge axe1">Axe 1 — Les données · leçon 6/6</p>
+  <h1>Générer sans GPU : serving, GGUF, MoE, retrieval-first</h1>
+  <p class="gagne">À la fin de cette leçon, vous saurez justifier l'arbitrage GPU contre CPU-only de la veille avec trois nombres en tête.</p>
+
+  <h2>Serving : la porte d'entrée est une API</h2>
+  <p>Le LLM ne se branche pas sur l'interface, il se branche sur une <strong>API compatible OpenAI</strong> — le dénominateur commun de tout l'écosystème. La veille retient deux serveurs. <a href="https://github.com/ollama/ollama">Ollama</a>, sous licence MIT, s'appuie sur le moteur llama.cpp et sur les formats GGUF (un format de fichier de poids quantifiés) ; il convient au développement sur un poste de travail en CPU. <a href="https://github.com/vllm-project/vllm">vLLM</a>, sous licence Apache-2.0, est le standard de la production sur GPU avec le batching continu (le regroupement des requêtes en cours pour occuper le GPU à chaque passe) ; son backend CPU est « documenté mais lent/limité ». La conséquence sur l'architecture est directe : changer de serveur ne change rien au reste de la stack.</p>
+
+  <h2>Quantification : les deux nombres qui décident</h2>
+  <p>En fp16 (flottant sur 2 octets), les poids occupent environ <strong>2 octets par paramètre</strong> : un modèle de 8 milliards de paramètres demande donc environ 16 Go. En GGUF Q4_K_M (quantification 4 bits), chaque paramètre occupe 0,5 à 0,6 octet, et un modèle de 8 milliards de paramètres tient dans environ 5 Go de RAM. C'est ce qui rend une exécution uniquement sur CPU envisageable, mais seulement dans la bande des modèles de 8 milliards de paramètres au plus.</p>
+  <p><strong>Mixture-of-Experts</strong> (un modèle à multiples sous-réseaux spécialisés) : Qwen3-30B-A3B (Apache-2.0) possède 30 B de paramètres, mais seuls <strong>~3 B sont actifs par token</strong> — le calcul « ne coûte » que les 3 B actifs. La veille retient ce modèle comme le meilleur compromis qualité/CPU.</p>
+
+  <h2>En CPU, on repense l'expérience d'usage au lieu de la réduire</h2>
+  <div class="qa">
+    <p class="q">Pourquoi la variante CPU recommande « l'UX retrieval-first » et un mode « sans LLM » ?</p>
+    <p class="r">Parce que sur CPU, tout fonctionne <em>sauf la génération</em> : l'encodage et le rerank tournent sur CPU avec des modèles de 0,6 B au plus, mais un petit LLM ajoute des dizaines de secondes de latence et ne sert surtout qu'à reformuler. Le service rend alors d'abord la recherche hybride, les facettes et les extraits surlignés, de façon déterministe et auditable ; la synthèse par LLM devient une simple option. Cf. <a href="../../axe1-donnees.md">axe1 §5 et §8</a>.</p>
+  </div>
+
+  <div class="retenir"><strong>À retenir.</strong> L'API compatible OpenAI est la seule interface qui compte. La quantification Q4 descend à environ 0,5 octet par paramètre. Un MoE 30B-A3B se paie comme un modèle de 3 B actifs. En CPU, on sert la recherche en premier.</div>
+
+  <h2>Vérifiez que c'est acquis</h2>
+  <div class="quiz" data-answer="2">
+    <p class="quiz-q">1. Que « paie-t-on » à chaque token avec un MoE 30B-A3B ?</p>
+    <button class="quiz-opt">Trente milliards de paramètres complets</button>
+    <button class="quiz-opt">Trois milliards de paramètres actifs</button>
+    <button class="quiz-opt">Six milliards de paramètres communs</button>
+    <p class="quiz-fb">« A3B » signifie environ 3 milliards de paramètres actifs par token : le routeur n'active qu'un sous-ensemble d'experts. C'est ce qui lui donne son statut de meilleur compromis CPU de la veille.</p>
+  </div>
+  <div class="quiz" data-answer="3">
+    <p class="quiz-q">2. Pourquoi brancher LLM et plateformes via API OpenAI-compatible ?</p>
+    <button class="quiz-opt">Pour standardiser les prompts utilisés</button>
+    <button class="quiz-opt">Pour chiffrer les échanges avec l'interface</button>
+    <button class="quiz-opt">Pour interchanger Ollama et vLLM sans rien changer</button>
+    <p class="quiz-fb">C'est la leçon d'intégration de l'axe 2 (§4) : Dify, RAGFlow, Onyx, Open WebUI acceptent vLLM/Ollama tels quels précisément parce qu'ils parlent tous ce dialecte unique.</p>
+  </div>
+
+  <footer class="nav">
+    <p><strong>Source principale :</strong> <a href="../../axe1-donnees.md">votre veille, axe 1 §5</a> ; <a href="https://docs.vllm.ai/en/latest/getting_started/installation/cpu.html">vLLM — backend CPU</a>.</p>
+    <p><a href="0007-turnkey-vs-stack-composee.html">→ Axe 2, leçon 0007 : turnkey ou stack composée</a></p>
+    <p class="followup">Un point flou ? Demandez à l'agent dans OpenCode.</p>
+  </footer>
+</body>
+</html>

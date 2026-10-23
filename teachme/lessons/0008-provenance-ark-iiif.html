@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leçon 0008 — La provenance comme motif central : arK &amp; IIIF</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body>
+  <p class="crumbs"><a href="../index.html">Plan du cours</a> · <a href="0007-turnkey-vs-stack-composee.html">← 0007</a> · <a href="../reference/glossaire.html">Glossaire</a></p>
+  <p class="badge axe2">Axe 2 — L'interface web · leçon 8/10</p>
+  <h1>La provenance comme motif central : arK &amp; IIIF</h1>
+  <p class="gagne">À la fin de cette leçon, vous saurez expliquer ce qu'est un « deep link » vers la page source, et pourquoi c'est ce qui distingue un outil scientifique d'une démonstration grand public.</p>
+
+  <h2>Le pattern « chat-with-citations »</h2>
+  <p>Partout où la veille a regardé (Kotaemon, RAGFlow, Open WebUI), on retrouve le même patron d'interface : (1) la réponse porte des marqueurs <code>[^n]</code> cliquables ; (2) un panneau latéral affiche les chunks sources avec leur score ; (3) le lien pointe vers une <strong>vue stable</strong> du document. C'est le point (3) qui nous occupe : la « vue stable » doit mener à la <em>page</em>, pas au fichier.</p>
+
+  <h2>arK : un identifiant pérenne, page par page</h2>
+  <p>L'<strong>arK</strong> (<em>Archival Resource Key</em>) est l'identifiant pérenne de la BnF — conçu pour survivre aux refontes de site. Chaque document Gallica en porte un ; on le dérive au niveau <strong>page</strong> : <code>gallica.bnf.fr/ark:/12148/bpt6k…/f569.item</code> pointe sur la page 569 du tome. Le pipeline d'ingestion de référence (Puren et al. 2025) fait exactement cela. Conséquence directe pour le modèle de données de la leçon <a href="0001-postocr-normalisation.html">0001</a> : <strong>chaque chunk porte son arK</strong> ; sinon, la citation ne peut pas remonter à la page.</p>
+
+  <h2>IIIF : l'image de la page en standard ouvert</h2>
+  <p>L'<a href="https://api.bnf.fr/fr/api-iiif-de-recuperation-des-images-de-gallica">API IIIF de la BnF</a> expose les images de pages sous forme de <em>manifestes</em> standardisés : n'importe quel visualiseur IIIF (Mirador, Universal Viewer) les affiche avec zoom, et nous n'hébergeons pas les fac-similés chez nous. La chaîne complète d'une citation devient :</p>
+  <pre><code>chunk (leçon 0002) → page_jo + arK (leçon 0001)
+   → lien profond Gallica (vue stable)
+   → manifeste IIIF (visualiseur libre)</code></pre>
+
+  <div class="qa">
+    <p class="q">Pourquoi « motif central » plutôt que « fonctionnalité en plus » ?</p>
+    <p class="r">Parce que sans provenance vérifiable, un public chercheur ne peut pas utiliser l'outil : une réponse sans citation page-à-page est une <em>affirmation</em>, pas une source. Et c'est un actif <strong>non régénérable</strong> — la synthèse le place en Phase 1, avant toute indexation à pleine échelle.</p>
+  </div>
+
+  <div class="retenir"><strong>À retenir.</strong> La chaîne de provenance va du chunk à la cote et à la page, puis à l'arK, au lien profond Gallica, et enfin au manifeste IIIF. La provenance est une donnée du pipeline, décidée dès l'indexation, et non un habillage de l'interface.</div>
+
+  <h2>Vérifiez que c'est acquis</h2>
+  <div class="quiz" data-answer="3">
+    <p class="quiz-q">1. À quoi sert l'arK dans notre architecture ?</p>
+    <button class="quiz-opt">À authentifier les utilisateurs du service</button>
+    <button class="quiz-opt">À versionner les index de recherche</button>
+    <button class="quiz-opt">À pointer stablement une page source</button>
+    <p class="quiz-fb">L'arK est l'identifiant pérenne de la BnF : stocké par chunk, il permet de générer le lien profond vers la page du JO qui authentifie la citation.</p>
+  </div>
+  <div class="quiz" data-answer="1">
+    <p class="quiz-q">2. Pourquoi la provenance se décide-t-elle à la Phase 1, avant l'indexation ?</p>
+    <button class="quiz-opt">Car sans arK au moment du chunking, plus rien ne relie les chunks aux pages</button>
+    <button class="quiz-opt">Car Gallica facture l'API au nombre d'appels</button>
+    <button class="quiz-opt">Car l'UI Next.js la réclame au démarrage</button>
+    <p class="quiz-fb">L'arK doit être dans le JSON canonique dès l'indexation ; le rajouter après coup impose de ré-indexer des dizaines de Go. C'est l'actif non régénérable de la synthèse (§6, décision 2).</p>
+  </div>
+
+  <footer class="nav">
+    <p><strong>Source principale :</strong> <a href="../../axe2-interface-web.md">votre veille, axe 2 §2 et §3</a> ; <a href="https://api.bnf.fr/fr/api-document-de-gallica">BnF — API Document de Gallica</a>.</p>
+    <p><a href="0009-facettes-vs-text-to-sql.html">→ Leçon suivante : facettes vs text-to-SQL</a></p>
+    <p class="followup">Un point flou ? Demandez à l'agent dans OpenCode.</p>
+  </footer>
+</body>
+</html>

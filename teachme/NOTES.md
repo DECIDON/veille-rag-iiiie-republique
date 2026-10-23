@@ -1,0 +1,22 @@
+# Notes
+
+## Préférences utilisateur
+- Langue du cours : **français** (comme la veille).
+- Hiérarchie imposée : **Axe 1 — les données** puis **Axe 2 — l'interface web** ; les leçons suivent l'ordre du pipeline de l'axe 1 et la structure de l'axe 2.
+- Tout doit être ancré sur les trois fichiers de veille à la racine (`../axe1-donnees.md`, `../axe2-interface-web.md`, `../SYNTHESE.md`) : ne jamais affirmer un fait licence/taille hors de ces sources ou de leurs URLs premières, sinon citer la source.
+- Périmètre choisi par l'utilisateur : **notions techniques** derrière les deux axes. Pas d'OCR, pas d'entraînement de modèles.
+- Règle de rédaction (22/10) : phrases complètes, pas de style télégraphique ; définir tout terme technique ou anglicisme à sa première occurrence. Relire les leçons existantes dans ce sens au fil de l'eau.
+- Règle de rédaction (22/10, précision de l'utilisateur) : pas de tournures elliptiques ni de métaphores familières (« il meurt deux fois », « les pavés gagnent », « un cran bouge », « harnais », « frilosité », « et personne d'autre ») ; sujet + verbe conjugué partout, y compris dans les listes et les encadrés ; chaque phrase doit se comprendre isolément.
+
+## En cours / à faire
+- [ ] Vérifier le niveau de départ réel (requêtes SQL, Python, notions vectorielles) et ajuster la ZPD — voir learning record 0001.
+- [ ] Après le quiz de chaque leçon, noter les erreurs révélatrices dans un learning record.
+- [x] Leçon 0012 « atelier pipeline complet » créée (22/10) — kit exécutable dans `ateliers/axe1-pipeline/` (Python, variante CPU du §8 : normalisation → chunking → bge-m3 → Qdrant → RRF → rerank → évaluation ; Ollama en bonus leçon 0006) ; mini-corpus d'exemple fourni ; encodeur `dummy` pour tester la plomberie hors-ligne. Chaîne vérifiée de bout en bout (tests unitaires + intégration contre Qdrant réel, 39 verts) avec qdrant-client 1.20 — l'API du client a changé sur ce modèle (Prefetch, ScalarQuantizationConfig, DatetimeRange, `count().count`, `config.params.sparse_vectors`) : ne pas « moderniser » ces imports sans relancer `make test-complet`.
+- [ ] Déposer le corpus réel dans `ateliers/axe1-pipeline/data/corpus/` au format du contrat (`data/corpus/README.md`) ; retirer `exemple.json` ensuite.
+- [ ] Remplir `ateliers/axe1-pipeline/data/questions/QUERIES.md` avec l'utilisateur (session dédiée) : questions-réponses annotées ; ajouter nDCG au module `evaluation.py` quand le jeu atteindra ~200 questions.
+- [x] Leçon 0011 « atelier enrichissement » créée (22/10) — en attente des mesures de l'utilisateur (taux de désaccord, tokens/s) pour la mise à jour et l'ADR.
+- [x] Leçon 0002, point 3 du § GPU (« le juge reste votre évaluation interne ») développé (22/10) : objection material-indépendante, charge de la preuve inversée vers B, protocole A/B à protocole constant sur échantillon, règle de décision ; + question 4 au quiz.
+- [x] Leçon 0003 : aperçu BM25 ajouté (22/10) — fréquence/idf/longueur, cas d'échec (paraphrase, OCR), disponibilité dans la stack, lien vers sparse appris ; renvoi croissant 0003↔0005 ; + question 3 au quiz. Le traitement complet (entonnoir, fusion) reste la leçon 0005.
+- [x] Relecture stylistique (22/10, remarque de l'utilisateur) : tournures elliptiques et métaphores corrigées dans les sections ajoutées aux leçons 0002 et 0003 ; règle de rédaction précisée ci-dessus.
+- [x] Relecture stylistique (22/10, suite de la remarque de l'utilisateur) : leçons 0004 à 0011 réécrites selon les deux règles — suppression des tours elliptiques et des équations (« X = Y », « → », listes nominales), phrases complètes à sujet + verbe conjugué partout (y compris encadrés « À retenir », feedbacks de quiz et options), métaphores familières corrigées (« sauve la facture », « fonction reine », « techniquement dans le coup », « hors de prix », « tour de chauffe », « bidouillage », « jouet de démo », « n'est pas décoratif » conservé mais adossé à une phrase complète, etc.) ; le bandeau « Gagné à la fin : » devient une phrase (« À la fin de cette leçon, vous saurez… ») ; termes définis à leur première occurrence (ANN/HNSW, payload, rescore, GGUF, Mixture-of-Experts, nDCG, open-core, SSO/RBAC/whitelabel, OIDC, MCP, zero-shot, ADR).
+- [ ] Signe d'intérêt : l'utilisateur arbitre mentalement le scénario GPU (questions sur late chunking, §2 axe 1) — prévoir une leçon d'arbitrage GPU vs CPU consolidant le coût des options GPU quand les mesures de l'atelier 0011 seront là.

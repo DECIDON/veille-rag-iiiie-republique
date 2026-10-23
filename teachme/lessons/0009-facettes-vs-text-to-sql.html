@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leçon 0009 — Facettes déterministes, text-to-SQL soupçonné</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body>
+  <p class="crumbs"><a href="../index.html">Plan du cours</a> · <a href="0008-provenance-ark-iiif.html">← 0008</a> · <a href="../reference/glossaire.html">Glossaire</a></p>
+  <p class="badge axe2">Axe 2 — L'interface web · leçon 9/10</p>
+  <h1>Facettes déterministes, text-to-SQL soupçonné</h1>
+  <p class="gagne">À la fin de cette leçon, vous saurez expliquer pourquoi la question « combien de discours de Jaurès en 1904 ? » ne doit surtout pas passer par le LLM.</p>
+
+  <h2>Une facette est une agrégation, pas une génération</h2>
+  <p>Une <strong>facette</strong> est la colonne de compteurs que l'on affiche à gauche d'un moteur de recherche : « Sénat (4 212) · Chambre (9 017) », par date, par orateur… Elle est calculée par le moteur d'index, par exemple avec les <code>aggs</code> d'OpenSearch ou un <code>GROUP BY</code> SQL. Le résultat est <strong>déterministe</strong> : à index égal et à filtre égal, la réponse est la même à chaque clic, sans coût de calcul. Les interfaces de référence de l'AN et du Sénat fonctionnent exactement de cette façon, et c'est ce qu'une interface construite sur <strong>Searchkit</strong> (Apache-2.0, interface React pour OpenSearch) reproduirait.</p>
+
+  <h2>Le text-to-SQL, et pourquoi la veille s'en méfie</h2>
+  <p>Le text-to-SQL traduit une question en langage naturel en requête SQL (Vanna, WrenAI). La perspective est tentante pour les comptages, mais elle est statistiquement dangereuse : le benchmark officiel cité par la veille (arXiv 2601.08778) mesure jusqu'à <strong>62,8 % d'erreur</strong> même pour les meilleurs systèmes sur les questions complexes. Pour un service destiné à des historiens, un comptage faux <em>vraisemblable</em> est pire qu'une absence de réponse. La veille en déduit une règle (<a href="../../SYNTHESE.md">SYNTHESE §4</a>) : les facettes reposent sur des agrégations déterministes, et le LLM n'entre <strong>jamais</strong> dans le compteur.</p>
+  <p>Le text-to-SQL garde une place, <em>en complément</em> : il peut répondre à des questions ad hoc de comptage sur les tables de métadonnées, à condition que <strong>le SQL généré soit affiché</strong> (une pratique visible chez Vanna et Wren) pour que le chercheur audite la requête avant de croire le chiffre.</p>
+
+  <div class="qa">
+    <p class="q">Où vivent les données des facettes ?</p>
+    <p class="r">Elles vivent dans l'<em>index unique</em> de la leçon <a href="0004-bases-vectorielles-quantification.html">0004</a>, et jamais dans un second magasin de données parallèle qui dériverait. OpenSearch agrège et recherche ; pgvector joint les vecteurs aux tables de métadonnées (le choix des frameworks reposait déjà là-dessus, ainsi que sur le pattern « serveur MCP en lecture seule » d'<em>EU Parliament Monitor</em>, SYNTHESE §5 ; MCP, <em>Model Context Protocol</em>, est un protocole d'interface entre les outils et les modèles).</p>
+  </div>
+
+  <div class="retenir"><strong>À retenir.</strong> Compter est une agrégation déterministe sur l'index ; le LLM ne compte pas. Le text-to-SQL n'intervient qu'en complément, pour les questions ad hoc, et il affiche alors le SQL qu'il a produit.</div>
+
+  <h2>Vérifiez que c'est acquis</h2>
+  <div class="quiz" data-answer="2">
+    <p class="quiz-q">1. Comment l'interface doit-elle calculer « discours de Jaurès, 1904, par mois » ?</p>
+    <button class="quiz-opt">En demandant au LLM de compter les chunks</button>
+    <button class="quiz-opt">Par agrégation déterministe sur l'index</button>
+    <button class="quiz-opt">En résumant la liste des interventions</button>
+    <p class="quiz-fb">Une agrégation SQL (ou des `aggs`) sur les champs orateur et date donne un résultat rapide, rejouable et auditable. Faire appel à un LLM pour un <em>fait que l'on peut compter</em> constitue une régression, c'est-à-dire un retour en arrière par rapport à la règle.</p>
+  </div>
+  <div class="quiz" data-answer="3">
+    <p class="quiz-q">2. Quelle précaution minimale pour exposer du text-to-SQL aux chercheurs ?</p>
+    <button class="quiz-opt">Limiter le nombre de requêtes simultanées</button>
+    <button class="quiz-opt">Restreindre le modèle aux plus gros modèles</button>
+    <button class="quiz-opt">Afficher la requête SQL produite à l'écran</button>
+    <p class="quiz-fb">Afficher le SQL rend l'erreur vérifiable, or le taux d'erreur atteint 62,8 % sur les benchmarks. Les deux autres options n'ont pas d'effet démontré sur la justesse.</p>
+  </div>
+
+  <footer class="nav">
+    <p><strong>Source principale :</strong> <a href="../../SYNTHESE.md">votre veille, SYNTHESE §4</a> ; benchmark : <a href="https://arxiv.org/abs/2601.08778">arXiv 2601.08778</a>.</p>
+    <p><a href="0010-licences-pieges.html">→ Leçon suivante : le labyrinthe des licences</a></p>
+    <p class="followup">Un point flou ? Demandez à l'agent dans OpenCode.</p>
+  </footer>
+</body>
+</html>

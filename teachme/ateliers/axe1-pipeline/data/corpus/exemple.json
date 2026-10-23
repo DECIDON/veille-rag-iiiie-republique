@@ -1,0 +1,62 @@
+[
+  {
+    "id": "chambre-1890-01-28-s001-i003",
+    "date": "1890-01-28",
+    "chambre": "chambre",
+    "session": "1890",
+    "seance": "1",
+    "ordre_du_jour": ["Budget de l'instruction primaire"],
+    "titre_parent": "Suite de la discussion du budget de l'instruction primaire",
+    "orateur": {"nom": "J. Ferry", "role": "ministre de l'instruction publique et des cultes", "groupe": null},
+    "text_brut": "M. Jules Ferry, ministre de l'instruction publique et des cultes. — Messieurs, l’insti-\ntution des écoles primaires gratuites n’est pas une œuvre de parti : elle est une\nœuvre de République. Le crédit que nous demandons pour l'enseignement primaire\ncouvre les traitements des instituteurs et institutrices, les locaux scolaires et\nles bourses d'écoles normales. On a parlé d’épargne ; je demande la permission de\nparler de la dépense la plus féconde. Une nation qui s'ignore est une nation qui\nrecule ; l'école primaire est la vraie dette de l'État.",
+    "page_jo": 245
+  },
+  {
+    "id": "chambre-1890-01-28-s001-i007",
+    "date": "1890-01-28",
+    "chambre": "chambre",
+    "session": "1890",
+    "seance": "1",
+    "ordre_du_jour": ["Crédits extraordinaires — expédition de Madagascar"],
+    "titre_parent": "Discussion des crédits extraordinaires",
+    "orateur": {"nom": "Clemenceau", "role": null, "groupe": "extrême gauche"},
+    "text_brut": "Georges Clémenceau. — On nous demande des crédits pour l’expé-\ndition de Madagascar, et l'on appelle cela le prestige du drapeau. Messieurs, je\nn'interdis pas le courage, mais je compte. Vous envoyez des soldats sans plan,\nvous rappelerez des régiments sans profit. Le pays qui s'amuse aux lointaines\nclôtures de sable oublie les chemins de fer, les ports, l'instruction du peuple.\nNous voterons contre ces crédits, jusqu'au jour où un ministère viendra dire la\nvérité de cette campagne.",
+    "page_jo": 248
+  },
+  {
+    "id": "chambre-1890-01-28-s001-i009",
+    "date": "1890-01-28",
+    "chambre": "chambre",
+    "session": "1890",
+    "seance": "1",
+    "ordre_du_jour": ["Interpellation sur les événements de Decazeville"],
+    "titre_parent": "Interpellation sur la grève des mineurs de Decazeville",
+    "orateur": {"nom": "Citoyen Basly", "role": null, "groupe": null},
+    "text_brut": "Le Citoyen Basly. — Les mineurs de Decazeville, citoyens, ont eu raison de\ncesser le travail quand on touchait à leur pain. Ce que vous appelez un mouvement\n séditieux, je l'appelle l'exercice d'un droit naturel. Vous portez la baïonnette\noù la loi porterait le juge ; vous faites des gendarmes là où il faudrait des\narbitres. Le suffrage universel n'est pas une promesse de silence, et la République\nne se sauvera pas par la compresssion des ouvriers.",
+    "page_jo": 251
+  },
+  {
+    "id": "senat-1891-06-14-s002-i012",
+    "date": "1891-06-14",
+    "chambre": "senat",
+    "session": "1891",
+    "seance": "2",
+    "ordre_du_jour": ["Projet de traité de commerce"],
+    "titre_parent": "Discussion du projet de traité de commerce",
+    "orateur": {"nom": "Jules Ferry", "role": "président du conseil, ministre des affaires étrangères", "groupe": null},
+    "text_brut": "M. Jules Ferry, président du conseil, ministre des affaires étrangères. —\nMessieurs les sénateurs, le traité de commerce qu'on vous soumet n'est pas un\nacte d'abandon, c'est un acte de méthode. Le tarif conventionnel ménage nos\nindustries textiles tout en ouvrant nos marchés ; les traités bâillon expirent,\nil faut les remplacer par des accords calculés. La politique extérieure de la\nRépublique se juge aux débouchés de son commerce, non aux éclats de sa tribune.",
+    "page_jo": 612
+  },
+  {
+    "id": "senat-1891-06-14-s002-i015",
+    "date": "1891-06-14",
+    "chambre": "senat",
+    "session": "1891",
+    "seance": "2",
+    "ordre_du_jour": ["Budget général de l'exercice 1892 — monopole des tabacs"],
+    "titre_parent": "Budget général de l'exercice 1892",
+    "orateur": {"nom": "le ministre des finances", "role": "ministre des finances", "groupe": null},
+    "text_brut": "Le ministre des finances. — Le monopole des tabacs rend chaque année au budget\nune somme que aucune autre branche des revenus indirects n'approche. Y toucher,\nc'est demander au Trésor deux cents millions sans les remplacer; le déséqui-\nlibre budgétaire serait immédiat. La commission propose des réductions sur le\npersonnel des manufactures, la guerre des tarifs Douanes réduirait la recette de\nl'État plus encor qu'une réforme de l'impôt.",
+    "page_jo": 615
+  }
+]

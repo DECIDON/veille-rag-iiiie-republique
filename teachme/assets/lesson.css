@@ -1,0 +1,90 @@
+/* Feuille de style partagée du cours « RAG IIIe République » — toutes les leçons la lient. */
+:root {
+  --ink: #1c1a17;
+  --paper: #fffdf7;
+  --soft: #6d6656;
+  --rule: #e6dfcc;
+  --accent: #7a5b2b;
+  --axe1: #9a3f2f;
+  --axe2: #2f5a9a;
+  --ok: #2e6b3a;
+  --ko: #9a2f2f;
+  --card: #faf6ea;
+}
+* { box-sizing: border-box; }
+html { font-size: 17px; }
+body {
+  margin: 0 auto;
+  max-width: 44rem;
+  padding: 2.5rem 1.25rem 6rem;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: Georgia, Charter, 'Bitstream Charter', 'Times New Roman', serif;
+  line-height: 1.55;
+}
+a { color: var(--accent); }
+code {
+  font-family: 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.85em;
+  background: #f2ecdc;
+  padding: 0.05em 0.35em;
+  border-radius: 0.25em;
+}
+pre { background: #f2ecdc; padding: 0.9rem 1.1rem; border-radius: 0.4rem; overflow-x: auto; font-size: 0.82rem; line-height: 1.45; }
+pre code { background: none; padding: 0; }
+h1 { font-size: 1.7rem; line-height: 1.2; margin: 0.4rem 0 0.6rem; }
+h2 { font-size: 1.15rem; margin-top: 2.2rem; border-bottom: 1px solid var(--rule); padding-bottom: 0.3rem; }
+h3 { font-size: 1rem; margin-top: 1.6rem; }
+
+/* En-tête de leçon */
+.crumbs { font-size: 0.85rem; color: var(--soft); margin: 0 0 1.4rem; }
+.badge {
+  display: inline-block; font-size: 0.75rem; letter-spacing: 0.06em;
+  text-transform: uppercase; color: #fff; padding: 0.15rem 0.6rem; border-radius: 0.9rem; margin: 0;
+}
+.badge.axe1 { background: var(--axe1); }
+.badge.axe2 { background: var(--axe2); }
+.gagne { font-style: italic; color: var(--soft); margin-top: 0.4rem; }
+
+/* Encadrés */
+.retenir {
+  background: var(--card); border-left: 4px solid var(--accent);
+  padding: 0.8rem 1.1rem; margin: 1.6rem 0; border-radius: 0 0.4rem 0.4rem 0;
+}
+.retenir strong:first-child { letter-spacing: 0.04em; }
+.note { font-size: 0.9rem; color: var(--soft); }
+
+/* Cartes Question → Réponse */
+.qa { margin: 1.2rem 0; }
+.qa .q { font-weight: bold; margin-bottom: 0.15rem; }
+.qa .r { margin-top: 0; }
+
+/* Quiz (voir assets/quiz.js) */
+.quiz { margin: 1.4rem 0; padding: 1rem 1.1rem; border: 1px solid var(--rule); border-radius: 0.5rem; background: #fffef9; }
+.quiz-q { margin-top: 0; font-weight: bold; }
+.quiz-opt {
+  display: block; width: 100%; text-align: left; font: inherit; color: inherit;
+  margin: 0.4rem 0; padding: 0.5rem 0.8rem; background: #fff;
+  border: 1px solid var(--rule); border-radius: 0.35rem; cursor: pointer;
+}
+.quiz-opt:hover { border-color: var(--accent); }
+.quiz-opt.correct { border-color: var(--ok); background: #eef6ee; }
+.quiz-opt.wrong { border-color: var(--ko); background: #f9eded; }
+.quiz-fb { display: none; font-size: 0.92rem; border-left: 3px solid var(--accent); padding-left: 0.8rem; margin-top: 0.8rem; }
+.quiz.answered .quiz-fb { display: block; }
+
+/* Pied de leçon */
+footer.nav { margin-top: 3rem; border-top: 2px solid var(--rule); padding-top: 1rem; font-size: 0.92rem; }
+.followup { color: var(--soft); font-style: italic; }
+
+/* Page index */
+ul.plan { list-style: none; padding: 0; }
+ul.plan li { margin: 0.7rem 0; }
+ul.plan li .num { display: inline-block; width: 3.2rem; color: var(--soft); }
+ul.plan li .min { color: var(--soft); font-size: 0.85rem; }
+
+@media print {
+  body { background: #fff; max-width: none; }
+  .quiz-opt { border: 1px solid #999; }
+  a { color: inherit; text-decoration: none; }
+}

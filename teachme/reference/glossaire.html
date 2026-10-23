@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Glossaire — RAG IIIᵉ République</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+</head>
+<body>
+  <p class="crumbs"><a href="../index.html">Plan du cours</a></p>
+  <p class="badge axe1">Référence transversale</p>
+  <h1>Glossaire du cours</h1>
+  <p class="gagne">La référence à rouvrir : chaque terme du cours, en une ligne, avec sa leçon. Définitions alignées sur la veille (21/10/2026).</p>
+
+  <h2>Axe 1 — Les données</h2>
+  <dl>
+    <dt><strong>Post-OCR / normalisation</strong> (0001)</dt><dd>Nettoyage du texte OCR (Unicode NFKD, apostrophes, artefacts) par règles et dictionnaires d'alias — jamais par écrasement de l'original.</dd>
+    <dt><strong>JSON canonique par intervention</strong> (0001)</dt><dd>Format intermédiaire unique du corpus : une entrée = une intervention, avec date, chambre, orateur, page_jo, arK, <code>text_brut</code> + <code>text_normalise</code>.</dd>
+    <dt><strong>Chunk / chunking</strong> (0002)</dt><dd>Granulat indexé / acte de découpage. Ici : par intervention (frontières documentairement vraies), ~500–2 000 tokens.</dd>
+    <dt><strong>Parent-document</strong> (0002)</dt><dd>Pattern « indexer fin, restituer large » : chunk-enfant cherché, séance-parent rendue. <code>ParentDocumentRetriever</code> / <code>AutoMergingRetriever</code>.</dd>
+    <dt><strong>Late chunking</strong> (0002)</dt><dd>Encoder le document entier (modèle 32 k) puis découper les embeddings — chaque chunk porte le contexte global (arXiv 2409.04701). Option GPU uniquement.</dd>
+    <dt><strong>RAPTOR</strong> (0002)</dt><dd>Arbre récursif de résumés par LLM pour questions panoramiques ; coût = tout le corpus résumé ; résumés non citables.</dd>
+    <dt><strong>Embedding dense</strong> (0003)</dt><dd>Vecteur de sens (ex. 1 024 float32) ; similarité cosinus ; capture la paraphrase.</dd>
+    <dt><strong>Embedding sparse</strong> (0003)</dt><dd>Poids appris par terme dans un vocabulaire géant — un BM25 neuronal ; fidèle au terme exact (noms propres, OCR).</dd>
+    <dt><strong>bge-m3</strong> (0003)</dt><dd>Modèle MIT 568 M fournissant dense + sparse + ColBERT ensemble ; ~1–3 Go RAM, faisable CPU ; la clé de l'hybride sans moteur séparé.</dd>
+    <dt><strong>MTEB / MMTEB / MTEB-French</strong> (0003)</dt><dd>Bancs d'essai d'embeddings ; présélection uniquement — notre corpus XIXᵉ est hors distribution.</dd>
+    <dt><strong>ANN / HNSW</strong> (0004)</dt><dd>Recherche du plus proche voisin <em>approchée</em> (graphe HNSW chez Qdrant) : millisecondes contre quelques voisins ratés — à évaluer, pas à supposer.</dd>
+    <dt><strong>Payload</strong> (0004)</dt><dd>Métadonnées JSON indexées d'un point Qdrant ; support des filtres « chambre / date / orateur » avant ou après l'ANN.</dd>
+    <dt><strong>Quantification</strong> (0004)</dt><dd>Compression des vecteurs : int8 ×4 (perte minime), binaire ×32 (+ rescore exact). Transforme 60 Go en ~15 Go.</dd>
+    <dt><strong>Enrichissement / métadonnée dérivée</strong> (0001–0002, 0011)</dt><dd>Thème ou phrase-résumé généré pour une intervention : champ indexé du record (jamais doc séparé, jamais texte cité), produit par un étage dédié versionné entre normalisation et embedding ; filtrable seulement si vocabulaire contrôlé ; affiché comme enrichissement machine, jamais en remplacement du verbatim.</dd>
+    <dt><strong>Vocabulaire contrôlé</strong> (0009, enrichissement)</dt><dd>Liste fermée de valeurs de thème : sans elle, pas d'agrégation facettable possible sur un champ dérivé.</dd>
+    <dt><strong>BM25</strong> (0003, 0005)</dt><dd>Fonction de score lexicale de Lucène : fréquence du terme avec saturation, rareté (idf), normalisation par la longueur. Pas un modèle, pas de poids appris — indispensable sur corpus OCR bruité.</dd>
+    <dt><strong>Recherche hybride</strong> (0005)</dt><dd>BM25/lexical + vectoriel en parallèle, puis fusion. Le « socle recommandé » de la veille.</dd>
+    <dt><strong>RRF</strong> (0005)</dt><dd><em>Reciprocal rank fusion</em> : fusion par rang (pas par score), robuste car les échelles des moteurs sont incomparables.</dd>
+    <dt><strong>Reranker / cross-encoder</strong> (0005)</dt><dd>Relit requête + chunk ensemble pour re-scoring très précis, sur top-k uniquement (ex. bge-reranker-v2-m3, Apache-2.0).</dd>
+    <dt><strong>recall@k / nDCG</strong> (0005)</dt><dd>Métriques d'évaluation : présence des bonnes sources dans le top-k ; ordre en plus. Jouées sur ~200 Q&amp;R annotées en interne.</dd>
+    <dt><strong>Serving / API OpenAI-compatible</strong> (0006)</dt><dd>Serveur de LLM derrière un dialecte unique : Ollama (MIT, dev/CPU) → vLLM (Apache-2.0, prod GPU).</dd>
+    <dt><strong>GGUF / Q4</strong> (0006)</dt><dd>Format de poids quantifiés de llama.cpp ; Q4_K_M ≈ 0,5–0,6 octet/paramètre → un 8B ≈ 5 Go.</dd>
+    <dt><strong>MoE (A3B)</strong> (0006)</dt><dd>Mixture-of-Experts : Qwen3-30B-A3B, 30 B paramètres dont ~3 B actifs par token — meilleur compromis CPU.</dd>
+    <dt><strong>Retrieval-first (mode sans LLM)</strong> (0006)</dt><dd>UX CPU par défaut : recherche hybride + facettes + extraits surlignés ; la synthèse LLM n'est qu'une option.</dd>
+  </dl>
+
+  <h2>Axe 2 — L'interface web</h2>
+  <dl>
+    <dt><strong>Turnkey</strong> (0007)</dt><dd>Plateforme RAG complète auto-hébergée (RAGFlow, Kotaemon, Onyx…). Défaut structurel : elle recopie le corpus dans son index.</dd>
+    <dt><strong>Stack composée</strong> (0007)</dt><dd>Assemblage de briques permissives autour d'un index externe en lecture seule — la voie retenue.</dd>
+    <dt><strong>Open-core</strong> (0007, 0010)</dt><dd>Noyau open source + fonctionnalités sous <code>ee/</code>/<code>enterprise/</code> (Onyx, LiteLLM).</dd>
+    <dt><strong>Chat-with-citations</strong> (0008)</dt><dd>Pattern UI : marqueurs <code>[^n]</code> cliquables + panneau de sources + lien vers vue stable de la page.</dd>
+    <dt><strong>arK</strong> (0008)</dt><dd>Identifiant pérenne de la BnF ; dérivé par page, il permet les liens profonds Gallica qui authentifient une citation.</dd>
+    <dt><strong>IIIF / manifeste</strong> (0008)</dt><dd>Standard d'exposition d'images de pages ; API IIIF BnF + visualiseur libre (Mirador, Universal Viewer).</dd>
+    <dt><strong>Facette</strong> (0009)</dt><dd>Compteur par valeur de métadonnée (date, chambre, orateur) = agrégation <strong>déterministe</strong> de l'index — jamais un LLM.</dd>
+    <dt><strong>Text-to-SQL</strong> (0009)</dt><dd>NL→SQL (Vanna MIT, WrenAI Apache-2.0) ; ≤ 37 % de réussite selon les benchmarks → complément seulement, SQL affiché.</dd>
+    <dt><strong>Permissive / copyleft / AGPL</strong> (0010)</dt><dd>MIT-Apache-BSD (libre sans contrepartie) ; GPL (obligations à la redistribution) ; AGPL (+ section 13 : usage réseau = distribution).</dd>
+    <dt><strong>Source-available</strong> (0010)</dt><dd>SSPL / Elastic-2.0 : code consultable, pas open source OSI → Elasticsearch écarté au profit d'OpenSearch.</dd>
+    <dt><strong>Clause de marque</strong> (0010)</dt><dd>Interdiction Open WebUI de masquer le branding au-delà de 50 utilisateurs / 30 jours — seuil quasi sûr pour un service public.</dd>
+    <dt><strong>OIDC / RBAC</strong> (0007)</dt><dd>Authentification déléguée (SSO) et rôles ; dans le noyau Chainlit/Open WebUI, hors CE chez Onyx.</dd>
+  </dl>
+
+  <p class="note">Termes écartés par la veille mais cités pour mémoire : <em>SPLADE</em> (sparse neuronal FR, Apache-2.0), <em>ColBERT</em> (3ᵉ mode de bge-m3), <em>MRL</em> (dimensions tronquables de Qwen3-Embedding), <em>RRF/DBSF</em> (deux fusions Qdrant).</p>
+  <p class="followup">Un terme absent ou mal défini ? Dites-le à l'agent dans OpenCode : le glossaire est vivant.</p>
+</body>
+</html>

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leçon 0002 — Chunker par intervention, restituer par séance</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body>
+  <p class="crumbs"><a href="../index.html">Plan du cours</a> · <a href="0001-postocr-normalisation.html">← 0001</a> · <a href="../reference/glossaire.html">Glossaire</a></p>
+  <p class="badge axe1">Axe 1 — Les données · leçon 2/6</p>
+  <h1>Chunker par intervention, restituer par séance</h1>
+  <p class="gagne">Gagné à la fin : expliquer pourquoi le découpage du corpus suit la structure du Journal officiel — et pourquoi on indexe petit pour rendre grand.</p>
+
+  <h2>Le chunking : la contrainte fondatrice</h2>
+  <p>Un <strong>chunk</strong> est le morceau de texte élémentaire que l'on encode et que l'on retrouve : trop grand, son vecteur mélange plusieurs sujets ; trop petit, il perd le contexte nécessaire. Tout l'étage de recherche en aval (le « retrieval ») hérite de ce choix — c'est la décision la plus difficile à annuler une fois l'index construit.</p>
+  <p>Le <em>Journal officiel</em> a une structure naturelle : <strong>séance → ordre du jour → intervention (un orateur)</strong>. Découper <strong>par intervention</strong> revient à suivre cette structure : une intervention fait généralement 500 à 2 000 tokens ; au-delà, on la recoupe. Les frontières obtenues sont <em>documentairement vraies</em> (elles existent dans le document, pas dans un algorithme), et l'orateur devient une métadonnée sans effort supplémentaire. Les découpages « sémantiques » automatiques (par exemple LangChain <code>SemanticChunker</code>, qui coupe là où la similarité entre phrases chute) n'apportent rien ici : les frontières sémantiques sont déjà marquées dans le document.</p>
+
+  <h2>Le pattern parent-document : indexer fin, restituer large</h2>
+  <div class="qa">
+    <p class="q">Une intervention isolée perd la riposte, le « fait personnel », le fil du débat. Comment récupérer ce contexte ?</p>
+    <p class="r">En gardant deux niveaux de texte : l'<strong>enfant</strong> (l'intervention, celle qui est encodée et recherchée) et le <strong>parent</strong> (la séance, celle que l'on affiche avec la réponse). Deux implémentations MIT font ce travail — LangChain <code>ParentDocumentRetriever</code>, LlamaIndex <code>HierarchicalNodeParser</code> + <code>AutoMergingRetriever</code> — mais on peut aussi s'en passer : une colonne <code>parent_id</code> dans l'index suffit, votre code appliquant lui-même la restitution. Réf. : <a href="https://reference.langchain.com/python/langchain-classic/retrievers/parent_document_retriever/ParentDocumentRetriever">doc LangChain</a>, <a href="https://developers.llamaindex.ai/python/framework/module_guides/loading/node_parsers/modules">doc LlamaIndex</a>.</p>
+  </div>
+  <p>Le point contre-intuitif : de petits morceaux s'encodent <em>mieux</em> (vecteur plus précis), même si l'on rend le contexte large juste après. Les deux décisions ne se contrarient pas.</p>
+
+  <h2>Et si l'on a un GPU à cette étape ?</h2>
+  <p>Une précision d'abord, qui évite un contresens classique : <strong>le GPU ne change rien aux frontières</strong>. Découper par intervention est un travail de règles sur les marqueurs d'orateur (ou de Docling sur la séance reconstituée) — quelques millisecondes par séance, sur un seul cœur. Le GPU ne rend pas le découpage « plus rapide » : il rend possibles des <em>stratégies d'encodage</em> autrement impossibles. Conséquences en chaîne.</p>
+
+  <h3>1. Le late chunking devient faisable — le vrai sujet</h3>
+  <p>Principe (<a href="https://arxiv.org/abs/2409.04701">arXiv 2409.04701</a>) : au lieu d'encoder chaque chunk séparément, on encode le <strong>document entier en une seule passe</strong> avec un modèle à longue fenêtre, puis on regroupe les représentations de tokens ainsi obtenues pour former un vecteur par chunk. Chaque vecteur « a vu » toute la séance, et ce contexte est donc inclus dans le vecteur, sans rien ajouter au prompt au moment de la réponse. Sur CPU, encoder une séance de 32 000 tokens avec un modèle de 8 milliards de paramètres est rédhibitoire ; sur GPU, cela devient simplement une passe par séance au lieu d'une passe par intervention.</p>
+  <ul>
+    <li><strong>Modèle requis :</strong> une longue fenêtre (32 k tokens), du multilingue, une licence permissive → <a href="https://huggingface.co/Qwen/Qwen3-Embedding-8B">Qwen3-Embedding-8B</a>, Apache-2.0. Les poids des auteurs du papier (Jina v3) sont sous CC-BY-NC : votre politique open source stricte les écarte — la veille l'a vérifié.</li>
+    <li><strong>Trois unités se séparent :</strong> on <em>encode</em> la séance (avec une fenêtre glissante si elle dépasse 32 k tokens), on <em>cherche</em> par chunk, on <em>restitue</em> le parent. Le JSON canonique de la leçon <a href="0001-postocr-normalisation.html">0001</a> suffit : il porte déjà <code>parent_id</code> ; il n'y a plus qu'à stocker la position du chunk dans la séance (un offset).</li>
+    <li><strong>Le rayon de réencodage s'élargit :</strong> tant que l'unité encodée est l'intervention, corriger une intervention ne invalide qu'elle-même. Avec le late chunking, l'unité encodée est la séance : corriger une intervention invalide les vecteurs de <em>toute la séance</em>. Le script d'indexation reste idempotent (on peut le rejouer), mais il recalcule davantage à chaque modification. À peser face au gain attendu.</li>
+    <li><strong>Le stockage ne change pas :</strong> au bout du compte, la sortie est toujours un vecteur par chunk, réductible à 1 024 dimensions (les embeddings Qwen3 sont « MRL » : leurs dimensions peuvent être tronquées) puis quantifié (leçon <a href="0004-bases-vectorielles-quantification.html">0004</a>). Le late chunking n'est qu'un surcoût à l'indexation : il ne change ni l'index, ni la requête, ni la latence en ligne.</li>
+  </ul>
+
+  <h3>2. RAPTOR / GraphRAG : le GPU divise la durée, pas le nombre d'appels</h3>
+  <p>Ces deux architectures (<a href="https://arxiv.org/abs/2401.18059">RAPTOR</a>, <a href="https://arxiv.org/abs/2404.16130">GraphRAG</a>) font appeler le LLM sur tout le corpus — leur facture se compte en nombre d'appels, comme posé dans l'atelier <a href="0011-atelier-enrichissement.html">0011</a>. Un GPU comprime le temps (de plusieurs jours à quelques heures) ; il ne réduit pas le nombre d'appels, qui dépend du corpus, pas du matériel. Le verdict de la veille vaut donc aussi bien en GPU qu'en CPU : à réserver à un sous-corpus et à des questions panoramiques, avec des résumés jamais citables en l'état.</p>
+
+  <h3>3. Le juge reste votre évaluation interne</h3>
+  <p>Notre seconde objection contre le late chunking est indépendante du matériel, et c'est la plus solide des deux. Le bénéfice promis par l'article est la récupération du contexte que fait perdre un découpage arbitraire. Or notre découpage n'est pas arbitraire : nos chunks sont des interventions déjà autonomes (un texte de 500–2 000 tokens exprime une position complète), et le pattern parent-document restitue de toute façon la séance entière autour de chaque intervention retenue. Le late chunking n'ajouterait donc rien que nous n'ayons déjà, par deux voies — d'où le verdict de la veille (§6.7) : « bénéfice difficile à prouver sur des interventions déjà autonomes ». Ce verdict reste un raisonnement, non une mesure : il laisse prévoir un gain faible sans le démontrer, et seul un test peut en décider.</p>
+  <p>Le late chunking n'est donc pas un dû lié au GPU : c'est une hypothèse à prouver par un <strong>test A/B</strong> — la comparaison de deux variantes d'un même pipeline, à protocole constant, jugée sur des critères chiffrés. La charge de la preuve incombe à la nouveauté : ce n'est pas l'option A (un vecteur par intervention, le choix par défaut de la veille) qui doit se justifier, c'est l'option B (late chunking) qui doit la battre. C'est cette règle qui rendra l'arbitrage défendable devant des pairs : nous ne refuserons pas le late chunking par principe, mais parce qu'il n'aura rien apporté sur nos propres chiffres.</p>
+
+  <div class="qa">
+    <p class="q">Pourquoi exiger notre propre mesure alors que le papier publie des gains ?</p>
+    <p class="r">Parce que les gains publiés (<a href="https://arxiv.org/abs/2409.04701">arXiv 2409.04701</a>) ont été mesurés sur des corpus dont le découpage ignore la structure documentaire ; or c'est précisément cette perte de contexte que le late chunking compense, et nous ne la subissons pas, puisque nos frontières sont documentairement vraies. Et parce qu'aucun banc d'essai public ne contient de français XIXᵉ OCRisé : les scores de leaderboard ne jugent pas notre distribution (leçon <a href="0003-embeddings-dense-sparse.html">0003</a>). Ces chiffres justifient donc de tenter l'expérience, pas d'adopter la technique.</p>
+  </div>
+
+  <p><strong>Le protocole, calqué sur la rubrique « Évaluation » du §8 de la veille.</strong></p>
+  <ol>
+    <li><strong>Un seul élément change à la fois.</strong> Même corpus, même découpage par intervention, même entonnoir de recherche (hybride + rerank, leçon <a href="0005-retrieval-hybride-rerank.html">0005</a>), même k, et le même encodeur dans les deux variantes du test : Qwen3-Embedding. Si chaque variante utilisait un modèle différent, on mesurerait l'écart entre les modèles, et non l'effet du late chunking — la comparaison bge-m3 contre Qwen3 est une autre expérience, celle de la leçon <a href="0003-embeddings-dense-sparse.html">0003</a>.</li>
+    <li><strong>Le juge est notre jeu de 200 Q&amp;R internes</strong>, mesuré en recall@k / nDCG (leçon <a href="0005-retrieval-hybride-rerank.html">0005</a>), à l'exclusion de tout score extérieur. Le dispositif d'évaluation est celui que la veille (§8) fait déjà rejouer à chaque changement d'embeddings : l'expérience n'exige donc que l'encodage supplémentaire de la variante B, sans construire de nouvelle usine d'évaluation.</li>
+    <li><strong>L'essai porte sur un échantillon de séances couvrant les sujets des 200 Q&amp;R,</strong> et non sur le corpus entier. On mesure l'écart sur cet échantillon avant d'engager un encodeur 8B sur les dizaines de gigaoctets du corpus.</li>
+    <li><strong>L'analyse distingue les familles de questions.</strong> D'un côté les questions contextuelles (« qui a répondu à X ? », fil d'un article de loi, fait personnel), où un gain est attendu ; de l'autre les questions de contenu sur intervention autonome, où un écart nul est attendu. Une moyenne générale masquerait de la même façon un vrai gain local et une dégradation invisible ailleurs.</li>
+  </ol>
+  <p><strong>Règle de décision.</strong> On n'adopte la variante B que si le gain mesuré sur nos 200 Q&amp;R dépasse les deux coûts annoncés au point 1 : le surcoût d'indexation (une passe sur une fenêtre de 32 k tokens par séance) et le rayon de réencodage élargi (corriger une intervention invalide les vecteurs de toute la séance). Un coût récurrent ne se justifie que s'il est compensé par le gain mesuré sur la recherche. Si le résultat est nul ou non concluant, l'option A reste le choix par défaut : elle fonctionne dans les deux scénarios de la veille, GPU comme CPU.</p>
+  <p class="note">Comme dans l'atelier <a href="0011-atelier-enrichissement.html">0011</a>, il s'agit de ramener des mesures, pas des intentions. Quand le GPU sera disponible, lancer ce test A/B et consigner les écarts, par variante et par famille de questions : l'arbitrage GPU contre CPU, à venir, s'appuiera sur ces chiffres.</p>
+
+  <div class="retenir"><strong>À retenir.</strong> Frontières documentairement vraies (intervention), restitution large (séance parent). Un GPU n'accélère pas le découpage — il ouvre des <em>stratégies</em> : late chunking (à prouver par A/B sur nos 200 Q&amp;R, rayon de réencodage élargi), RAPTOR/GraphRAG (facturées en appels, pas en secondes). Le juge de ces options, c'est notre évaluation interne, jamais un leaderboard.</div>
+
+  <h2>Vérifiez que c'est acquis</h2>
+  <div class="quiz" data-answer="3">
+    <p class="quiz-q">1. Pourquoi le chunking par intervention bat le chunking sémantique ici ?</p>
+    <button class="quiz-opt">Il produit des vecteurs globalement plus précis</button>
+    <button class="quiz-opt">Il réduit le coût d'encodage du corpus</button>
+    <button class="quiz-opt">Ses frontières préexistent dans le document</button>
+    <p class="quiz-fb">Les limites d'intervention sont déjà la vérité documentaire du JO ; le découpage sémantique automatique redécouvre (moins bien) ce qui est marqué, et sans métadonnée orateur.</p>
+  </div>
+  <div class="quiz" data-answer="1">
+    <p class="quiz-q">2. Que restitue au utilisateur la récupération « parent-document » ?</p>
+    <button class="quiz-opt">La séance entière derrière le chunk trouvé</button>
+    <button class="quiz-opt">Le chunk exact avec son score de similarité</button>
+    <button class="quiz-opt">Un résumé de la séance fait par le modèle</button>
+    <p class="quiz-fb">On cherche sur les enfants (interventions) mais on rend le parent (la séance) : le contexte du débat revient sans polluer l'encodage. Le résumé, c'est RAPTOR — et il n'est pas citable.</p>
+  </div>
+  <div class="quiz" data-answer="2">
+    <p class="quiz-q">3. Qu'est-ce qu'un GPU débloque vraiment à l'étape de découpage ?</p>
+    <button class="quiz-opt">Un découpage par règles désormais automatisé</button>
+    <button class="quiz-opt">Un encodage global du document entier</button>
+    <button class="quiz-opt">Un reranking neuronal des frontières trouvées</button>
+    <p class="quiz-fb">Les frontières restent l'affaire des règles, et le rerank est une étape d'aval. Le GPU débloque l'encodage du document entier en une passe — ce qui rend le late chunking possible, sous réserve de la preuve A/B.</p>
+  </div>
+  <div class="quiz" data-answer="1">
+    <p class="quiz-q">4. Pourquoi le test A/B du late chunking garde-t-il le même encodeur dans les deux bras ?</p>
+    <button class="quiz-opt">Pour isoler la stratégie et ne pas mesurer le modèle</button>
+    <button class="quiz-opt">Pour diviser le coût d'encodage entre les deux bras</button>
+    <button class="quiz-opt">Pour que chaque bras tienne sur un seul cœur CPU</button>
+    <p class="quiz-fb">Si chaque variante utilisait un encodeur différent, on ne saurait plus si l'écart vient du late chunking ou du modèle lui-même. À protocole constant, seul l'élément que l'on teste doit changer — ici, la stratégie d'encodage.</p>
+  </div>
+
+  <footer class="nav">
+    <p><strong>Source principale :</strong> <a href="../../axe1-donnees.md">votre veille, axe 1 §2, §6.7 et §8</a> ; papier : <a href="https://arxiv.org/abs/2409.04701">Late Chunking (arXiv 2409.04701)</a>.</p>
+    <p><a href="0003-embeddings-dense-sparse.html">→ Leçon suivante : embeddings dense &amp; sparse</a></p>
+    <p class="followup">Un point flou ? Demandez à l'agent dans OpenCode — il ajuste la leçon à vos réponses.</p>
+  </footer>
+</body>
+</html>

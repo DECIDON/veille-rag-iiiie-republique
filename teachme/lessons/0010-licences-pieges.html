@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leçon 0010 — Le labyrinthe des licences</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body>
+  <p class="crumbs"><a href="../index.html">Plan du cours</a> · <a href="0009-facettes-vs-text-to-sql.html">← 0009</a> · <a href="../reference/glossaire.html">Glossaire</a></p>
+  <p class="badge axe2">Axe 2 — L'interface web · leçon 10/10</p>
+  <h1>Le labyrinthe des licences</h1>
+  <p class="gagne">À la fin de cette leçon, vous saurez classer n'importe quelle brique en 30 secondes et retrouver celle qui piège presque tout le monde.</p>
+
+  <h2>Cinq familles à distinguer</h2>
+  <ul>
+    <li><strong>Permissives OSI</strong> — MIT, Apache-2.0, BSD : ces licences sont l'objectif du chemin critique, car elles offrent la liberté sans aucune contrepartie.</li>
+    <li><strong>Copyleft</strong> — GPL-3.0 (Typesense, Neo4j CE, MaxKB) : ces licences imposent des obligations à la redistribution ; <strong>AGPL-3.0</strong> (Khoj, option AGPL d'Elastic, modules Wren annoncés) y ajoute la <a href="https://www.gnu.org/licenses/agpl.fr.html">section 13</a> : une interaction à distance compte comme une distribution, donc le code modifié doit être redistribué publiquement. L'AGPL est juridiquement compatible avec un service public, mais elle verrouille toute ré-licence. La veille préfère le permissif sur le chemin critique.</li>
+    <li><strong>Source-available</strong> — SSPL / Elastic-2.0 : on lit le code, mais on ne fait pas ce que l'on veut. Ces licences ne sont <em>pas</em> open source au sens OSI : Elasticsearch est donc écarté, et son <a href="https://opensearch.org/faq/">fork OpenSearch</a> (Apache-2.0) est retenu.</li>
+    <li><strong>Non-commercial</strong> — CC-BY-NC (Jina embeddings/rerankers) : cette famille est incompatible par nature avec un service public.</li>
+    <li><strong>Apache-2.0 « à conditions »</strong> — c'est le piège : Dify et FastGPT ajoutent « pas de multi-tenant sans licence commerciale, logo conservé » ; <a href="https://github.com/open-webui/open-webui/blob/main/LICENSE">Open WebUI</a> interdit de masquer sa marque <strong>dès 50 utilisateurs distincts sur 30 jours glissants</strong>, un seuil qu'un service public atteindra quasi sûrement. « Apache » y est un mot-valise : il faut lire le fichier LICENSE, pas le badge.</li>
+  </ul>
+
+  <h2>Les deux réflexes de contrôle</h2>
+  <ol>
+    <li><strong>Ouvrez le LICENSE brut</strong> (raw.githubusercontent.com), jamais la page marketing, puis listez les répertoires <code>ee/</code> et <code>enterprise/</code>, car Onyx et LiteLLM pratiquent l'open-core.</li>
+    <li><strong>Surveillez la licence dans le temps</strong>, car les conditions bougent : Elastic est revenu à l'AGPL en option en 2024, et Wren annonce des modules AGPL à venir. La veille tient sa liste de vigilance (SYNTHESE §7).</li>
+  </ol>
+
+  <div class="retenir"><strong>À retenir.</strong> Le test n'est pas « open source ? » mais « <em>quelle</em> licence, <em>quelles</em> conditions, et <em>où</em> sur le chemin critique ? ». La règle du projet est claire : il n'admet rien de non permissif sur son chemin critique.</div>
+
+  <h2>Vérifiez que c'est acquis</h2>
+  <div class="quiz" data-answer="1">
+    <p class="quiz-q">1. Qu'ajoute l'AGPL à la GPL pour un service web auto-hébergé ?</p>
+    <button class="quiz-opt">L'obligation de publier les modifications adaptées</button>
+    <button class="quiz-opt">L'interdiction d'utiliser le logiciel commercialement</button>
+    <button class="quiz-opt">La garantie de ne jamais changer de licence</button>
+    <p class="quiz-fb">Section 13 : un utilisateur qui « interagit à distance » doit pouvoir recevoir le code source modifié. La licence reste compatible avec un service public, mais toute personnalisation de Khoj resterait publiquement redistribuable.</p>
+  </div>
+  <div class="quiz" data-answer="2">
+    <p class="quiz-q">2. Quel projet à licence « quasi-Apache » devient risqué à partir de 50 utilisateurs ?</p>
+    <button class="quiz-opt">RAGFlow, avec son cloud optionnel</button>
+    <button class="quiz-opt">Open WebUI, avec sa clause de marque</button>
+    <button class="quiz-opt">Onyx, avec ses répertoires <code>ee/</code></button>
+    <p class="quiz-fb">La clause d'Open WebUI se déclenche à 50 utilisateurs distincts sur 30 jours glissants, un seuil qu'un service public atteindra quasi sûrement : soit on garde leur marque, soit on paie, soit on ne l'utilise qu'en test.</p>
+  </div>
+
+  <footer class="nav">
+    <p><strong>Source principale :</strong> <a href="../../axe2-interface-web.md">votre veille, axe 2 §6</a> ; <a href="https://www.elastic.co/blog/elasticsearch-is-open-source-again">Elastic — le mécanisme AGPL décrit par l'éditeur lui-même</a>.</p>
+    <p><a href="../reference/glossaire.html">→ Le cours se termine par le glossaire transversal</a></p>
+    <p class="followup">Fin du parcours. Reposez vos questions à l'agent dans OpenCode — il pourra en déduire les prochaines leçons (atelier de recalibrage du dimensionnement, lecture de LICENSE réels, etc.).</p>
+  </footer>
+</body>
+</html>
