@@ -1,0 +1,22 @@
+# Atelier axe 1 — dépendances (Python ≥ 3.10), gérées par uv.
+# Les licences des briques d'infrastructure sont MIT/Apache-2.0 (veille, §8).
+# Installation : `make setup` (= uv sync, lit uv.lock, crée .venv ; pytest est
+# dans le groupe « dev », installé par défaut).
+
+[project]
+name = "atelier-pipeline"
+version = "0.1.0"
+description = "Atelier axe 1 — pipeline complet, du texte OCR à la recherche hybride (leçon 0012)"
+requires-python = ">=3.10"
+dependencies = [
+    "sentence-transformers>=3.0", # encodeur BAAI/bge-m3 + reranker bge-reranker-v2-m3 (installe torch)
+    "qdrant-client>=1.20",        # client Python de la base vectorielle Qdrant
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8", # tests par étape (make test)
+]
+
+[tool.uv]
+package = false # pas de paquet à construire : on lance « uv run python -m atelier »

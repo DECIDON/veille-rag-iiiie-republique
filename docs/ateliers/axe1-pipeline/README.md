@@ -16,15 +16,22 @@ Il implémente la variante CPU du pipeline de référence de la veille
 
 ## Démarrage rapide
 
+Prérequis : [uv](https://docs.astral.sh/uv/installation/) (Python ≥ 3.10 est
+installé et géré par uv au besoin) et Docker pour Qdrant.
+
 ```bash
 cd docs/ateliers/axe1-pipeline
-make venv          # .venv + requirements.txt
+make setup         # uv sync : .venv + dépendances verrouillées (uv.lock)
 make up            # Qdrant mono-nœud (docker)
 make test          # tests unitaires — doivent passer sans Qdrant ni modèle
 make smoke         # pipeline complet hors-ligne (encodeur dummy) sur exemple.json
 make pipeline      # pipeline réel bge-m3 (télécharge ~2 Go de poids la 1re fois)
 make eval          # recall@k / MRR sur data/questions/QUERIES.md
 ```
+
+Toutes les commandes Python passent par `uv run` (ou `source .venv/bin/activate`) ;
+les dépendances et leurs licences sont déclarées dans `pyproject.toml`, l'état
+exact installé dans `uv.lock`.
 
 ## Étapes, commandes et vérification
 
@@ -34,13 +41,13 @@ pédagogique est dans la leçon 0012.
 
 | Étape | Mise en place | Test | Vérification attendue |
 |---|---|---|---|
-| 1 | `.venv/bin/python -m atelier normaliser` | `pytest tests/test_01_normalisation.py` | 5 lignes JSONL, `text_brut` intact + `text_normalise` |
-| 2 | `.venv/bin/python -m atelier chunker` | `pytest tests/test_02_chunking.py` | 5 enfants, 2 parents (séances) |
-| 3 | `.venv/bin/python -m atelier encoder` | `pytest tests/test_03_encodage.py` | cache `data/vecteurs/cache.jsonl`, relance ⇒ 0 recalcul |
-| 4 | `.venv/bin/python -m atelier indexer` | `pytest tests/test_04_indexation.py` (integration) | collection `jo_debats`, 5 points, dashboard Qdrant |
-| 5 | `python -m atelier rechercher "budget ecole primaire"` | `tests/test_05_recherche.py` | top-1 = l'intervention Ferry, parent cité |
-| 6 | `python -m atelier evaluer` | `tests/test_06_evaluation.py` | recall@5 et MRR affichés |
-| 7 | `python -m atelier generer "…"` (Ollama requis) | `tests/test_07_generation.py` | réponse citant les `page_jo` |
+| 1 | `uv run python -m atelier normaliser` | `uv run -m pytest tests/test_01_normalisation.py` | 5 lignes JSONL, `text_brut` intact + `text_normalise` |
+| 2 | `uv run python -m atelier chunker` | `uv run -m pytest tests/test_02_chunking.py` | 5 enfants, 2 parents (séances) |
+| 3 | `uv run python -m atelier encoder` | `uv run -m pytest tests/test_03_encodage.py` | cache `data/vecteurs/cache.jsonl`, relance ⇒ 0 recalcul |
+| 4 | `uv run python -m atelier indexer` | `uv run -m pytest tests/test_04_indexation.py` (integration) | collection `jo_debats`, 5 points, dashboard Qdrant |
+| 5 | `uv run python -m atelier rechercher "budget ecole primaire"` | `uv run -m pytest tests/test_05_recherche.py` | top-1 = l'intervention Ferry, parent cité |
+| 6 | `uv run python -m atelier evaluer` | `uv run -m pytest tests/test_06_evaluation.py` | recall@5 et MRR affichés |
+| 7 | `uv run python -m atelier generer "…"` (Ollama requis) | `uv run -m pytest tests/test_07_generation.py` | réponse citant les `page_jo` |
 
 ## Le corpus
 
@@ -65,8 +72,8 @@ dans [`data/questions/QUERIES.md`](data/questions/QUERIES.md).
 ```bash
 make test           # unitaires : stdlib seule, aucun service requis
 make test-complet   # + intégration : Qdrant démarré (docker compose up -d)
-.venv/bin/python -m pytest -m modele    # contrat des vrais poids bge-m3 (~2 Go)
-.venv/bin/python -m pytest -m reseau    # appel réel à Ollama (bonus 7)
+uv run -m pytest -m modele    # contrat des vrais poids bge-m3 (~2 Go)
+uv run -m pytest -m reseau    # appel réel à Ollama (bonus 7)
 ```
 
 ## Passage GPU (quand vient le GPU)
