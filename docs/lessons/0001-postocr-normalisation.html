@@ -22,7 +22,7 @@
   <h2>La règle d'or : ne jamais écraser l'original</h2>
   <div class="qa">
     <p class="q">Pourquoi deux colonnes de texte, <code>text_brut</code> et <code>text_normalise</code> ?</p>
-    <p class="r">Parce que les deux consommateurs n'ont pas les mêmes besoins. BM25 (la recherche lexicale, cf. <a href="0005-retrieval-hybride-rerank.html">leçon 0005</a>) et l'<strong>authenticité des citations</strong> scientifiques exigent le texte d'origine ; l'embedding, lui, préfère la version nettoyée. PostgreSQL (colonnes multiples) comme Qdrant/OpenSearch (champs nommés multiples) permettent de stocker les deux. Voir <a href="../../axe1-donnees.md">axe1-donnees.md §1.1</a>.</p>
+    <p class="r">Parce que les deux consommateurs n'ont pas les mêmes besoins. BM25 (la recherche lexicale, cf. <a href="0005-retrieval-hybride-rerank.html">leçon 0005</a>) et l'<strong>authenticité des citations</strong> scientifiques exigent le texte d'origine ; l'embedding, lui, préfère la version nettoyée. PostgreSQL (colonnes multiples) comme Qdrant/OpenSearch (champs nommés multiples) permettent de stocker les deux. Voir <a href="../axe1-donnees.md">axe1-donnees.md §1.1</a>.</p>
   </div>
   <p>Le produit de cet étage est un <strong>format JSON canonique par intervention</strong> — la granularité de base de tout le pipeline :</p>
   <pre><code>{
@@ -58,7 +58,7 @@
   </div>
 
   <footer class="nav">
-    <p><strong>Source principale :</strong> <a href="../../axe1-donnees.md">votre veille, axe 1 §1</a> ; côté outils : <a href="https://arxiv.org/abs/2408.09869">Docling, rapport technique (arXiv 2408.09869)</a>.</p>
+    <p><strong>Source principale :</strong> <a href="../axe1-donnees.md">votre veille, axe 1 §1</a> ; côté outils : <a href="https://arxiv.org/abs/2408.09869">Docling, rapport technique (arXiv 2408.09869)</a>.</p>
     <p><a href="0002-chunking-parent-document.html">→ Leçon suivante : chunker par intervention</a></p>
     <p class="followup">Un point flou ? Revenez dans OpenCode et demandez à l'agent — c'est votre professeur, il peut aussi creuser une source avec vous.</p>
   </footer>

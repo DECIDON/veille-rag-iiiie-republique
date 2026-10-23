@@ -2,7 +2,7 @@
 
 Kit d'exécution de la **leçon 0012** (`../../lessons/0012-atelier-pipeline-complet.html`).
 Il implémente la variante CPU du pipeline de référence de la veille
-(`../../../axe1-donnees.md` §8), en Python, avec les briques retenues :
+(`../../axe1-donnees.md` §8), en Python, avec les briques retenues :
 
 | Étape | Leçon | Brique retenue | Module |
 |---|---|---|---|
@@ -17,7 +17,7 @@ Il implémente la variante CPU du pipeline de référence de la veille
 ## Démarrage rapide
 
 ```bash
-cd teachme/ateliers/axe1-pipeline
+cd docs/ateliers/axe1-pipeline
 make venv          # .venv + requirements.txt
 make up            # Qdrant mono-nœud (docker)
 make test          # tests unitaires — doivent passer sans Qdrant ni modèle
