@@ -52,8 +52,7 @@ make test        # les tests unitaires doivent passer ici déjà, sans modèle n
   "chambre": "chambre",                          // "chambre" ou "senat", valeurs stables
   "session": "1890",
   "seance": "1",
-  "ordre_du_jour": ["Budget de l'instruction primaire"],
-  "titre_parent": "Suite de la discussion du budget de l'instruction primaire",
+  "résumé": "Ferry expose le budget de l'instruction primaire comme la vraie dette de l'État", // court résumé de l'intervention
   "orateur": {"nom": "J. Ferry", "role": "ministre…", "groupe": null},
   "text_brut": "… texte OCR SANS aucun nettoyage …",
   "page_jo": 245
@@ -61,7 +60,7 @@ make test        # les tests unitaires doivent passer ici déjà, sans modèle n
   <p>Deux exigences découlent directement des leçons : ne pré-nettoyez rien (les césures, apostrophes et accents instables sont précisément la matière première de l'étape 1, leçon 0001) et gardez <code>page_jo</code>, car la citation de provenance se décide dès l'entrée des données (leçon 0008). Les noms d'orateurs se règlent par le dictionnaire <code>data/corpus/alias_orateurs.json</code> au format <code>{"nom canonique": ["variantes observées"]}</code>. Un mini-corpus fictif de cinq interventions (<code>exemple.json</code>) est fourni pour que tout roule avant vos données réelles.</p>
 
   <h2>Étape 1 — Normaliser (leçon 0001)</h2>
-  <p>Commande : <code>uv run python -m atelier normaliser</code>. L'étage applique les règles annoncées par la veille : décomposition Unicode NFKD (forme stable qui conserve les accents), unification des apostrophes typographiques et des espaces insécables, rejointoiement des césures OCR (« insti-↵tution » redevient « institution »), aplatissement des blancs ; puis il ajoute <code>orateur.nom_canonique</code> via le dictionnaire d'alias. Il ne touche jamais au <code>text_brut</code>, qui reste la source des citations verbatim.</p>
+  <p>Commande : <code>uv run python -m atelier normaliser</code>. L'étage applique les règles annoncées par la veille : décomposition Unicode NFKD (forme stable qui conserve les accents), unification des apostrophes typographiques et des espaces insécables, rejointoiement des césures OCR (« insti-↵tution » redevient « institution », et « lec- ture » aussi quand l'export a aplati le saut de ligne en espace), aplatissement des blancs ; puis il ajoute <code>orateur.nom_canonique</code> via le dictionnaire d'alias. Il ne touche jamais au <code>text_brut</code>, qui reste la source des citations verbatim.</p>
   <p><strong>Tester :</strong> <code>uv run -m pytest tests/test_01_normalisation.py -v</code> — douze tests : apostrophes, césures, guillemets, intégrité de <code>text_brut</code>, alias, refus des enregistrements incomplets et des identifiants dupliqués. <strong>Vérifier :</strong> cinq lignes dans <code>data/normalise/interventions.jsonl</code>, chacune portant les deux versions du texte.</p>
 
   <h2>Étape 2 — Découper par intervention (leçon 0002)</h2>

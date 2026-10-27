@@ -57,6 +57,10 @@ interventions fictives (`data/corpus/exemple.json`) permet de tout tester avant
 de déposer vos données réelles ; le jeu de questions d'évaluation se remplit
 dans [`data/questions/QUERIES.md`](data/questions/QUERIES.md).
 
+Vos exports bruts se déposent dans `data/corpus/brut/` et se convertissent avec
+`uv run python outils/adaptateur_debats.py --chambre … --date …` — le détail du
+mapping est dans [`data/corpus/README.md`](data/corpus/README.md), règle 5.
+
 ## Réglages (variables d'environnement)
 
 | Variable | Défaut | Rôle |

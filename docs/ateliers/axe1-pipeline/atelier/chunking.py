@@ -105,8 +105,7 @@ def enficher(enreg: dict, max_tokens: int = 1200) -> list[dict]:
             "orateur_brut": enreg["orateur"]["nom"],
             "role": enreg["orateur"].get("role"),
             "groupe": enreg["orateur"].get("groupe"),
-            "titre_parent": enreg.get("titre_parent"),
-            "ordre_du_jour": enreg.get("ordre_du_jour") or [],
+            "résumé": enreg.get("résumé"),
             "page_jo": enreg["page_jo"],
         })
     return enfants

@@ -1,0 +1,2477 @@
+[
+  {
+    "id": "senat-1922-11-28-s002-i001",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Regaud",
+      "role": "l'un des secrétaires",
+      "groupe": null
+    },
+    "text_brut": "donne lecture du procès-verbal de la 2e séance d'hier. Le procès-verbal est pro- ad",
+    "page_jo": 1,
+    "résumé": "M. Regaud lit le procès-verbal de la séance précédente."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i002",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le président",
+      "role": "président",
+      "groupe": null
+    },
+    "text_brut": "M. Duval-Arnould s'ex- cuse de ne pouvoir assister à la 1re séance de ce jour.",
+    "page_jo": 1,
+    "résumé": "Le président annonce l'absence excusée de M. Duval-Arnould."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i003",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le président",
+      "role": "président",
+      "groupe": null
+    },
+    "text_brut": "M. Edouard Soulier s'excuse de ne pou- voir assister aux séances de ce jour et de- mande un congé. Conformément à l'article 129 du règle- ment, le bureau est d'avis d'accorder ce congé. Il n'y a pas d'opposition ?... Le congé est accordé.",
+    "page_jo": 1,
+    "résumé": "Le président annonce l'absence excusée de M. Edouard Soulier et accorde le congé demandé."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i004",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le président",
+      "role": "président",
+      "groupe": null
+    },
+    "text_brut": "J'ai reçu de M. le mi- nistre de la marine le décret suivant: “Le Président de la République fran- çaise, Vu l'article 6, paragraphe 2, de la loi constitutionnelle du 16 juillet 1875 sur les rapports des pouvoirs publies, qui dispose que les ministres peuvent se faire assister, dans les deux Chambres, par des commis- saires du Gouvernement désignés pour la discussion d'un projet de loi déterminé; Sur la proposition du ministre de la marine, Décrète; Art. 1er. — Sont désignés, en qualité de commissaires du Gouvernement, pour assister le ministre de la marine, à la Chambre des députés et au Sénat, dans la discussion du projet de loi portant ouver- ture et annulation de crédits sur l'exer- cice 1922: M. le contre-amiral Lanxade, chef du service central aéronautique ; M. Croneau, ingénieur général du gé- nie maritime, directeur central des cons- tructions navales ; M. Lancret, ingénieur général d'artil- lerie, directeur central de l'artillerie na- vale; M. Coustolle, inspecteur général des travaux maritimes, chef du service central des travaux hydrauliques; M. Vignal, directeur de la comptabilité générale ; M. Chambry, contrôleur de 1re classe de l'administration de la marine, chef de la section administrative du cabinet du ministre. Art. 2. — Le ministre de la marine est chargé de l'exécution du présent décret. Fait à Paris, le 4 novembre 1922. A. MILLERAND. Par le Pre- sident de la République : Le ministre de la marine, RAIBERTI. Acte est donné de la communication dont la Chambre vient d'entendre la lec- ture. Le décret sera inséré au procès-verbal de la présente séance et déposé aux ar- chives.",
+    "page_jo": 1,
+    "résumé": "Le président lit un décret désignant des commissaires du gouvernement pour assister le ministre de la marine."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i005",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le président",
+      "role": "président",
+      "groupe": null
+    },
+    "text_brut": "J'ai reçu de M. le pré- sident du Sénat les communications sui- vantes: Paris, le 27 novembre 1922. Monsieur le président, Dans sa séance du 23 novembre 192. le Sénat a adopté une proposition de loi tendant à rendre les femmes commerçan- tes éligibles aux chambres de commerce. Conformément aux dispositions de l'article 126 du règlement du Sénat, j'ai l'honneur de vous adresser une expédition authentique de cette proposition, dont je vous prie de vouloir bien saisir la Cham- bre des députés. Je vous serai obligé de m'accuser ré- ception de cet envoi. Agréez, monsieur le président, l'assu- rance de ma haute considération. Le président du Sénat, LÉON BOURGEOIS. La proposition de loi sera imprimée sous le n° 5144, distribuée, et, s'il n'y a pas d'opposition, renvoyée à la commis- sion du commerce et de l'industrie.",
+    "page_jo": 1,
+    "résumé": "Le président annonce la réception d'une proposition de loi du Sénat visant à rendre les femmes commerçantes éligibles aux chambres de commerce."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i006",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le président",
+      "role": "président",
+      "groupe": null
+    },
+    "text_brut": "Paris, le 27 novembre 1922 Monsieur le président, Dans sa séance du 23 novembre 1922 le Sénat a adopté une proposition de loi relative à la protection des enfants du pre- mier âge et aux consultations de nourri- sons. Conformément aux dispositions de l'article 126 du règlement du Sénat, j'ai l'honneur de vous adresser une expédition authentique de cette proposition, dont je vous prie de vouloir bien saisir la Cham- bre des députés. Je vous serai obligé de m'accuser ré- ception de cet envoi. Agréez, monsieur le président, l'assu- rance de ma haute considération. Le président du Sénat, LÉON BOURGEOIS. La proposition de loi sera imprimée sous le n° 5145, distribuée et, s'il n'y a pas d'opposition, renvoyée à la commis- sion de l'hygiène publique, sous réserve de l'avis de la commission de l'administra- tion générale et de la commission des finances.",
+    "page_jo": 1,
+    "résumé": "Le président annonce la réception d'une proposition de loi du Sénat relative à la protection des enfants en bas âge et aux consultations de nourrissons."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i007",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le président",
+      "role": "président",
+      "groupe": null
+    },
+    "text_brut": "L'ordre du jour appelle la suite de la discussion du projet de loi portant fixation du budget général de l'exercice 1923 nautique Dans la 2e séance d'hier la Chambre a commencé la discussion gé- nérale du budget de la 3e section du mi- nistère des travaux publics: Aéronau- tique et transports aériens. La parole est à M. Tisseyre.",
+    "page_jo": 1,
+    "résumé": "Le président ouvre la discussion sur le budget de l'aéronautique et des transports aériens et donne la parole à M. Tisseyre."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i008",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Messieurs, je m'excuse d'avoir, aujourd'hui, une voix insuffi- sante. Heureusement, l'intimité de cette séance du matin me permettra de vous parler presque sur le ton de la confidence et de m'éviter un effort trop grand. L'aviation commerciale, est une des questions les plus importantes que nous ayons à examiner, en raison des services qu'elle rend dès maintenant, ainsi que de ceux que nous sommes en droit d'en at- tendre dans l'avenir. L'aviation commerciale nous coûte peut- être fort cher. Nous avons entendu hier le rapport de M. Bouilloux-Lafont, et nous savons quels sacrifices incombent au pays pour avoir une aviation digne de lui. Ces sacrifices, il faut les consentir si nous vou- lons garder la place que nous avons su prendre et que nous devons savoir garder.",
+    "page_jo": 1,
+    "résumé": "M. Tisseyre s'excuse pour sa voix faible et souligne l'importance de l'aviation commerciale, malgré son coût élevé."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i009",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "montrions au public qui doit l'utiliser qu'il peut avoir confiance en elle. II y a encore, évidemment, de nombreux accidents mortels — les accidents mortels sont toujours trop nombreux — mais, si nous ne retenons que les chiffres qui nous sont donnés pour l'aviation de transport proprement dite, nous devons nous rassurer un peu: nous constatons que ces accidents ne sont pas aussi nombreux qu'ils semblaient l'être à première vue. Si l'on fait la somme de tous les accidents, de ceux qui surviennent dans les exercices audacieux nécessaires à la formation des pilotes militaires, ainsi que de ceux qui endeuillent l'aviation civile à la recherche d'appareils toujours plus puissants ou toujours plus rapides, évidemment, leur nombre est très grand; mais si nous ne considérons que ceux qui surviennent dans l'aviation commerciale proprement dite, dans l'aviation pratique, dans l'aviation utilisée par le grand public, nous nous apercevons qu'ils sont heureusement encore assez rares.",
+    "page_jo": 2,
+    "résumé": "M. Tisseyre souligne que malgré les accidents, l'aviation commerciale reste relativement sûre pour le grand public."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i010",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "La route du progrès est toujours ensanglantée. Nous saluons les morts, mais nous devons continuer notre tâche.",
+    "page_jo": 2,
+    "résumé": "M. Tisseyre rend hommage aux victimes tout en insistant sur la nécessité de poursuivre les efforts pour améliorer la sécurité."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i011",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Donner confiance au public, cela veut dire: augmenter la sécurité. Je crois qu'il suffirait, dans l'état actuel des choses, de prendre quelques petites mesures de précaution, pour diminuer encore le nombre des accidents et donner plus de confiance au public. Je me permettrai de les suggérer à M. le sous-secrétaire d'État de l'aéronautique, non pas que je craigne qu'il n'y ait pas pensé, mais parce que je crois qu'en cette matière, il est bon que chacun apporte sa collaboration. Je n'ai rien d'un technicien, je n'ai pas de compétence particulière; j'ai simplement fait quelques voyages: c'est le résultat de mes observations et de mes remarques au cours de ces voyages que je vous soumets, monsieur le sous-secrétaire d'État, simplement, en toute amitié.",
+    "page_jo": 2,
+    "résumé": "M. Tisseyre propose des mesures pour renforcer la sécurité et rassurer le public, tout en offrant sa collaboration amicale au sous-secrétaire d'État."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i012",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Vous avez déjà prescrit que, sur tout appareil qui emporte au moins six passagers, le pilote doit être doublé par un navigateur. À mon avis, tous les appareils mis en service dans les compagnies d'aviation devraient, quel que soit le nombre des passagers emportés, comporter un double poste de pilotage. Les voyages, aujourd'hui, sont très longs, le pilotage est quelquefois pénible. Il serait donc nécessaire de doubler toujours le pilote. Le second pourrait être un jeune pilote à qui serait confiée la manœuvre de l'appareil au delà d'une certaine altitude, c'est-à-dire quand elle est plus facile; le pilote chef pourrait alors se reposer et se verrait réserver la direction de l'appareil pour les manœuvres délicates de l'atterrissage et du décollage. Après un certain nombre de voyages dans ces conditions, le second se verrait confier un appareil ne transportant que des messageries ou des courriers postaux. Enfin, après un certain nombre de voyages au cours desquels il aurait transporté colis et lettres, il pourrait avoir la direction d'un appareil portant des passagers. Ce pilote acquerrait ainsi une grande expérience; il aurait, en tout cas, la maîtrise de son appareil, parce qu'il le connaîtrait mieux et qu'il connaîtrait aussi les terrains qu'il doit survoler, la connaissance du terrain étant également indispensable au pilote.",
+    "page_jo": 2,
+    "résumé": "M. Tisseyre propose d'imposer un double poste de pilotage sur tous les appareils pour améliorer la sécurité et former progressivement les jeunes pilotes."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i013",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Il faudrait, d'autre part, que les moteurs ne fussent pas vérifiés par le personnel navigant des compagnies, mais par un personnel qui n'appartiendrait pas à ces compagnies et qui ne naviguerait pas. Les pilotes acquièrent très rapidement une insouciance que j'admire, mais qui risque d'être préjudiciable aux passagers qui confient leur vie à ces appareils et à ces pilotes.",
+    "page_jo": 2,
+    "résumé": "M. Tisseyre suggère que la vérification des moteurs soit confiée à un personnel indépendant des compagnies pour éviter les risques liés à l'insouciance des pilotes."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i014",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Je m'excuse de n'être pas tout à fait de l'avis de M. Bouilloux-Lafont qui souhaite la réduction du nombre des aéroports ou des terrains d'atterrissage et la fin de la politique qui, jusqu'à présent, a été pratiquée par le sous-secrétariat d'État de l'aéronautique. Si l'on veut que l'aviation se développe, il faut des terrains d'atterrissage très nombreux. Auriez-vous raison, monsieur le rapporteur, l'appareil de demain serait-il un appareil géant, extrêmement puissant, multi-moteur, avec lequel les pannes deviendraient presque l'exception, qu'il faudrait quand même des terrains d'atterrissage très nombreux. Un appareil qui a, si je puis dire, une volonté mécanique, qui est soumis à un élément mécanique, sera toujours à la merci d'un petit accident qui l'obligera à atterrir n'importe où, dans n'importe quelle circonstance. Si les terrains d'atterrissage ont été multipliés, il pourra toujours atterrir dans les meilleures conditions.",
+    "page_jo": 2,
+    "résumé": "M. Tisseyre s'oppose à la réduction des terrains d'atterrissage, arguant qu'ils sont indispensables pour la sécurité, même avec des appareils plus fiables."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i015",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le général de Castelnau",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "C'est exact.",
+    "page_jo": 2,
+    "résumé": "M. le général de Castelnau approuve les propos de M. Tisseyre sur la nécessité de multiplier les terrains d'atterrissage."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i016",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Je voudrais aussi que les postes de météorologie fussent multipliés. Il est inadmissible, et presque criminel, de permettre à des compagnies d'exploiter sans avoir des postes de météorologie nombreux. Un pilote doit être fixé sur le temps qu'il rencontrera 100 kilomètres plus loin, car ce renseignement est indispensable pour la conduite d'un appareil. Certaines compagnies ont pu exploiter sans posséder de postes de météorologie. Sur certaines lignes, qui sont en dehors de France, j'ai constaté que des pilotes partaient ignorant complètement le temps qu'ils allaient rencontrer. Lorsqu'ils avaient des renseignements, ceux-ci remontaient à plusieurs heures, et l'état de l'atmosphère rencontré en cours de route était tout différent de celui qu'ils pensaient trouver. Il faut combler cette lacune.",
+    "page_jo": 2,
+    "résumé": "M. Tisseyre insiste sur la nécessité de multiplier les postes de météorologie pour assurer la sécurité des vols."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i017",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Il est également indispensable que tous les appareils soient munis d'appareils de T. S. F. et de tous les moyens susceptibles de parer aux dangers consécutifs aux accidents, comme l'incendie. Il faudrait notamment imposer aux compagnies l'obligation d'avoir des appareils extincteurs à bord de leurs avions. Il faut également favoriser les recherches des dispositifs facilitant l'atterrissage normal; mais c'est une question technique sur laquelle je n'insiste pas.",
+    "page_jo": 2,
+    "résumé": "M. Tisseyre recommande d'équiper tous les appareils de moyens de communication et de sécurité, comme des extincteurs, pour prévenir les accidents."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i018",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Je voudrais aussi que la formation des pilotes attirât votre attention et méritât tous vos soins. Je sais que le système employé actuellement donne de bons résultats; mais il est encore insuffisant. Mettez en œuvre toutes les forces du pays, toutes les activités. Il y a dans de nombreuses régions françaises des sociétés aéronautiques qui ne demandent qu'à former des pilotes. Utilisez-les. L'année dernière, je vous avais déjà suggéré cette idée et vous m'aviez répondu que peut-être vous en tireriez parti. Ignorant ce que vous en avez fait, je vous la livre de nouveau.",
+    "page_jo": 2,
+    "résumé": "M. Tisseyre propose d'améliorer la formation des pilotes en mobilisant davantage les sociétés aéronautiques locales."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i019",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Je voudrais que les compagnies elles-mêmes eussent des écoles de pilotage qui pourraient être subventionnées par les constructeurs, car si l'aviation est utile, indispensable à la France, il n'en est pas moins vrai que les premiers bénéficiaires du développement de l'aéronautique sont les constructeurs. Je voudrais qu'ils cessassent un peu de considérer l'État français comme une vache à lait qu'on trait à l'infini et qui, par surcroît, donnerait du lait qui n'est pas le sien. Il faudrait qu'ils fissent, eux aussi, des sacrifices dont ils seraient les premiers bénéficiaires. Ils devraient subventionner des écoles de pilotage qui formeraient des pilotes immédiatement utilisables pour l'aviation civile. Si vous donniez à ces pilotes civils des avantages militaires, comme la dispense quasi totale du service militaire, vous trouveriez plus facilement de nouveaux pilotes.",
+    "page_jo": 2,
+    "résumé": "M. Tisseyre suggère que les constructeurs aéronautiques financent des écoles de pilotage et que les pilotes civils bénéficient d'avantages militaires pour encourager leur recrutement."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i020",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "N'oublions pas que nos pilotes actuels sont tous ou presque tous des pilotes de guerre. Ils sont excellents, ce n'est pas douteux, car la guerre a formé des pilotes dans des conditions que nous souhaitons tous de ne jamais revoir. Mais la réserve s'en épuise, et bien que vos centres d'entraînement en forment quelques autres, ils restent insuffisants tant par le nombre que par la qualité.",
+    "page_jo": 2,
+    "résumé": "M. Tisseyre rappelle que les pilotes actuels sont principalement d'anciens pilotes de guerre, mais que leur nombre et leur formation restent insuffisants."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i021",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Voilà quelques idées très générales en ce qui concerne la confiance à donner au public, confiance qui restera la pierre d'achoppement de l'avenir de l'aviation. Elle ne pourra se développer qu'à la condition que le public se serve des appareils. Tant que les appareils n'auront pas de passagers, l'aviation ne pourra pas se développer, elle coûtera très cher et ne rendra pas les services que nous en attendons.",
+    "page_jo": 2,
+    "résumé": "M. Tisseyre conclut que la confiance du public est essentielle pour le développement de l'aviation, qui doit devenir rentable en attirant plus de passagers."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i022",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Je passe maintenant à un autre ordre d'idées et je vous demande, monsieur le sous-secrétaire d'État, de ne voir, dans les quelques critiques que je pourrai formuler sur la façon dont vous avez opéré jusqu'ici, que mon souci très sincère de collaborer avec vous. Vous savez quelle amitié j'éprouve pour vous; je serais désolé de vous être désagréable, même en apparence.",
+    "page_jo": 2,
+    "résumé": "M. Tisseyre introduit une nouvelle partie de son intervention en précisant que ses critiques sont constructives et motivées par une volonté de collaboration."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i023",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Nous avons vu hier que certaines lignes d'aviation ne rendent pas, au point de vue économique, les services que nous en espérions. Nous avons vu notamment que les lignes purement métropolitaines n'ont qu'un trafic quasi nul. Elles ne transportent pas de lettres, pas de messagerie. Nous avons vu que les lignes continentales ont un trafic économique un peu supérieur aux lignes métropolitaines, mais pas encore satisfaisant. Il faut remédier non pas à cet état de choses — vous ne le pouvez pas — mais à la façon dont vous subventionnez ces compagnies.",
+    "page_jo": 2,
+    "résumé": "M. Tisseyre critique la faible rentabilité des lignes aériennes métropolitaines et continentales et propose de revoir le système de subventions."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i024",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Vos cahiers des charges les obligent à un certain nombre de voyages et à des heures de départ et elles les pénalisent quand les voyages ne sont pas effectués ou quand les départs ne sont pas donnés aux heures indiquées. Il y a là quelque chose qui n'est pas logique. Vous ne devriez pas obliger des appareils à partir à vide sous menace de pénalités. De même, quand le temps est très mauvais, quand le départ devient un danger pour les passagers, il serait préférable que le départ ne fût pas donné. J'ai vu au Bourget, dans la tempête, des appareils s'élever difficilement et revenir quelques instants après. Il n'y a pas eu de pénalité, puisque l'appareil était parti, et cependant le voyage ne s'était pas effectué. C'est encore un voyage qui vous a coûté cher. Il faut revoir cette question et la méthode d'attribution des subventions et des primes aux compagnies. Je ne suis pas d'avis de les supprimer, pas même pour les compagnies qui ne rapportent rien.",
+    "page_jo": 2,
+    "résumé": "M. Tisseyre propose de réformer les cahiers des charges pour éviter les départs inutiles ou dangereux et mieux adapter les subventions aux réalités économiques."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i025",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "suis, au contraire, d'avis qu'il faut aider toutes les compagnies, dès l'instant qu'elles ont une importance ou économique, ou même politique.",
+    "page_jo": 3,
+    "résumé": "M. Tisseyre propose de réformer les cahiers des charges pour éviter les départs inutiles ou dangereux et mieux adapter les subventions aux réalités économiques."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i026",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Certaines compagnies, dont nous avons parlé hier et qui ont disparu, étaient des amorces, des tronçons d'exploitations plus grandes et il est très dommage qu'elles aient disparu. Il en est d'autres, qui sont notoirement inutiles. Celles-là, il faut les laisser disparaître.",
+    "page_jo": 3,
+    "résumé": "M. Tisseyre distingue les compagnies utiles, à soutenir, des compagnies inutiles, à laisser disparaître."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i027",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "L'importance de l'aviation commerciale peut revêtir un double aspect; elle peut être économique ou politique. Certaines lignes métropolitaines n'ont aucune importance économique; nous pouvons dire qu'elles n'ont pas davantage d'importance politique et que si elles n'ont plus qu'une importance de propagande à l'intérieur, c'est une propagande qui est payée trop cher. Ne les supprimez pas, toutefois; aidez-les de façon différente, aidez-les au prorata des services qu'elles rendent.",
+    "page_jo": 3,
+    "résumé": "M. Tisseyre souligne que certaines lignes métropolitaines, sans importance économique ou politique, coûtent trop cher et devraient être subventionnées différemment."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i028",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Quant aux compagnies continentales, elles ont, elles aussi, une importance économique diminuée, je ne dirai pas nulle mais pas aussi grande que nous pourrions le désirer. Elles ont cependant une importance politique très sérieuse. Il n'est pas douteux que nos lignes d'aviation, qui vont de capitale en capitale, ont une importance politique des plus grandes et une force de propagande française qu'il faut développer.",
+    "page_jo": 3,
+    "résumé": "M. Tisseyre insiste sur l'importance politique des lignes continentales, malgré leur faible rentabilité économique."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i029",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le colonel Girod",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Elles ont également de l'importance au point de vue national, parce que c'est notre flotte de réserve, en partie tout au moins.",
+    "page_jo": 3,
+    "résumé": "Le colonel Girod souligne l'importance nationale des lignes aériennes comme flotte de réserve."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i030",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Charles Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Cela, c'est autre chose, c'est la question de l'aviation militaire que je n'envisagerai pas. Je me place uniquement au point de vue commercial. Ces lignes d'importance purement politique et de propagande française doivent être aidées puissamment. Les efforts que nous faisons aujourd'hui je ne les crois pas trop grands, il faut les continuer et même, si c'est nécessaire, les intensifier. Le pays est décidé à consentir tous les sacrifices nécessaires pour l'aviation, car il se rend compte de l'importance qu'elle a et des services qu'il peut en attendre. Il faut, néanmoins, faire attention à la façon dont sont dispensés les deniers des contribuables, car aujourd'hui ces deniers sont choses précieuses.",
+    "page_jo": 3,
+    "résumé": "M. Tisseyre exclut la dimension militaire et insiste sur la nécessité de soutenir les lignes politiques et de propagande, tout en contrôlant l'usage des fonds publics."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i031",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Quelles sont donc les lignes qui remplissent les deux conditions, économique et politique, car il y en a? Ce sont uniquement, à mon avis, les lignes coloniales, et ce sont celles-là qu'il faut soutenir de tous nos moyens. Je crois savoir que la réduction qui vous a été imposée par la commission des finances est presque entièrement supportée par les lignes coloniales. Je le déplore. Il est inadmissible que les lignes coloniales, qui sont des lignes purement françaises, soient sacrifiées au bénéfice des lignes continentales.",
+    "page_jo": 3,
+    "résumé": "M. Tisseyre défend les lignes coloniales comme les seules à remplir à la fois des critères économiques et politiques, critiquant leur réduction budgétaire."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i032",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Bouilloux-Lafont, rapporteur",
+      "role": "rapporteur",
+      "groupe": null
+    },
+    "text_brut": "La commission des finances n'a jamais indiqué qu'on devait supprimer les lignes coloniales. Elle a même dit tout le contraire.",
+    "page_jo": 3,
+    "résumé": "M. Bouilloux-Lafont précise que la commission des finances n'a jamais envisagé de supprimer les lignes coloniales."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i033",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Je n'ai pas dit que c'était la commission des finances qui en avait demandé la suppression. J'ai dit que je croyais que la diminution imposée par la commission des finances était presque entièrement supportée par les lignes coloniales.",
+    "page_jo": 3,
+    "résumé": "M. Tisseyre clarifie qu'il n'a pas accusé la commission des finances de vouloir supprimer les lignes coloniales, mais de les avoir réduites."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i034",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le colonel Girod",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "La commission a réduit, en effet, les crédits destinés à des lignes d'études et le rapport classe comme lignes d'études: les lignes de Marseille à Alger, de Kayes à Bamako, pour l'Afrique occidentale, et de Tuléar à Antsirabé pour Madagascar. Mais c'est, au contraire, sur ces lignes que doit porter l'effort du Gouvernement.",
+    "page_jo": 3,
+    "résumé": "Le colonel Girod explique que les réductions concernent des lignes d'études, mais insiste sur la nécessité de soutenir ces lignes."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i035",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Les subventions accordées ne sont pas en rapport direct avec le programme établi par le ministère des colonies lui-même, et je ne demande qu'une chose, c'est qu'on permette à nos compagnies coloniales de réaliser le programme demandé par le ministère des colonies.",
+    "page_jo": 3,
+    "résumé": "M. Tisseyre demande que les subventions correspondent au programme du ministère des colonies pour soutenir les compagnies coloniales."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i036",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Si je n'avais pas la mauvaise fortune de parler à une heure aussi matinale, il est probable que tous nos collègues coloniaux seraient ici et qu'ils m'appuieraient de toutes leurs forces, car ils savent quelle importance a l'aviation pour les colonies.",
+    "page_jo": 3,
+    "résumé": "M. Tisseyre regrette l'absence des collègues coloniaux et insiste sur l'importance de l'aviation pour les colonies."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i037",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Laurent Eynac, sous-secrétaire d'Etat de l'aéronautique",
+      "role": "sous-secrétaire d'Etat de l'aéronautique",
+      "groupe": null
+    },
+    "text_brut": "Laissez-moi vous dire que mon attention est très tournée sur le développement de l'aéronautique aux colonies et j'aurai l'occasion de vous indiquer comment je le conçois. À la vérité, jusqu'à présent, nous n'avons jamais refusé une subvention d'Etat aux colonies qui faisaient elles-mêmes un effort sur leur propre budget.",
+    "page_jo": 3,
+    "résumé": "M. Laurent Eynac assure que son attention est portée sur le développement de l'aéronautique coloniale et explique la politique de subventions."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i038",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le colonel Girod",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Sauf à Madagascar, l'année dernière.",
+    "page_jo": 3,
+    "résumé": "Le colonel Girod rappelle une exception concernant Madagascar."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i039",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Laurent Eynac",
+      "role": "sous-secrétaire d'Etat de l'aéronautique",
+      "groupe": null
+    },
+    "text_brut": "Le projet n'a pas encore été établi dans la colonie.",
+    "page_jo": 3,
+    "résumé": "M. Laurent Eynac explique que le projet pour Madagascar n'a pas encore été établi."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i040",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Ce n'est pas tout à fait ce que je vous demande. Je ne vous demande pas de donner une aide aux colonies qui font un effort sur leur propre budget. Je vous demande de faire un effort pour les compagnies françaises qui vont s'installer aux colonies, même si elles ne reçoivent pas une subvention des colonies. On me fera peut-être une objection qui repose sur une vieille loi prescrivant qu'on ne peut subventionner les entreprises françaises aux colonies qu'à la condition que le budget de la colonie fasse un effort semblable. Mais cette loi a été faite avant que l'aviation soit née. Elle n'a pas été faite pour l'aviation. Et même, si vous m'opposiez cette loi, je vous dirais, monsieur le sous-secrétaire d'Etat: Tenez compte des efforts et des sacrifices faits par les colonies pour l'infrastructure, pour l'établissement de lignes, travaux qu'on ne peut pas chiffrer, parce que la main-d'œuvre coûte très bon marché. Mais ces travaux ont une valeur considérable, même s'ils ne figurent pas pour une dépense importante au budget de chaque colonie intéressée.",
+    "page_jo": 3,
+    "résumé": "M. Tisseyre demande un effort pour les compagnies françaises installées aux colonies, indépendamment des subventions locales, et propose de réviser une loi obsolète."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i041",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le sous-secrétaire d'Etat de l'aéronautique",
+      "role": "sous-secrétaire d'Etat de l'aéronautique",
+      "groupe": null
+    },
+    "text_brut": "Nous sommes tout à fait d'accord, et c'est pourquoi nous n'avons pas exigé de l'Afrique occidentale française la participation d'un tiers, parce que la colonie avait eu la charge de l'infrastructure.",
+    "page_jo": 3,
+    "résumé": "Le sous-secrétaire d'État confirme un accord sur la prise en compte de l'infrastructure pour les subventions."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i042",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Si nous sommes d'accord, j'en suis enchanté, parce que cela permettra au budget d'être voté plus vite, en me permettant, à moi, d'abréger mes observations.",
+    "page_jo": 3,
+    "résumé": "M. Tisseyre se réjouit de l'accord trouvé pour accélérer le vote du budget."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i043",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le général de Castelnau",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Ce que vous avez dit était nécessaire, parce que cela fixe la doctrine.",
+    "page_jo": 3,
+    "résumé": "Le général de Castelnau souligne l'importance des propos de M. Tisseyre pour établir une doctrine."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i044",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Tisseyre",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Nous avons le devoir formel de développer nos colonies le plus possible, et je suis très heureux que M. Albert Sarraut, notre ministre des colonies, ait tracé le grand programme que l'on sait. Nous avons le devoir de développer nos colonies, parce qu'après le grand bouleversement de la guerre, cette grande folie des hommes, le monde ne peut du jour au lendemain retrouver un état de calme et d'ordre économique. Nous avons besoin de nous-mêmes, et si nous ne trouvons pas chez nous ce qu'il nous faut, nous devons aller le chercher au-delà des mers, dans nos colonies, que nous avons payées si cher, de notre sang et de notre argent.",
+    "page_jo": 3,
+    "résumé": "M. Tisseyre insiste sur le devoir de développer les colonies pour des raisons économiques et historiques."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i045",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Messieurs, je n'ai aucune intention de retarder, par des considérations d'ordre général, le vote d'un budget impatiemment attendu ; mais, à propos de ce débat sur l'aéronautique, des doctrines diverses ont été apportées à cette tribune, elles ont été exposées dans le rapport de M. Bouilloux-Lafont. Et, sur ces questions de doctrine, comme je ne partage pas entièrement les vues du rapporteur de la commission des finances, la Chambre me permettra de lui présenter quelques observations, en même temps que quelques suggestions qui pourront, je l'espère, être utiles à M. le sous-secrétaire d'Etat de l'aéronautique dans le développement de sa politique aérienne. Messieurs, c'est un grave et grand problème que la politique aérienne de la France. Le développement de la navigation aérienne exige, à la fois, un effort technique, un effort d'organisation et un effort financier. L'effort technique, on vous en a beaucoup parlé hier et je crois bien que M. Bouilloux-Lafont désirerait restreindre, pour le moment, à cet effort technique, toute la politique aérienne française. J'ai le regret de ne pas être d'accord avec lui sur ce point. Loin de moi la pensée de nier qu'il faille encourager les recherches des savants dans les laboratoires, qu'il faille consacrer des sommes importantes aux recherches techniques et à la détermination des appareils prototypes. J'aurais mauvaise grâce à le soutenir, puisqu'aussi bien le même M. Bouilloux-Lafont, que je trouve, cette année, avec la plus grande satisfaction, réclamant 11 millions de crédits supplémentaires pour le service technique, ne faisait pas un accueil aussi bienveillant, l'année dernière, à certain amendement que j'avais présenté et par lequel je réclamais une augmentation de crédits en faveur du service technique aéronautique pour commander des cellules de mototypes d'avion.",
+    "page_jo": 3,
+    "résumé": "M. Flandin expose son désaccord partiel avec le rapporteur sur la politique aérienne, soulignant la nécessité d'un effort technique, organisationnel et financier."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i046",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Mais ce n'est pas tout que de donner des crédits au service technique et que le service technique, à son tour, les répartisse entre les bureaux d'études et les usines de construction aéronautique. Quant à moi, je pense — c'est un peu le résultat d'une expérience personnelle — que ce progrès technique certes naît dans les laboratoires et dans les bureaux d'études, mais qu'il ne devient définitif et qu'il ne prend sa forme utilisable pour le progrès aéronautique qu'à partir du moment où il a été con-",
+    "page_jo": 3,
+    "résumé": "M. Flandin insiste sur l'importance de l'application pratique des progrès techniques au-delà des laboratoires et bureaux d'études."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i047",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Si vous voulez attendre qu'on puisse aller de Londres à Bombay en avion, autant dire que vous y perdrez votre place. Si vous voulez au contraire y prendre votre place tout de suite, ne critiquez pas la mise en secteurs de Londres-Paris-Lyon-Marseille, et peut-être demain de Londres-Paris-Lyon-Marseille-Rome. Ce n'est pas la ligne de Londres à Paris et de Londres-Paris-Lyon-Marseille qu'il faut considérer en cette affaire ; il faut y voir simplement le premier acte d'un grand dessein, le premier secteur de cette grande route internationale, dans laquelle vous voulez — j'en suis certain — que la France conserve sa place.",
+    "page_jo": 6,
+    "résumé": "Flandin souligne l'importance de ne pas retarder la mise en place des secteurs aériens pour conserver la place de la France dans le développement des routes internationales."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i048",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Je pense que nous sommes d'accord sur cette politique, car, somme toute, votre rapport contient bien des critiques, et en vous écoutant je me disais que, fidèle à une tactique assez en honneur à la commission des finances, vous alliez sans doute nous proposer de renvoyer le budget de l'aéronautique au Gouvernement.",
+    "page_jo": 6,
+    "résumé": "Flandin suppose que le rapporteur pourrait proposer de renvoyer le budget de l'aéronautique au gouvernement, suivant une tactique de la commission des finances."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i049",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le rapporteur",
+      "role": "rapporteur",
+      "groupe": null
+    },
+    "text_brut": "Non!",
+    "page_jo": 6,
+    "résumé": "Le rapporteur contredit l'hypothèse de Flandin."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i050",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Vous n'en avez rien fait; vous avez maintenu tous les crédits et augmenté même certains. Si ce n'est pas une querelle de faits, mais simplement une querelle de mots, nous nous trouvons donc d'accord, et je le constate, pour le plus grand bien de l'aéronautique française.",
+    "page_jo": 6,
+    "résumé": "Flandin constate que le rapporteur a maintenu les crédits et qu'ils sont d'accord sur le fond."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i051",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "J'examinerai maintenant — je m'excuse de retenir si longtemps l'attention de la Chambre — l'effort financier. Si nous sommes d'accord sur ce programme, qui, pour moi, est le programme type de la navigation aérienne, il faut préciser que ce programme exige un gros effort financier.",
+    "page_jo": 6,
+    "résumé": "Flandin aborde la question de l'effort financier nécessaire pour le programme de navigation aérienne."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i052",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Je conçois très bien que la commission des finances, qui est la gardienne des finances publiques, ne veuille pas s'engager dans une politique d'augmentation des primes et des subventions qui ne répond pas à l'attente générale. Je suis donc entièrement d'accord avec elle et, me tournant vers M. le sous-secrétaire d'Etat, je lui dis: Mon cher ministre, l'année dernière j'ai tenu ce même langage à la tribune ; vous avez pris la parole après moi; vous avez bien voulu me déclarer que vous partagiez entièrement mon opinion, et me promettre, au nom du Gouvernement, de déposer dans l'année un projet de loi réglant le régime définitif des compagnies de navigation aérienne. J'ai cherché ce projet, je ne l'ai pas encore vu.",
+    "page_jo": 6,
+    "résumé": "Flandin exprime son accord avec la commission des finances et rappelle une promesse non tenue du sous-secrétaire d'État concernant un projet de loi."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i053",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le sous-secrétaire d'Etat de l'aéronautique",
+      "role": "sous-secrétaire d'Etat de l'aéronautique",
+      "groupe": null
+    },
+    "text_brut": "Vous savez qu'il est prêt.",
+    "page_jo": 6,
+    "résumé": "Le sous-secrétaire d'État affirme que le projet de loi est prêt."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i054",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Je sais qu'il est prêt chez vous. En effet, ce projet a été étudié dans vos services. Il a été mis au point, mais je sais aussi qu'il est parti, comme tant d'autres projets d'intérêt général, vers une maison où partent bien des choses qui ne reviennent jamais: j'ai nommé le ministère des finances. Je crois savoir aussi que ce projet a dormi quelque trois mois d'été sous le coude gauche d'un honorable fonctionnaire du ministère des finances. Puis-je souhaiter qu'un jour où le banc des ministres sera plus garni, M. le ministre des finances s'intéressera à ce projet d’intérêt national ?",
+    "page_jo": 6,
+    "résumé": "Flandin critique le retard du projet de loi, bloqué au ministère des finances, et appelle le ministre des finances à s'y intéresser."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i055",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Voulez-vous me permettre d'usurper vos fonctions et de vous indiquer brièvement ce que vous pourriez dire à M. le ministre des finances pour le déterminer à agir ? Je répondrai en même temps au rapport de M. Bouilloux-Lafont. Vous lui direz: Il faut que nous trouvions un régime permettant à la navigation aérienne française de se développer, parce qu'après avoir pris la tête du mouvement aéronautique nous sommes arrêtés; et dans la lutte pour l'existence, quand on n'avance plus, on recule.",
+    "page_jo": 6,
+    "résumé": "Flandin propose des arguments pour convaincre le ministre des finances de soutenir le développement de la navigation aérienne française."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i056",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Dans le même temps les autres nations du monde cherchent à prendre position sur toutes les grandes routes aériennes d'intérêt mondial. Les Etats-Unis ont assez à faire, c'est entendu, chez eux. Ils ont lancé New-York-Chicago, la plus grande route aérienne du monde, et ils poussent en outre deux antennes, l'une par Key-West et la Havane, vers les Antilles et Panama, l'autre sur le Mexique, où ils ont fondé une ligne de Mexico à Tampico. Le Japon, qui voue un intérêt passionné à l'aéronautique, essaie de diriger un mouvement qui a pour but de le relier plus tard à la Chine et à la Sibérie. L'Australie elle-même — et c'est là une partie de l'effort britannique — a organisé trois lignes : Sydney-Geraldton-Derby, Sydney-Adelaïde et Sydney-Brisbane. La Nouvelle-Zélande, par deux lignes aériennes, annonce son raccordement avec la future ligne aérienne des Indes. Sur la route des Indes même, l'Angleterre a mis en exploitation Le Caire à Bagdad, qui est un des tronçons de la ligne qu'elle veut établir.",
+    "page_jo": 6,
+    "résumé": "Flandin décrit les avancées des autres nations dans le développement des routes aériennes mondiales."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i057",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "En Europe, toutes les puissances essayent, elles aussi, bien qu'elles y rencontrent la concurrence avec les chemins de fer, de prendre position sur les grands itinéraires mondiaux. Les Anglais lancent la ligne Londres, Amsterdam, Brême, Hambourg, Berlin et prolongements, prolongements assez intéressants à signaler, puisque ce sont des prolongements allemands: Dantzig, Koenigsberg, Memel, Revel, Riga. Koenigsberg, Moscou, exploité par une société russe de façade, entièrement exploitée, dirigée, financée par les Allemands. Du côté du Sud, l'Allemagne s'est appliquée, comme je le disais, à traiter avec l'Espagne pour mettre en exploitation un service Europe, Afrique et Amérique du Sud; elle essaye de joindre maintenant la tête de ligne de dirigeables Zeppelin, qui doit partir de Séville sur Buenos-Aires, avec l'Allemagne et pousse, en collaboration avec une société suisse, la ligne Copenhague-Berlin-Leipzig-Munich-Constance — Genève pour, dès qu'elle le pourra, passer par dessus la France et retomber en Espagne, à Séville. Vers l'Orient elle a organisé une ligne Copenhague-Berlin-Prague, avec prolongement.",
+    "page_jo": 6,
+    "résumé": "Flandin détaille les efforts européens, notamment ceux de l'Angleterre et de l'Allemagne, pour établir des routes aériennes."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i058",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "La France ne peut se désintéresser de cette activité de la navigation aérienne dans le monde. Elle a le devoir de préparer cette législation spéciale, ces conventions spéciales qui permettront aux compagnies de navigation aérienne de poursuivre leur effort et de maintenir, non sans difficultés, à la France, la place qu'elle a prise sur les grands itinéraires mondiaux.",
+    "page_jo": 6,
+    "résumé": "Flandin insiste sur la nécessité pour la France de préparer une législation adaptée pour maintenir sa position dans la navigation aérienne mondiale."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i059",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Au surplus, je répondrai en passant qu'en agissant ainsi, elle ne fera pas œuvre d'impérialisme, puisqu'il paraît que cette objection d'impérialisme est celle qu'on nous jette le plus facilement et le plus souvent à la tête.",
+    "page_jo": 6,
+    "résumé": "Flandin rejette l'accusation d'impérialisme concernant les efforts de la France en navigation aérienne."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i060",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "A côté des chiffres que vous avez cités à propos de l'Allemagne, monsieur le rapporteur, j'aurais voulu que vous signaliez ceux-ci, qui ont été publiés aux États-Unis au moment de la conférence de Washington. C'était une comparaison des sommes dépensées par les grandes puissances pour leur aéronautique et j'emprunte ces chiffres à l'amiral Moffett. L'amiral Moffett arrivait à cette conclusion que les États-Unis dépensaient 32 millions de dollars pour leur aviation militaire et pour leur aviation navale. Il avait omis d'ajouter à cette somme 2,200,000 dollars pour la poste aérienne. Il ne pouvait pas y ajouter à l'époque la somme de 6,500,000 dollars, votée en juin dernier par le parlement américain pour la construction de nouveaux avions destinés à leur marine. C'est donc en réalité pour les États-Unis un total de 40 millions de dollars. La Grande-Bretagne dépensait, dans les calculs de l'amiral Moffett, 66,424,000 dollars, mais il avait soin d'ajouter 'non compris les dépenses de la Royal Air Force aux Indes, de l'aviation civile et de l'aviation coloniale', de telle sorte qu'en ajoutant aux 66,424,000 dollars ces chiffres, on peut dire que la Grande-Bretagne dépense, en réalité, 72 millions de dollars par an. Pour la France, il estimait ce chiffre, en comprenant l'aviation militaire, coloniale et civile, à 44 millions de dollars. En réalité, si vous voulez appliquer le cours du change, non pas à l'époque, mais aujourd'hui, vous verrez que la France dépense 32 millions de dollars.",
+    "page_jo": 6,
+    "résumé": "Flandin compare les dépenses des grandes puissances en aéronautique, soulignant que la France dépense moins que les États-Unis et la Grande-Bretagne."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i061",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le rapporteur",
+      "role": "rapporteur",
+      "groupe": null
+    },
+    "text_brut": "Les budgets ne sont pas les mêmes non plus!",
+    "page_jo": 6,
+    "résumé": "Le rapporteur souligne que les budgets des pays ne sont pas comparables."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i062",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Regardez la position géographique de ces trois puissances. Il y en a une complètement protégée de toute agression militaire possible, ce sont les États-Unis. Une autre est protégée par un bras de mer et par les circonstances atmosphériques telles que la brume et le brouillard, c'est l'Angleterre. Elles dépensent toutes deux plus que nous pour leur aviation, et nous avons pourtant la menace constante de l'autre côté du Rhin.",
+    "page_jo": 6,
+    "résumé": "Flandin explique que malgré une position géographique moins menaçante, les États-Unis et l'Angleterre dépensent plus que la France pour leur aviation."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i063",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Si j'ai cité ces chiffres ce n'est pas pour demander — M. Bouilloux-Lafont se rassure — un nouvel effort financier, une augmentation de crédit...",
+    "page_jo": 6,
+    "résumé": "Flandin précise qu'il ne demande pas une augmentation des crédits malgré les chiffres cités."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i064",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le rapporteur",
+      "role": "rapporteur",
+      "groupe": null
+    },
+    "text_brut": "Je le ferais volontiers!",
+    "page_jo": 6,
+    "résumé": "Le rapporteur indique qu'il serait prêt à demander une augmentation des crédits."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i065",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "...répondre à une campagne que j'ai vu personnellement se dessiner contre nous à plusieurs reprises, dans la presse américaine et anglaise, qui nous accuse de vouloir faire de l'impérialisme aérien et disait crûment que la France entretenait 2,000 avions militaires d'une manière permanente dans son armée, avec l'argent qu'après tout nous devrions payer à nos alliés. Il est nécessaire qu'on réponde à ces objections. Je le fais, je crois, dans la mesure possible.",
+    "page_jo": 6,
+    "résumé": "Flandin répond aux accusations d'impérialisme aérien et de détournement de fonds dans la presse étrangère."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i066",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Nous ne pouvons pas laisser entacher notre action aérienne dans le monde avec des arguments aussi pauvres. Nous avons le droit d'avoir une politique aérienne. Nous avons le droit de développer notre navigation aérienne dans le monde, sans être taxés d'impérialisme.",
+    "page_jo": 6,
+    "résumé": "Flandin défend le droit de la France à développer sa navigation aérienne sans être accusée d'impérialisme."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i067",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Vous trouverez tout naturel, après ces observations sur l'effort aéronautique à l'étranger, que je m'arrête un instant sur l'aéronautique allemande.",
+    "page_jo": 6,
+    "résumé": "Flandin annonce qu'il va aborder spécifiquement la question de l'aéronautique allemande."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i068",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "l'ai montré tout à l'heure l'activité de l'Allemagne dans la navigation aérienne. Je vous ai montré son action: multiplication des sociétés de navigation aérienne — je n'y reviendrai pas. M. Bouilloux-Lafont a fait sur ce point un rapport très complet — participation dans toutes les entreprises voisines, qu'elles soient hollandaises, scandinaves, baltes, russes ou même dans une certaine mesure tchéco-slovaques.",
+    "page_jo": 7,
+    "résumé": "Flandin annonce qu'il va aborder spécifiquement la question de l'aéronautique allemande."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i069",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Au point de vue de la construction, même politique allemande. L'ingénieur Fokker a repassé la frontière hollandaise et a installé des usines en Hollande et aux États-Unis. L'ingénieur Dornier est en Suisse et en Italie. Les usines Brod en Yougo-Slavie semblent bien être entrées dans cette conjonction d'intérêts industriels aéronautiques allemands, et j'étonnerai sans doute beaucoup de membres de cette Chambre en leur citant les résultats d'une compagnie de constructions aéronautiques, installée en Autriche, cette pauvre Autriche au secours de laquelle la Société des nations s'emploie avec tant de zèle et de dévouement, il s'agit de la société Wiener-Flugzeug-Allgemeine-Gesellschaft, qui se permet de distribuer, en raison des bénéfices de son exploitation, un dividende de 40 p. 100 à ses actionnaires cette année.",
+    "page_jo": 7,
+    "résumé": "Flandin décrit l'expansion industrielle aéronautique allemande en Europe et les profits réalisés par ses entreprises."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i070",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Je ne crois pas que beaucoup d'affaires françaises aéronautiques pourraient en faire autant. Alors, voyant que même avec les garanties contenues dans le traité de paix, l'activité aéronautique allemande peut revêtir cette forme, que d'autre part, au point de vue de ses pilotes, il se forme dans toute l'Allemagne, grâce à une société qui s'appelle le Bunddeutscherflieger (union des aviateurs allemands), des groupes de pilotes de réserve dans toute l'Allemagne, et qu'enfin, ce qui prouve un esprit très délié, l'Allemagne se constitue un noyau de nouveaux pilotes — M. le général de Castelnau sait que c'est une des questions les plus essentielles de l'aéronautique militaire — qui ne sont pas des pilotes d'aviation, mais des pilotes d'avions sans moteur. Elle multiplie, en effet, les écoles de vol à voile. Je ne pense pas que les techniciens allemands croient autant qu'ils le disent à l'avenir technique du vol à voile, mais l'Allemagne se rend parfaitement compte qu'en instituant des écoles de vol à voile, elle dresse des pilotes qui, du jour au lendemain, et par l'intermédiaire du Bunddeutscherflieger deviendront en réalité les cadres d'une armée aéronautique formidable !",
+    "page_jo": 7,
+    "résumé": "Flandin explique comment l'Allemagne forme secrètement des pilotes militaires via des écoles civiles et des associations."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i071",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Je me permets, en effet, de rappeler à la Chambre qu'il faut très peu de temps pour construire un avion et un moteur. À la fin de la guerre nous étions arrivés à sortir 3 000 avions par mois et 4 500 à 5 000 moteurs. Aussi, quand on parle du désarmement de l'Allemagne par suppression de ses effectifs et de son matériel aéronautique militaire, je pense que c'est une plaisanterie, parce que, pour lancer une fabrication de moteurs en grande série, nous savons, en France, qu'il faut six mois, et que pour lancer une fabrication de cellules, il suffit de faire trois mois. Je me tourne donc vers vous et je vous demande: avant un conflit possible avec l'Allemagne à un moment donné, n'y aura-t-il pas une période de tension de six mois, et pendant cette période de tension sera-t-il bien efficace d'avoir supprimé les effectifs de l'armée aérienne allemande, si au même moment elle peut repartir sur une fabrication en grande série de matériel d'aviation, d'autant plus perfectionné qu'il sera nouveau et qu'elle aura pu, grâce au jeu des dispositions du traité de paix, peut-être mal interprétées — et je vais dire tout de suite pourquoi — se constituer, pour monter cette flotte aérienne à l'abri de la Bunddeutscherflieger, à l'abri des sociétés de vol à voile, les pilotes de l'armée aérienne qu'elle pourra demain lancer sur nous ?",
+    "page_jo": 7,
+    "résumé": "Flandin souligne la rapidité avec laquelle l'Allemagne pourrait reconstituer une force aérienne militaire en cas de conflit."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i072",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "En présence de ces résultats, je me demande si véritablement la politique aérienne que vous avez pratiquée à l'égard de l'Allemagne est heureuse. Quelle est-elle ? Vous savez qu'en vertu des articles 198 et suivants du traité de paix l'Allemagne n'a pas le droit d'entretenir une aviation militaire, ni une aviation navale. Mais, d'après les articles 313 et suivants — contradiction flagrante avec les premiers articles 198 et suivants — l'Allemagne peut entretenir une aviation commerciale. Ici, il faut bien qu'il soit entendu qu'il n'entre dans ma pensée aucune critique à l'égard des rédacteurs du traité de paix. Ils ont défendu jusqu'au bout la thèse française qui consistait à supprimer purement et simplement à l'Allemagne le droit de construire du matériel aéronautique, jusqu'à ce qu'elle ait donné des preuves de son respect des traités. Ils ont été obligés de s'incliner devant une opposition formelle, un non catégorique qui leur a été opposé par la délégation américaine et par M. le président Wilson.",
+    "page_jo": 7,
+    "résumé": "Flandin critique les contradictions du traité de paix concernant l'aviation allemande et l'échec des négociateurs français face aux Américains."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i073",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Le traité de paix étant ainsi fait, il fallait trouver un moyen de mettre d'accord les prescriptions de l'article 313 et celles de l'article 198. C'est alors qu'après de longs débats, les alliés se sont mis d'accord sur ce qu'on appelle les neuf règles du 5 mai 1921, auxquelles M. le rapporteur de la commission des finances faisait allusion hier, règles qui apportent un certain nombre de limitations aux caractéristiques techniques des avions dits commerciaux, et qui, ainsi, prétendent faire une discrimination entre l'aviation militaire et l'aviation commerciale. Ces règles ont été rédigées par des techniciens trop avertis des choses de l'aéronautique et dont la compétence dépasse trop celle que je puis avoir pour que je veuille en discuter ici l'efficacité : j'admets que ces règles soient pleinement efficaces. Mais, même en l'admettant, je dis que vous n'avez pas résolu le problème tel qu'il se pose.",
+    "page_jo": 7,
+    "résumé": "Flandin évoque les règles techniques de 1921 visant à limiter l'aviation commerciale allemande, mais en souligne l'insuffisance."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i074",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "En effet, qu'il s'agisse de fabriquer des avions dont le plafond ne soit pas supérieur à 4 000 mètres, dont la vitesse n'excède pas 170 kilomètres à l'heure, à 2 000 mètres d'altitude, et dont la charge utile ne dépasse pas 600 kilogrammes, ou qu'il s'agisse de construire ces gros appareils qui sont les appareils militaires de demain, il n'y a, pour la raison que j'ai exposée il y a un instant, qu'une chose qui importe pour l'Allemagne : c'est la possibilité d'entretenir une industrie aéronautique active. Si vous lui laissez cette possibilité, vos règles techniques n'ont plus aucune valeur. Le moment venu, dans la période de tension à laquelle je faisais allusion tout à l'heure, cette industrie aéronautique active transformera l'avion à caractéristiques limitées en avion de guerre perfectionné. Elle trouvera, au jour dit, les dessins de tous ces avions et de tous ces moteurs dans toutes les usines allemandes et, six mois après, vous vous trouverez en face d'une flotte aérienne allemande de 3 000 avions, conduite par des hommes qui auront fait leur apprentissage par le vol à voile. Par conséquent, au point de vue de notre sécurité nationale, les règles techniques ne suffisent pas.",
+    "page_jo": 7,
+    "résumé": "Flandin argue que les limitations techniques sont inefficaces si l'Allemagne conserve une industrie aéronautique active."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i075",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Je défends une autre thèse et je dis : si l'aviation allemande doit être une aviation purement commerciale, ses effectifs doivent être limités, aussi bien en personnel qu'en matériel. Ce n'est pas un contrôle technique que vous auriez dû établir, c'est un contrôle numérique et, sur cette thèse, vous pouvez, M. le sous-secrétaire d'État de l'aéronautique le sait bien, avoir l'appui complet du gouvernement britannique. Il vous sera d'ailleurs fort malaisé de maintenir vos règles techniques, car vous êtes, à ce point de vue, dans une position fausse. En effet, vous avez édicté, pour la discrimination de l'avion commercial et de l'avion militaire, des règles techniques auxquelles ne répondent pas vos propres avions commerciaux. Ainsi vous serez amené à dire à l'Allemagne: nous vous imposons, pour vos avions commerciaux, des caractéristiques auxquelles, pour les nôtres, nous nous réservons de ne pas nous conformer.",
+    "page_jo": 7,
+    "résumé": "Flandin propose un contrôle numérique plutôt que technique et dénonce l'hypocrisie des règles imposées à l'Allemagne."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i076",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "J'admets parfaitement que le vainqueur, tant que le vaincu n'a pas donné des preuves de sa bonne volonté et de sa bonne foi, puisse lui tenir ce langage. Mais ne le tenez que s'il est opérant. S'il ne l'est pas, ne vous mettez pas, devant le monde entier, dans une fausse position, ne tentez pas de la défendre, sans aucune utilité pour vous. Venez-en à la vraie formule de limitation de l'aviation militaire allemande, la limitation numérique. Je n'interdis pas à l'Allemagne d'avoir une aviation commerciale, mais je lui dis: s'il est juste que moi, Gouvernement français, quand il s'agit de mes compagnies de navigation aérienne, je fixe le nombre des appareils qui doivent être mis en service sur une ligne déterminée, trouvez bon que j'applique la même réglementation chez vous. Si vous voulez mettre en service régulièrement, quotidiennement, 2 000 kilomètres de lignes allemandes, mettons que ce service représente 50 avions; vous aurez donc 50 avions et pas un de plus. Voilà la véritable thèse.",
+    "page_jo": 7,
+    "résumé": "Flandin plaide pour une limitation numérique stricte de l'aviation commerciale allemande pour empêcher son détournement militaire."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i077",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "D'autre part, obligez l'Allemagne à faire quelque chose qu'il est bien significatif qu'elle n'ait pas encore fait — et ceci devrait vous avoir éclairé depuis longtemps. Il a été annexé au traité de paix une convention aérienne internationale, la convention de 1919, et il a été prévu que l'Allemagne pourrait demander à y adhérer. Vous savez combien l'Allemagne est désireuse de rentrer dans le concert européen, combien de fois elle a déjà essayé de faire poser sa candidature, par personne interposée, à la Société des nations. Il est singulier de constater qu'au contraire, elle n'a jamais fait la moindre tentative pour adhérer à la convention aérienne internationale. Pourquoi cette abstention? Simplement parce que toutes les puissances adhérentes doivent, aux termes de la convention, échanger tous renseignements concernant l'immatriculation de leurs appareils commerciaux et les licences de pilote délivrées à leurs ressortissants. En adhérant à cette convention, l'Allemagne se fût obligée à communiquer la liste de tous ses appareils commerciaux et de tous ses pilotes brevetés. Elle ne l'a pas fait. Elle ne veut pas le faire, pour pouvoir constituer une aviation commerciale puissante, en entretenant une industrie aéronautique prospère, qui, demain, se lancera dans la reconstitution d'une aviation militaire.",
+    "page_jo": 7,
+    "résumé": "Flandin révèle que l'Allemagne refuse d'adhérer à la convention aérienne internationale pour cacher ses préparatifs militaires."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i078",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Je sais bien : la règle 9 stipule que les stocks de moteurs d'aviation, de pièces détachées, d'accessoires de moteurs, ne seront pas autorisés au delà de ce qui sera apprécié nécessaire pour satisfaire aux besoins de l'aviation civile. Ces quantités seront déterminées par le comité de garantie v. Oui, mais cette stipulation n'a jamais été appliquée. Je ne sache pas qu'on ait jamais notifié officiellement à l'Allemagne le nombre maximum d'appareils qui devait correspondre aux besoins de son aviation marchande. La situation est donc grave.",
+    "page_jo": 8,
+    "résumé": "Flandin révèle que l'Allemagne refuse d'adhérer à la convention aérienne internationale pour cacher ses préparatifs militaires."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i079",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Si j'ai traité de façon étendue — et j'en demande pardon à la Chambre — cette question, que je considère comme très importante, c'est que j'avais déposé, au mois de juin dernier, une demande d'interpellation sur l'application des clauses aériennes du traité de Versailles, interpellation qui n'a pu être discutée, en raison de l'ordre du jour très chargé de la Chambre jusqu'à sa séparation.",
+    "page_jo": 8,
+    "résumé": "Flandin explique pourquoi il insiste sur cette question, évoquant une interpellation non discutée sur les clauses aériennes du traité de Versailles."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i080",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Mais, le 31 décembre de cette année — on vous l'a dit — l'Allemagne recouvre sa liberté. Jusqu'à cette date, vous pouvez causer. Plus tard, vous ne le pourrez plus ou vous ne le pourrez que dans des conditions bien moins favorables.",
+    "page_jo": 8,
+    "résumé": "Flandin alerte sur l'urgence d'agir avant que l'Allemagne ne recouvre sa pleine souveraineté aérienne."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i081",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Ne laissez pas se constituer, en dehors de vous et contre vous — et la question dépasse le domaine des relations entre la France et l'Allemagne, elle est d'intérêt mondial, tout au moins européen — ne laissez pas se constituer des groupements qui commencent à prendre de la puissance comme cette International air traffic association qui, sous un nom anglo-saxon s'est réunie déjà à Copenhague et à Amsterdam, et qui, comme par hasard, a inscrit tout d'abord à l'ordre du jour de ses travaux la fixation des règles pour la discrimination des avions commerciaux et des avions militaires.",
+    "page_jo": 8,
+    "résumé": "Flandin met en garde contre la formation de groupements internationaux qui pourraient contourner les restrictions aériennes imposées à l'Allemagne."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i082",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Vous avez, dans le traité de paix, forgé une arme: c'est la convention internationale de navigation aérienne. Cette arme, il faut la mettre à profit. Aujourd'hui, elle s'émousse. Les puissances dont on avait escompté l'adhésion s'abstiennent. Au contraire, il se forme, autour de cette International air traffic association, dans laquelle sont entrés des représentants de l'Allemagne et de toutes les puissances neutres pendant la guerre, toute une cabale en réalité dirigée contre la convention aérienne internationale.",
+    "page_jo": 8,
+    "résumé": "Flandin souligne l'affaiblissement de la convention aérienne internationale et la menace que représente l'International air traffic association."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i083",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Je vous demande de reviser votre point de vue. Je sais que M. le sous-secrétaire d'Etat a saisi de cette question le Gouvernement, je sais que le Gouvernement en a délibéré, je sais aussi que la décision qu'il a prise n'est nullement conforme à ma thèse. Peut-être — je me flatte sans doute — les explications supplémentaires que je viens d'apporter à cette tribune et le point de vue nouveau que je viens de soulever détermineront-ils le Gouvernement à soumettre la question à une nouvelle étude.",
+    "page_jo": 8,
+    "résumé": "Flandin exhorte le Gouvernement à reconsidérer sa position sur la convention aérienne internationale."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i084",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Messieurs, il ne me reste qu'un mot à dire de la politique du Gouvernement français à l'égard de l'industrie aéronautique. Il est indéniable qu'il y a une crise dans l'industrie aéronautique et il est impossible qu'il n'en soit pas ainsi, puisqu'une industrie vit de commandes et que les commandes ont diminué et diminueront sans doute plus encore, en ce qui concerne tout au moins les cellules d'avions, lorsque celles qui sont destinées à la constitution de la réserve de guerre auront été complètement exécutées.",
+    "page_jo": 8,
+    "résumé": "Flandin aborde la crise de l'industrie aéronautique française et la nécessité de commandes pour la soutenir."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i085",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Dans ces conditions, que faut-il faire ? Je crois — et les raisons que j'en donnais pour l'Allemagne tout à l'heure sont valables aussi pour la France — que la puissance aérienne de notre pays repose, non seulement sur une armée aérienne puissante et une navigation aérienne prospère, mais sur une industrie aéronautique forte.",
+    "page_jo": 8,
+    "résumé": "Flandin argue que la puissance aérienne française dépend d'une industrie aéronautique solide."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i086",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Or, une industrie aéronautique exposée du jour au lendemain à des dépôts de bilans, à des faillites, faute de commandes suffisantes, ne serait pas une force pour la France. D'autre part, personne ne comprendrait, dans la situation financière générale où nous nous trouvons, que l'Etat distribuât des commandes à l'industrie aéronautique en nombre considérable, uniquement pour la faire vivre.",
+    "page_jo": 8,
+    "résumé": "Flandin souligne les risques financiers pour l'industrie aéronautique et l'incompréhension qu'engendrerait un soutien excessif de l'État."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i087",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Eh bien, monsieur le sous-secrétaire d'Etat, je vous propose un moyen terme — vous vous orientez d'ailleurs, je crois, dès maintenant, vers cette politique, et je vous en félicite — consistant à restreindre le nombre des usines de construction aéronautique. Si le nombre de ces usines croissait indéfiniment, vous arriveriez à ne pouvoir donner à chacune d'elles, annuellement, que 25, 30, 40 ou 50 avions à construire, et ils seraient construits dans de très mauvaises conditions. En outre, cette poussière de commandes mettrait en situation financière difficile l'industrie aéronautique et la priverait de la force qu'elle doit conserver, comme une condition essentielle de la défense nationale.",
+    "page_jo": 8,
+    "résumé": "Flandin propose de réduire le nombre d'usines aéronautiques pour leur assurer des commandes plus importantes et viables."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i088",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Par conséquent, j'exprime le voeu que vous restreigniez le nombre des maisons de construction aéronautique, pour pouvoir leur donner des commandes de séries plus importantes. Vous pourrez ainsi réaliser une économie sur le prix unitaire. Bien entendu, en contre-partie de l'avantage que vous réserverez à ces industries, vous leur imposerez un effort technique considérable, sur lequel je voudrais dire un mot encore.",
+    "page_jo": 8,
+    "résumé": "Flandin insiste sur la nécessité de commandes groupées pour les usines aéronautiques et d'un effort technique accru."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i089",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "On a dit: il faut des crédits plus élevés pour commander des prototypes à l'industrie aéronautique. La commission des finances a pris l'initiative de les relever. Initiative louable ! Mais il ne faut pas que ces crédits soient inutilisés ou demeurent inutilisables, ce qui reviendrait au même, et ce qui se produirait si l'Etat ne prenait pas une part de risque dans la mise au point de ces avions nouveaux, qui est une oeuvre considérable. Le jour où vous passerez à l'avion de très grosse capacité de transport, et vous y passerez — M. le rapporteur voit que je partage son opinion sur ce point — vous serez obligés d'investir des capitaux très importants dans cette construction. Vous ne serez pas encore, bien entendu, aux 700 ou 800 millions que représente un cuirassé. Néanmoins, vous arriverez facilement, du prototype de 400,000 ou 500,000 fr., au prototype de 4 ou 5 millions.",
+    "page_jo": 8,
+    "résumé": "Flandin plaide pour une participation de l'État aux risques financiers liés au développement de prototypes d'avions."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i090",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Aventurer 4 ou 5 millions dans la fabrication d'un prototype, avec tous les aléas des essais et de la mise au point, c'est, pour une industrie, une grosse imprudence, si l'Etat ne participe pas aux risques de l'affaire. Sous quelle forme l'Etat peut-il consentir cette participation ? Plusieurs modalités peuvent être envisagées. L'Etat peut évidemment, en tout état de cause, à partir du moment où l'appareil sera construit, abandonner certaines sommes sur la commande au constructeur, quels que soient les résultats des essais. Il peut aussi, je crois que c'est la formule à adopter, pour les appareils qui, malgré tout, ne seraient commandés qu'à un petit nombre d'exemplaires, adopter le système de la régie intéressée.",
+    "page_jo": 8,
+    "résumé": "Flandin propose des modalités de participation financière de l'État pour soutenir les constructeurs aéronautiques."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i091",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Les constructeurs gagneront — je suis convaincu qu'ils seront d'accord sur cette formule — à se trouver en collaboration étroite et constante avec le service technique de l'aéronautique, pour l'établissement des plans et des dessins. En cette occasion, que je saisis avec empressement, je tiens à rendre ici hommage à l'effort technique de M. l'ingénieur de marine Fortant, qui, depuis son fauteuil, dirige le service de l'aéronautique avec une grande compétence et surtout une grande intelligence du métier.",
+    "page_jo": 8,
+    "résumé": "Flandin souligne l'importance d'une collaboration étroite entre les constructeurs et le service technique de l'aéronautique."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i092",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Si vous admettez ces rapports étroits entre les services techniques et les constructeurs pour la mise au point des appareils, je vous demande d'admettre la même collaboration pour leur construction même. Au demeurant, vous savez que la construction est suivie par les services de fabrication, qui pointent, à la réception, toutes les matières entrant dans la construction. Dès lors que vous admettez cette collaboration au point de vue technique, organisez la même entente au point de vue financier et donnez aux constructeurs, pour ces grands prototypes qui vont exiger des dépenses considérables, un véritable contrat d'association. Organisez la fabrication en régie intéressée.",
+    "page_jo": 8,
+    "résumé": "Flandin propose une collaboration financière et technique renforcée entre l'État et les constructeurs pour la fabrication des prototypes."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i093",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Je m'excuse d'avoir été au-delà de la mesure dans mes explications. Mais vous voyez dans quel esprit je suis monté à cette tribune. J'ai voulu apporter mon modeste concours au développement de la politique aérienne française, par la recherche des méthodes et des moyens qui me semblent les plus propres à donner à la France le bénéfice moral et matériel de son rôle d'animatrice de l'aéronautique.",
+    "page_jo": 8,
+    "résumé": "Flandin conclut son intervention en réaffirmant son engagement pour une politique aérienne française ambitieuse."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i094",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Cette politique aérienne, je crois l'avoir démontré, ne peut en aucune manière être taxée d'impérialisme. Nous avons le droit et le devoir d'assurer notre sécurité, qui serait gravement menacée par une offensive aérienne brutalement déchaînée sur notre territoire. Il n'est pas douteux que nos pensées aillent bien plus vers le développement de la navigation aérienne et vers le progrès qu'elle promet à l'humanité.",
+    "page_jo": 8,
+    "résumé": "Flandin défend la politique aérienne française contre les accusations d'impérialisme et insiste sur son rôle pacifique et progressiste."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i095",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Si nous voulons apprécier les progrès et — pour reprendre une expression très juste employée hier par M. Lafont — si nous voulons apprécier leur dynamique du progrès aérien, il ne faut pas le cristalliser, comme l'a fait M. Lafont, dans son état actuel. Il faut que nous gardions bien présents à l'esprit ces deux axiomes fondamentaux : l'avion est une machine à gagner du temps, la vitesse reste l'essence même du mouvement.",
+    "page_jo": 8,
+    "résumé": "Flandin souligne l'importance de la dynamique du progrès aérien et des principes fondamentaux de l'aviation."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i096",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Or il a presque toujours été dans la destinée de notre pays et de notre race, que si elle constitue dans le monde une aristocratie, celle de l'esprit et de la pensée, elle ait aussi pour mission de faire progresser la civilisation par ces grandes découvertes. En même temps, il est très rare que notre pays ait bénéficié matériellement de la mise au point et de l'exploitation de ces grandes découvertes mondiales. Si nous cherchions l'explication de ce fait, nous la trouverions facilement : nous dirions que la rançon de notre génie inventif est de ne pas toujours en tirer profit.",
+    "page_jo": 8,
+    "résumé": "Flandin évoque le rôle historique de la France dans les grandes découvertes et son incapacité à en tirer un profit matériel."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i097",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "prit, c'est l'exagération de notre sens critique.",
+    "page_jo": 9,
+    "résumé": "Flandin évoque le rôle historique de la France dans les grandes découvertes et son incapacité à en tirer un profit matériel."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i098",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "général de Castelnau",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Et un peu d'indiscipline, peut-être.",
+    "page_jo": 9,
+    "résumé": "Castelnau ajoute que l'indiscipline pourrait aussi expliquer les blocages."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i099",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Combien de vastes desseins, combien d'initiatives fécondes et d'efforts passionnés ont été soudainement paralysés par notre esprit critique!",
+    "page_jo": 9,
+    "résumé": "Flandin critique l'excès d'esprit critique qui paralyse les initiatives françaises."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i100",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Certes, je ne veux pas contester la valeur de l'esprit critique dans une démocratie comme la nôtre, mais j'en redoute les excès. Dans le cas présent, M. Bouilloux-Lafont me permettra de le lui dire, ce serait un excès déplorable que d'arrêter ce programme de navigation aérienne, auquel se consacrent, avec un zèle méritoire, aussi bien les pouvoirs publics, dans la personne de M. Laurent Eynac et de ses collaborateurs d'hier et d’aujourd’hui, que l'initiative privée, c'est-à-dire les ingénieurs, les constructeurs, les pilotes, étroitement unis dans la recherche du progrès aéronautique et dans la volonté d'y garder à la France le premier rang.",
+    "page_jo": 9,
+    "résumé": "Flandin défend le programme de navigation aérienne et souligne l'engagement des pouvoirs publics et du secteur privé."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i101",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "A l'origine de tous les moyens de transport, il y a eu des incrédules. D'une manière plus ou moins élégante, ils abritaient leur incrédulité derrière l'apparence pateline de la recherche du mieux. Quand les chemins de fer ont débuté et quand le gouvernement de l'époque sollicitait des crédits pour les aider, on lui répondait: Mais non! Il ne faut pas aller si vite; les chemins de fer, cela ne sert à rien! Alors, en effet, on allait de Paris à Versailles, de Paris à Saint-Germain ou de Saint-Etienne à Lyon et, chose curieuse, on tenait les mêmes raisonnements qu'aujourd’hui: “Nous ne gagnons pas tant de temps sur la voiture ou la diligence, et puis: C'est beaucoup plus dangereux et, enfin: Cela coûte beaucoup plus cher. Malgré tout, les chemins de fer se sont développés et, en dépit des réserves qu'avant M. Bouilloux-Lafont, M. Thiers apportait à cette tribune — je pense que ce parallèle n'aura pour notre collègue rien de désobligeant (Sourires) — ils ont fait leur place en France. Ces critiques n'avaient pas grande importance, d'ailleurs, parce que, si les chemins de fer avaient été arrêtés dans leur essor en France, comme ils se développaient à l'étranger, nous devions fatalement un jour les voir s'étendre chez nous.",
+    "page_jo": 9,
+    "résumé": "Flandin compare les critiques contre les chemins de fer à celles contre l'aviation, soulignant que la France ne doit pas répéter ses erreurs passées."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i102",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Mais, pour la navigation aérienne, le cas est beaucoup plus grave. Si nous acceptions aujourd’hui de nous arrêter dans notre programme, si nous acceptions de réduire notre effort parce que la sécurité n'est pas encore complète, parce que la régularité n'est pas absolue, parce qu'on ne gagne pas beaucoup de temps et parce qu'aussi cela coûte très cher, nous trouvions demain, devant nous, toutes les routes aériennes du monde occupées. Cela, il n'est pas possible que la Chambre le veuille.",
+    "page_jo": 9,
+    "résumé": "Flandin met en garde contre l'abandon du programme aérien, qui laisserait la France devancée par les autres nations."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i103",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "La commission des finances a senti, du reste, que cette position ne pouvait pas être la sienne. Certes, elle a critiqué. Elle est ainsi dans son rôle. Je crois même que l'esprit de critique a fait élection de domicile dans son local. (Sourires.)",
+    "page_jo": 9,
+    "résumé": "Flandin reconnaît le rôle critique de la commission des finances mais souligne son importance pour l'aviation."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i104",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "rapporteur",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Notre budget est en déficit de 4 milliards, ne l'oublions pas. Aussi le rôle de rapporteur de la commission des finances est-il plus ingrat que celui qui consiste à faire le très élégant et très utile discours que vous venez de prononcer.",
+    "page_jo": 9,
+    "résumé": "Le rapporteur rappelle le déficit budgétaire et défend la rigueur de son rôle."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i105",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Bouisson",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "C'est évident.",
+    "page_jo": 9,
+    "résumé": "Bouisson approuve le rapporteur."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i106",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guérin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Tout le monde ne pourrait pas faire un aussi beau discours.",
+    "page_jo": 9,
+    "résumé": "Guérin fait un compliment ironique sur le discours de Flandin."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i107",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Bouisson",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "M. le rapporteur n'a pas dit le contraire.",
+    "page_jo": 9,
+    "résumé": "Bouisson précise que le rapporteur n'a pas contesté la qualité du discours de Flandin."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i108",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Quoi qu'il en soit, gardons-nous de cet excès d'esprit critique et, lorsque la France a pris, dans un domaine, comme elle l'a fait dans la navigation aérienne, l'initiative de l'activité et du progrès, gardons-lui sa place. Faisons une large confiance à tous ceux qui, dans les pouvoirs publics ou dans l'initiative privée, se sont donné, avec un si noble esprit de sacrifice, la tâche de maintenir à la France le rang qu'elle a conquis et auquel elle a droit.",
+    "page_jo": 9,
+    "résumé": "Flandin conclut en appelant à la confiance dans les efforts pour maintenir la place de la France en aéronautique."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i109",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Messieurs, nous venons d'entendre de M. Flandin, un fort beau discours qui nous a remis un peu de baume au cœur (Très bien! très bien!) car M. le rapporteur nous avait montré l'avenir un peu en noir, peut-être. (Sourires.) C'était votre rôle, mon cher collègue, je ne le nie pas. D'ailleurs, je conçois fort bien qu'en examinant, sinon pour la première fois, du moins sans être familiarisé avec elle depuis très longtemps, une question aussi complexe que celle de l'aéronautique, on soit un peu étonné — et parfois à juste titre — des dépenses importantes qui sont affectées à certains chapitres et dont on ne voit pas, peut-être, la répercussion exacte. La question est, en effet, très complexe. Je reconnais tout de suite que tout n'y est pas pour le mieux dans le meilleur des mondes et que beaucoup de critiques de M. le rapporteur sont justifiées par les faits; mais il y en a un certain nombre que je ne saurais approuver.",
+    "page_jo": 9,
+    "résumé": "Montjou salue le discours de Flandin et reconnaît la complexité de la question aéronautique, tout en critiquant partiellement le rapporteur."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i110",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Pour bien comprendre le problème dans ses détails, il faut d'abord le voir dans l'ensemble et je vous demande, messieurs, la permission de faire, aussi brièvement que possible, un exposé général de la question de l'aéronautique, telle qu'elle se présente à nous aujourd’hui. M. Flandin et ceux qui l'ont précédé à cette tribune, depuis le commencement de la discussion de ce budget, nous ont parlé presque exclusivement des lignes aériennes et des questions d'aéronautique civile. C'est évidemment de ce budget qu'il s'agit; mais, pour moi, ces questions sont inséparables des questions d'aéronautique militaire et navale.",
+    "page_jo": 9,
+    "résumé": "Montjou propose une vision globale de l'aéronautique, incluant ses aspects civils et militaires."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i111",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Fonck",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Très bien!",
+    "page_jo": 9,
+    "résumé": "Fonck approuve l'intervention de Montjou sur le lien entre aéronautique civile et militaire."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i112",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "C'est avec joie que je vois mon camarade Fonck m'approuver. Tous ceux qui ont pratiqué depuis longtemps l'aéronautique seront également de mon avis. Si nous portons un faux jugement, quelquefois, sur certaines de ces questions, c'est parce que nous ne voyons qu'un des côtés du problème. (Très bien ! très bien!) Mais ce côté est, pour le moment, le plus critique, je le constate tout en le regrettant. Si l'intérêt de l'aéronautique est puissant, c'est parce que, malheureusement, la guerre peut encore survenir, ce qui nous oblige à être forts, parce que la guerre future sera, plus encore que la dernière, une guerre scientifique et parce qu'enfin, parmi les moyens mis par la science à la disposition des hommes pour s'entretuer, il n'en est pas de plus efficace, de plus brutal ni de plus formidable que l'arme aérienne.",
+    "page_jo": 9,
+    "résumé": "Montjou insiste sur l'importance stratégique de l'aéronautique en cas de guerre future."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i113",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Si nous avons un budget de l'aéronautique civile, si ce budget est relativement lourd par rapport à nos moyens financiers actuels, ce n'est pas surtout pour l'aéronautique civile, c'est pour l'aéronautique militaire. Ces aviations sont intimement liées. On a dit le contraire et je m'élève très vivement contre cette opinion. Le budget de l'aéronautique civile est en réalité, en grande partie, un budget militaire. Constatons, d'abord, qu'au point de vue technique, l'aviation militaire et l'aviation civile sont identiques. Si nous considérons la marine, c'est-à-dire le service qui peut être comparé avec le plus de vraisemblance à celui de l'aéronautique, que voyons-nous? Les navires employés depuis des milliers d'années sont différenciés, c'est entendu, suivant qu'ils font la guerre ou servent au trafic civil. Mais leurs caractéristiques essentielles et leurs qualités nautiques sont les mêmes. Les ingénieurs qui établissent les plans des paquebots et ceux qui construisent des navires de guerre obéissent aux mêmes lois scientifiques; ils étudient les fluides dans les mêmes conditions et ne font que des applications différentes des mêmes lois.",
+    "page_jo": 9,
+    "résumé": "Montjou explique que le budget de l'aéronautique civile sert en réalité des objectifs militaires, les deux domaines étant techniquement liés."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i114",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Nous n'en sommes pas encore là pour l'aviation; et les futures escadrilles de bombardement, celles qui comprennent les avions plus puissants, sont constituées avec des appareils Goliath, c'est-à-dire avec nos appareils civils de transport actuels. Dans l'avenir, il y aura des différenciations plus accusées. Des emplois militaires de l'aviation exigeront certainement des modèles sans aucun intérêt commercial.",
+    "page_jo": 9,
+    "résumé": "Montjou souligne que les appareils militaires actuels sont issus de modèles civils, mais que des différenciations apparaîtront à l'avenir."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i115",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "général de Castelnau",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "C'est évident.",
+    "page_jo": 9,
+    "résumé": "Castelnau approuve l'analyse de Montjou sur les différenciations futures entre aviation civile et militaire."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i116",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Néanmoins, l'étude des matières premières qui entrent dans la composition de ces avions, notamment celle, qui est à l'ordre du jour, de l'emploi des métaux ultralégers et même du bois ou de la toile, est utile aussi bien pour la construction de ces appareils que pour les appareils de transport. Pour les moteurs, les relations sont encore plus étroites entre ces deux aéronautiques. Qu'il s'agisse des moteurs d'aviation militaire ou des moteurs d'aviation civile, on retrouve les mêmes principes; ainsi, pour la marine, le Diesel, qui sert à la propulsion du sous-marin, c'est-à-dire de l'engin maritime de guerre le plus perfectionné, a de nombreux emplois civils, et les principes de construction de ce moteur ont été appliqués dans l'un et l'autre but.",
+    "page_jo": 9,
+    "résumé": "Montjou explique que les recherches sur les matériaux et les moteurs bénéficient aux deux types d'aviation."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i117",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Ce n'est pas seulement à ce point de vue que le budget de l'aéronautique a un caractère militaire. Le sous-secrétaire d'Etat de l'aéronautique n'est pas autre chose que le fournisseur du ministre de la guerre. Les crédits que nous lui donnons pour perfectionner notre technique industrielle aéronautique, pour poursuivre les recherches en ce qui concerne les moteurs ou les cellules, sont destinés à fournir des appareils à la guerre ou à la marine. Quelles commandes étudie son service des fabrications, par exemple? Celles que lui demandent les services de la guerre et de la marine. Quelles réceptions assure-t-il? Celles d'appareils dont il se débarrasse ensuite au profit de la guerre et pour lesquels il a servi d'intermédiaire. Il faut donc voir la question dans son ensemble.",
+    "page_jo": 9,
+    "résumé": "Montjou affirme que le sous-secrétaire d'État à l'aéronautique agit principalement comme fournisseur pour l'armée et la marine."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i118",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Je ne dis pas que l'aviation commerciale ne présente pas un intérêt commercial. Je n'irai pas jusqu'à soutenir ce paradoxe. Mais je comprends, en partie, la thèse de M. le rapporteur. L'aviation sera intéressante du point de vue...",
+    "page_jo": 9,
+    "résumé": "Montjou reconnaît l'intérêt commercial de l'aviation mais comprend partiellement les critiques du rapporteur."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i119",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "vue commercial — M. de La Palisse Pau rait dit déjà — le jour où (De vivra par ses propres moyens. Le jour où ses clients seront assez nombreux pour couvrir ses frais d'exploitation, elle rendra des services incontestables.",
+    "page_jo": 10,
+    "résumé": "Montjou reconnaît l'intérêt commercial de l'aviation mais comprend partiellement les critiques du rapporteur."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i120",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le général de Castelnau",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Il faut lui faire réaliser ce progrès.",
+    "page_jo": 10,
+    "résumé": "Castelnau insiste sur la nécessité de faire progresser l'aviation."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i121",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Tant que nous la ferons vivre d'une façon factice, son rôle commercial restera tout à fait secondaire. Est-ce à dire que nous n'arriverons jamais à avoir de grandes compagnies de transports aériens vivant sans aucune subvention de l'Etat ? Certainement, mais nous n'atteindrons pas ce but avant un certain temps. Nous n'avons pas encore de compagnies de navigation ni même de chemins de fer qui exploitent leurs lignes sans subvention de l'Etat. Cependant, voilà soixante-dix ans que les chemins de fer existent. On ne peut donc pas exiger des compagnies de transports aériens qu'elles volent de leurs propres ailes après trois années d'existence.",
+    "page_jo": 10,
+    "résumé": "Montjou explique que l'aviation ne peut pas encore se passer de subventions, contrairement aux chemins de fer qui ont mis des décennies à devenir autonomes."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i122",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Les services maritimes qui assurent nos relations avec l'Amérique du Sud coûteront encore beaucoup de millions à l'Etat l'année prochaine.",
+    "page_jo": 10,
+    "résumé": "Flandin souligne le coût élevé des subventions pour les services maritimes."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i123",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Bouisson",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Malheureusement!",
+    "page_jo": 10,
+    "résumé": "Bouisson exprime son regret face au coût des subventions maritimes."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i124",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guérin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Ils ne sont pas les seuls.",
+    "page_jo": 10,
+    "résumé": "Guérin rappelle que d'autres services coûtent également cher à l'État."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i125",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Le budget de laéronautique civile offre encore un autre intérêt, l'intérêt politique. L'aviation, au même titre que la marine, plus encore peut-être, est un instrument de prestige un instrument d'influence morale de premier ordre. Les grandes lignes qui traversent de nombreux pays, comme notre ligne de Varsovie ou de Constantinople, sont une arme politique importante.",
+    "page_jo": 10,
+    "résumé": "Montjou souligne l'importance politique et stratégique de l'aviation civile."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i126",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "J'espère bien que le Gouvernement, dans les négociations de Lausanne, saura défendre la position que la France a prise au port aérien de Constantinople.",
+    "page_jo": 10,
+    "résumé": "Flandin exprime son espoir que le gouvernement défende les intérêts français à Constantinople."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i127",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le sous-secrétaire d'Etat de l'aéronautique",
+      "role": "sous-secrétaire d'Etat de l'aéronautique",
+      "groupe": null
+    },
+    "text_brut": "Je puis vous rassurer à cet égard. Le sous-secrétariat d'Etat de l'aéronautique est représenté dans les conversations de Lausanne.",
+    "page_jo": 10,
+    "résumé": "Le sous-secrétaire d'État rassure sur la représentation française dans les négociations de Lausanne."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i128",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Nous en prenons acte, et nous vous en remercions, parce que le port de San-Stéfano constitue une base très importante pour notre influence en Orient. La ligne dont il s'agit est très disputée. Les Anglais ont tout tenté pour essayer de nous supplanter. Ils ont envoyé des autorités très notoires de leur aéronautique, comme le major général sir Seafton-Banker, pour essayer de nous arracher les marchés que nous avions conquis. Les Allemands, également, ont essayé de créer une ligne de Munich à Vienne. Le jour de l'inauguration, le gouvernement autrichien était sur le terrain d'aviation, entièrement pavoisé. La fête était fort bien organisée. Le temps était malheureusement très mauvais. Un appareil arrive; tout le monde se rassemble pour le saluer; et l'on s'aperçoit que c'est un appareil français qui arrive de Prague. Les ministres autrichiens se sont montrés fort corrects : l'inauguration s'est faite à notre profit — nous devons nous en féliciter — et l'appareil allemand n'a pas paru.",
+    "page_jo": 10,
+    "résumé": "Montjou décrit la compétition internationale pour les lignes aériennes et la réussite française en Autriche."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i129",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Il faut donc soutenir notre aviation civile — et c'est la raison du budget que nous votons — pour les nécessités que je viens d'indiquer : nécessités militaires actuelles, nécessités commerciales futures et nécessités politiques. La discussion de ce budget doit consister dans l'examen de l'utilité et de l'emploi des crédits que nous allons voter, en les envisageant par rapport à ces différents buts. Avant tout, au point de vue militaire, comme au point de vue commercial, ils doivent servir la cause du progrès. Nous devons posséder les meilleurs appareils, afin d'avoir, d'une part, la supériorité de l'armement; de l'autre, la primauté des appareils à grand rendement, offrant le maximum de sécurité, emportant dans les meilleures conditions le plus grand nombre de passagers et la plus grande quantité de marchandises, faisant gagner, enfin, comme le disait M. Pierre-Etienne Flandin, le plus de temps possible.",
+    "page_jo": 10,
+    "résumé": "Montjou justifie le budget de l'aviation civile par ses enjeux militaires, commerciaux et politiques, et insiste sur la nécessité du progrès technique."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i130",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Il faut que ces subventions contribuent aussi à faciliter la mobilisation, en permettant l'installation et le développement d'usines importantes prêtes à fabriquer très rapidement et en grand nombre les appareils dont nous aurons besoin à ce moment. N'accumulons pas, dans ce but, des stocks trop importants qui seraient pour nous une cause de stagnation, en temps de paix, et qui, en temps de guerre, empêcheraient la production des appareils du type le plus récent, du type supérieur à celui de l'adversaire.",
+    "page_jo": 10,
+    "résumé": "Montjou explique l'importance des subventions pour la mobilisation industrielle et met en garde contre l'accumulation de stocks obsolètes."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i131",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Aidons nos usines. Soutenons aussi nos compagnies de navigation aérienne. A cet égard, M. le rapporteur a émis de nombreuses critiques. Après lui, je prétends que les subventions aux lignes aériennes doivent subir une discrimination sévère. Pour mériter une subvention, il faut que ces lignes soient une cause de progrès pour la construction des appareils et qu'elles servent à la mise au point de notre matériel de guerre et à la formation d'un grand nombre de mécaniciens et de pilotes. Il faut, en outre, qu'elles préparent le développement commercial de notre pays. Il faut, enfin, qu'elles offrent un intérêt politique, c'est-à-dire qu'elles représentent par l'établissement et le service régulier de ports aériens comme celui de San-Stefano, dont il était question tout à l'heure, un instrument d'influence politique internationale. Si les lignes aériennes ne remplissent pas ces trois conditions, il ne faut pas les subventionner; ce serait du gaspillage. Il est inutile de soutenir des lignes qui doublent les voies ferrées et qui abrègent peu la route lorsqu'on préfère voyager la nuit.",
+    "page_jo": 10,
+    "résumé": "Montjou propose une discrimination stricte des subventions aux lignes aériennes en fonction de leur utilité militaire, commerciale et politique."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i132",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Mais les subventions, telles qu'elles sont réparties, ne répondent pas du tout aux buts que je voudrais voir poursuivre. Il faut des crédits importants ; mais j'estime, et je ne suis pas le seul, que leur répartition est mal comprise. Tout de suite, je délimite la question. Je ne mets pas en cause M. le sous-secrétaire d'Etat de l'aéronautique. Je suis persuadé — il ne le dira pas évidemment — qu'il est de mon avis sur beaucoup de questions. Le mal dont souffre l'aviation a une cause plus élevée, plus générale : le défaut d'organisation d'ensemble. Le mal est même que celui dont nous souffrons dans beaucoup d'autres domaines. Tant que nous n'aurons pas entrepris une réorganisation générale, rationnelle, de l'aéronautique, celui qui sera chargé d'employer les crédits que nous y consacrons, qu'il soit ministre de la guerre, des colonies, de la marine ou de l'air, en gaspillera énormément.",
+    "page_jo": 10,
+    "résumé": "Montjou critique la mauvaise répartition des subventions et le manque d'organisation globale de l'aéronautique."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i133",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "M. Flandin a très bien exposé la situation. Il nous a dit qu'elle était très brillante en apparence, mais stagnante, et que nous avions atteint un palier. Qui dit arrêt dit régression. Faisons bien attention : nous allons reculer. Nous reculons déjà, parce que nous restons sur place et que les autres avancent. Pourquoi notre aviation a-t-elle une brillante apparence? Parce que, jusqu'à présent, nous n'avons pas eu de concurrents. Il nous était très facile d'être les premiers. L'Allemagne, à cause du traité de Versailles, n'a pas pu avoir une aviation civile avant le 5 mai dernier et ne pourra pas ouvrir une ligne aérienne internationale avant le 1er janvier prochain. Les Anglais ne nous ont pas fait concurrence réelle, parce qu'ils ont eu à organiser d'abord la base de leur aviation.",
+    "page_jo": 10,
+    "résumé": "Montjou alerte sur le risque de régression de l'aviation française face à la concurrence étrangère, notamment allemande et anglaise."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i134",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Au parlement anglais, les critiques sont acerbes, parce que le rendement des services anglais n'était pas apparent. L'Angleterre a institué un ministère de l'air, groupe tous les crédits, aussi bien ceux de la guerre et de la marine que des colonies. Elle a établi des centres d'études importants, qui ont poussé les recherches dans des directions très intéressantes, comme la mise au point d'un nouveau type de dirigeable — il est vrai que, dans ce domaine, les Anglais ont commis des erreurs, qu'ils ont payées lourdement. Les Anglais ont fondé des écoles militaires pour former des officiers aéronautes, et des écoles civiles pour instruire des ingénieurs également spécialisés. Ils se sont livrés à un travail de préparation. Je suis persuadé qu'ils en tireront maintenant des résultats ; et nous devons prendre garde à la concurrence très sérieuse qui se prépare de ce côté.",
+    "page_jo": 10,
+    "résumé": "Montjou décrit les efforts anglais en matière d'aviation et met en garde contre leur future concurrence."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i135",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Pourquoi notre situation est-elle stagnante? Parce que, d'abord au point de vue recherches, au point de vue technique, nos progrès sont très minces. Les compliments ont été adressés à M. l'ingénieur général Fortant. Je m'y suis associé de grand cœur, mais, là encore, il y a une question d'organisation qui est en cause. J'estime que l'Etat a trop d'attributions; j'estime que l'initiative individuelle n'est pas assez encouragée et l'un des grands reproches que je ferai à notre rapporteur, c'est qu'en reportant sur ce chapitre « études » une grande partie des crédits destinés aux lignes, il n'a peut-être pas envisagé ce fait que ces crédits vont précisément dans des organismes d'Etat, organismes déjà extrêmement gonflés, extrêmement complexes, alors que je voudrais voir surtout soutenir les bureaux d'études, les ingénieurs, les inventeurs et les initiatives privées.",
+    "page_jo": 10,
+    "résumé": "Montjou critique le manque de progrès technique en France et le manque de soutien à l'initiative privée."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i136",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Cela, comment? Nous avons entendu exposer une politique fort intéressante à cet égard. Il est certain que les inventeurs qui ne reçoivent pas des fonds pour les aider à construire leurs appareils, ne pourront que très difficilement les trouver dans le crédit privé. C'est entendu, mais, là, il faudra faire une très sérieuse discrimination pour ne pas encourager trop d'usines qui tombent ensuite, parce que les crédits qui leur sont affectés ne couvrent pas entièrement les dépenses.",
+    "page_jo": 10,
+    "résumé": "Montjou propose une discrimination dans le soutien aux inventeurs et aux usines pour éviter le gaspillage des crédits."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i137",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "commandes suffisantes ne leur sont pas faites, tout le fruit de leurs études est perdu et elles sont alors obligées de changer d’études, d'abandonner les constructions aéronautiques. Quel est donc le procédé possible? Je n'en vois qu'un. C'est celui qui fut employé par l'armée en 1911. C'est le procédé du concours. Je crois qu'en aidant très modérément les constructeurs, qui peuvent paraître au service technique les plus intéressants, mais, de plus, en fixant longtemps à l'avance, et non pas trois mois auparavant, comme pour certains concours — il faut envisager au moins dix-huit mois ou deux ans de marge — les caractéristiques des appareils nécessaires pour répondre à tous les différents besoins de l'Etat, qu'il s'agisse des besoins militaires, qui sont nombreux: chasse, bombardements de jour et de nuit, reconnaissances, corps d'armée, observation, que sais-je! et qui demandent pour chacun d'eux quelquefois plusieurs modèles, ou qu'il s'agisse des besoins de la marine ou des besoins du commerce, en fixant, dis-je, les caractéristiques et les qualités de rendement désirable de chacun de ces appareils, et en instituant des concours employant presque totalement les crédits alloués pour les recherches et les études, nous aurions des chances d'obtenir des résultats très intéressants.",
+    "page_jo": 11,
+    "résumé": "Montjou propose une discrimination dans le soutien aux inventeurs et aux usines pour éviter le gaspillage des crédits."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i138",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Evidemment, il y aurait des catastrophes parmi les concurrents. Mais c'est la loi générale de la concurrence industrielle. C'est une loi dure, mais c'est une loi évidente et fatale, c'est une loi bienfaisante sans laquelle aucun progrès ne serait jamais atteint. Ceux qui auraient créé les meilleurs types d'appareils, réalisant les meilleures performances constatées par le service technique pendant les concours, verraient ces appareils commandés par l'État à des prix avantageux, ce qui exciterait la concurrence et pousserait au progrès.",
+    "page_jo": 11,
+    "résumé": "Montjou défend la concurrence industrielle comme moteur de progrès, malgré ses risques."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i139",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Voilà, messieurs, la politique que j'envisagerais à ce point de vue. Elle est discutable, comme toute politique, mais elle en vaut peut-être d'autres. Pour les lignes aériennes, le même mal se manifeste, c'est l'étatisme. L'Etat s'est institué la providence des lignes aériennes. Il le fallait jusqu'à un certain point: je l'ai reconnu tout à l'heure. Mais, lorsqu'on accepte le rôle de providence, il faut savoir le remplir. L'Etat a dit aux lignes aériennes: 'Je vous donnerai des terrains.' Il leur en a donné quelques-uns. Sur plusieurs sont arrivés des accidents dus évidemment à la mauvaise qualité de ces terrains.",
+    "page_jo": 11,
+    "résumé": "Montjou critique l'étatisme dans la gestion des lignes aériennes et la mauvaise qualité des terrains fournis par l'État."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i140",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Là je me séparerai tout à fait du rapporteur. Je trouve qu'une des parties essentielles de l'organisation de notre aviation, c'est précisément l'infrastructure. Mais je comprends très bien qu'on ait reculé devant les crédits demandés, car leur emploi actuel est absolument paradoxal. Je vais vous en donner un exemple. C'est un exemple personnel. On a quelquefois tort de le donner. Mais ils ont une valeur, c'est d'avoir été vécus. Il s'agit de Laval, chef-lieu du département que j'ai l'honneur de représenter. Le conseil municipal a consenti, en vue du développement de l'aviation, avec le désir d'avoir une gare aérienne, et en évoquant justement le souvenir rappelé tout à l'heure de la création de compagnies de chemins de fer et des villes qui ne voulaient pas avoir de voie ferrée pour ne pas être gênées par le bruit et la fumée, la ville de Laval, dis-je, a voté un crédit de 200,000 fr. pour acheter un terrain. C'est un joli denier. Mais elle dit: 'Ce terrain servira également comme terrain de sports. On y fera du football; une fois par an, on y donnera des courses.' Rien de mieux.",
+    "page_jo": 11,
+    "résumé": "Montjou illustre par un exemple local les paradoxes dans l'utilisation des crédits pour l'infrastructure aéronautique."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i141",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Pour que ce terrain soit parfait, il faudrait que l'État veuille bien accorder une toute petite somme et exproprier une bande d'une cinquantaine de mètres qui gêne sur un des côtés. Il y a également des arbres à abattre. Dès maintenant, on peut y atterrir, mais, pour en faire un terrain permanent, ces mesures sont nécessaires. Là-dessus, la douzième direction, c'est-à-dire l'armée, envoie un représentant, qui dit: 'Ce terrain n'est pas du tout ce qu'il nous faut. Nous voulons un terrain sur lequel seuls les militaires puissent atterrir.' — Les civils sont probablement de mauvaises fréquentations. — 'Il ne faut pas qu'on y fasse des courses, cela pourrait l'abîmer, ni qu'on y joue au football' — sans doute parce qu'un appareil en atterrissant pourrait heurter le ballon, ce qui serait très dangereux!",
+    "page_jo": 11,
+    "résumé": "Montjou dénonce l'absurdité des exigences militaires pour les terrains d'aviation, limitant leur usage aux seuls militaires."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i142",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Cette conception est abracadabrante. S'il faut que tous nos ports aériens soient achetés en double par l'Etat, l'un pour les civils et l'autre pour les militaires, et si l'on ne peut rien faire d'autre sur ces terrains, c'est évidemment là engager des dépenses invraisemblables et tout à fait inutiles. Ce gaspillage dure depuis la fin de la guerre. Sur les terrains militaires, les civils n'ont souvent pas le droit de descendre. C'est une conception inadmissible. Il faut qu'il y ait des terrains, mais pour tout le monde. Quand il y a des hangars militaires, il faut, comme dans un port, leur donner un emplacement, un côté du terrain.",
+    "page_jo": 11,
+    "résumé": "Montjou critique le gaspillage et l'exclusivité militaire des terrains d'aviation, prônant une utilisation partagée."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i143",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Pour diriger ces aéro-gares créées par l'Etat et magnifiquement installées, des examens ont eu lieu, analogues à celui des contributions directes. D'anciens notaires qui n'ont pas réussi, ou d'anciens banquiers sont chefs d'aérogare dans différents coins de la France. Résultat: organisation invraisemblable.",
+    "page_jo": 11,
+    "résumé": "Montjou dénonce le recrutement inadapté des chefs d'aérogare, souvent sans compétence aéronautique."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i144",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le sous-secrétaire d'Etat de l'aéronautique",
+      "role": "sous-secrétaire d'État de l'aéronautique",
+      "groupe": null
+    },
+    "text_brut": "C'est tout à fait inexact.",
+    "page_jo": 11,
+    "résumé": "Le sous-secrétaire d'État conteste les affirmations de Montjou sur le recrutement des chefs d'aérogare."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i145",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Je l'ai constaté par moi-même en m'entretenant avec certains d'entre eux.",
+    "page_jo": 11,
+    "résumé": "Montjou maintient ses critiques en s'appuyant sur des témoignages directs."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i146",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le sous-secrétaire d'Etat de l'aéronautique",
+      "role": "sous-secrétaire d'État de l'aéronautique",
+      "groupe": null
+    },
+    "text_brut": "C'est inexact. Notre personnel est recruté par voie de concours et nous réservons des places aux mutilés qui sont présentés par l'autorité militaire.",
+    "page_jo": 11,
+    "résumé": "Le sous-secrétaire d'État défend le recrutement par concours et l'inclusion des mutilés."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i147",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "J'en connais qui ne sont nullement mutilés et qui n'ont aucune compétence.",
+    "page_jo": 11,
+    "résumé": "Montjou persiste à critiquer le manque de compétence de certains chefs d'aérogare."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i148",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le sous-secrétaire d'Etat de l'aéronautique",
+      "role": "sous-secrétaire d'État de l'aéronautique",
+      "groupe": null
+    },
+    "text_brut": "Ils sont gardiens de terrains. De telles affirmations nécessitent une mise au point. Vous voulez parler sans doute des gardiens de terrains de secours, c'est-à-dire des aérodromes qui ne sont ni des ports, ni des gares, ni des stations...",
+    "page_jo": 11,
+    "résumé": "Le sous-secrétaire d'État précise que les personnes visées sont des gardiens de terrains de secours."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i149",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Je parle d'aérogares et des chefs d'aérogare ainsi que de leurs employés.",
+    "page_jo": 11,
+    "résumé": "Montjou réaffirme qu'il parle des chefs d'aérogare et non des gardiens de terrains de secours."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i150",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le sous-secrétaire d'Etat de l'aéronautique",
+      "role": "sous-secrétaire d'État de l'aéronautique",
+      "groupe": null
+    },
+    "text_brut": "Ce sont des terrains de secours sur lesquels on va toucher en cas d'atterrissage forcé.",
+    "page_jo": 11,
+    "résumé": "Le sous-secrétaire d'État insiste sur le fait qu'il s'agit de terrains de secours."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i151",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Ni Dijon, ni Antibes ne sont dans ce cas.",
+    "page_jo": 11,
+    "résumé": "Montjou conteste l'argument en citant des exemples de grandes aérogares."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i152",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le sous-secrétaire d'Etat de l'aéronautique",
+      "role": "sous-secrétaire d'État de l'aéronautique",
+      "groupe": null
+    },
+    "text_brut": "Pour diminuer les frais, nous plaçons sur ces terrains de simples gardiens qui sont pris de préférence parmi les candidats mutilés.",
+    "page_jo": 11,
+    "résumé": "Le sous-secrétaire d'État explique la politique de recrutement des gardiens de terrains de secours."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i153",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Il y a, en plus de cela, des aérogares importantes comme celles que je vous ai citées et sur lesquelles il y a des chefs d'aérogare et d'autres employés de tout ordre.",
+    "page_jo": 11,
+    "résumé": "Montjou réitère l'existence de chefs d'aérogare dans des aérogares importantes."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i154",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le sous-secrétaire d'Etat de l'aéronautique",
+      "role": "sous-secrétaire d'État de l'aéronautique",
+      "groupe": null
+    },
+    "text_brut": "Mais ceux-là ont été recrutés au concours. Il y en a qui ont appartenu à l'aéronautique. En tout cas, les épreuves du concours comportent une partie importante réservée à l'aéronautique.",
+    "page_jo": 11,
+    "résumé": "Le sous-secrétaire d'État défend le recrutement des chefs d'aérogare par concours avec des épreuves aéronautiques."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i155",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Peut-être ont-ils été météorologistes ou constructeurs de hangars Bessonneau! Ils n'ont pas une grande expérience des choses de l'air. J'aimerais mieux que l'on utilise des militaires, des chefs d'escadrilles, qui, placés sur certains terrains, pourraient très bien les gérer et feraient des chefs d'aérogare autrement compétents que ces excellents fonctionnaires, quelle que soit leur compétence.",
+    "page_jo": 11,
+    "résumé": "Montjou propose de recruter des militaires expérimentés pour gérer les aérogares plutôt que des fonctionnaires."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i156",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Vous savez mieux que personne que le ministre de la guerre qui, par ailleurs, a trop d'officiers, refuse d'en donner à l'aéronautique.",
+    "page_jo": 11,
+    "résumé": "Flandin explique que le ministre de la Guerre refuse de détacher des officiers pour l'aéronautique."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i157",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "C'est pour cela que je reproche la dispersion des efforts. Nous sommes complètement d'accord.",
+    "page_jo": 11,
+    "résumé": "Montjou reconnaît un accord avec Flandin sur la dispersion des efforts."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i158",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Pierre-Etienne Flandin",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Je suis entièrement de votre avis sur toute cette partie de votre exposé.",
+    "page_jo": 11,
+    "résumé": "Flandin approuve les critiques de Montjou sur l'organisation de l'aviation."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i159",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Je vous remercie de cette approbation. Il y a là des maux dont je ne rends pas responsable M. le sous-secrétaire d'Etat. Il ne doit pas se croire visé par mes paroles; c'est une question d'organisation générale.",
+    "page_jo": 11,
+    "résumé": "Montjou remercie Flandin et précise que ses critiques ne visent pas personnellement le sous-secrétaire d'État."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i160",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le sous-secrétaire d'Etat de l'aéronautique",
+      "role": "sous-secrétaire d'État de l'aéronautique",
+      "groupe": null
+    },
+    "text_brut": "Les chefs de service des aérodromes sont, je le répète, choisis au concours. La plupart de ceux qui se présentent à ce concours sont d'anciens aviateurs.",
+    "page_jo": 11,
+    "résumé": "Le sous-secrétaire d'État réaffirme que les chefs d'aérodrome sont recrutés par concours parmi d'anciens aviateurs."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i161",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "A mon point de vue, ces concours sont ridicules. Il y a tellement d'anciens aviateurs, tellement de militaires qui jouent au bridge sur les aérodromes, qu'il vaudrait mieux les employer ainsi ou autrement.",
+    "page_jo": 11,
+    "résumé": "Montjou critique l'inutilité des concours et propose d'employer les militaires inactifs."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i162",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le général de Castelnau",
+      "role": "général",
+      "groupe": null
+    },
+    "text_brut": "S'ils jouent au bridge, il vaudrait mieux les renvoyer chez eux.",
+    "page_jo": 11,
+    "résumé": "Le général de Castelnau suggère de renvoyer les militaires inactifs chez eux."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i163",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Que voulez-vous qu'ils fassent? Ils ne peuvent pas voler toute la journée simplement pour tourner en rond autour des terrains. Cela use des appareils, de l'essence et cela ne sert à rien tout en coûtant fort cher! Au bout d'un certain temps il faut bien qu'ils descendent, et ils n'ont plus qu'à jouer au bridge. C'est forcé.",
+    "page_jo": 11,
+    "résumé": "Montjou explique que les militaires inactifs jouent au bridge par manque d'activités utiles."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i164",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "le général de Castelnau",
+      "role": "général",
+      "groupe": null
+    },
+    "text_brut": "C'est donc que les parties de bridge sont un repos.",
+    "page_jo": 11,
+    "résumé": "Le général de Castelnau ironise sur le bridge comme activité de repos pour les militaires."
+  },
+  {
+    "id": "senat-1922-11-28-s002-i165",
+    "date": "1922-11-28",
+    "chambre": "senat",
+    "session": "1922",
+    "seance": "2",
+    "orateur": {
+      "nom": "Guy de Montjou",
+      "role": "",
+      "groupe": null
+    },
+    "text_brut": "Quant aux services de radios et de météorologie, ils sont essentiels au fonctionnement des services aériens. Je dois dire qu'ils fonctionnent bien mal. Généralement l'annonce du départ de l'aérodrome parvient à l'arrivée bien après l'appareil. C'est du moins ce que j'ai constaté par expérience personnelle. Quant aux communications météorologiques, peut-être est-ce une question de crédits. Est-ce parce qu'on a vu les choses trop en grand et que les services coûtent...",
+    "page_jo": 11,
+    "résumé": "Montjou critique le mauvais fonctionnement des services de radios et de météorologie, évoquant un possible problème de crédits."
+  }
+]

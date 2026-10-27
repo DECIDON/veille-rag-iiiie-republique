@@ -134,8 +134,8 @@ def afficher(resultats: list[dict]) -> str:
             f"{rang}. {r['orateur']} — {r['chambre']}, {r['date']}, "
             f"page JO {r['page_jo']} [{r['chunk_id']}]"
         )
-        if r.get("titre_parent"):
-            lignes.append(f"   sous « {r['titre_parent']} »")
+        if r.get("résumé"):
+            lignes.append(f"   résumé : {r['résumé']}")
         lignes.append(f"   « {extrait} »")
         score = r.get("score_rerank")
         lignes.append(f"   rerank : {score:+.3f}" if score is not None else "")

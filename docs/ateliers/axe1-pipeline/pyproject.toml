@@ -9,7 +9,7 @@ version = "0.1.0"
 description = "Atelier axe 1 — pipeline complet, du texte OCR à la recherche hybride (leçon 0012)"
 requires-python = ">=3.10"
 dependencies = [
-    "sentence-transformers>=3.0", # encodeur BAAI/bge-m3 + reranker bge-reranker-v2-m3 (installe torch)
+    "sentence-transformers>=3.0", # reranker bge-reranker-v2-m3 ; installe torch/transformers (encodeur bge-m3 chargé en direct, cf. embedders.py)
     "qdrant-client>=1.20",        # client Python de la base vectorielle Qdrant
 ]
 

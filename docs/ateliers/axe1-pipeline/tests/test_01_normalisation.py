@@ -49,6 +49,14 @@ def test_césure_rejointée_pas_les_vrais_tirets():
     assert "des" in conserve
 
 
+def test_césure_aplatis_en_espace_rejointée():
+    """Certains exports remplacent le saut de ligne de césure par un espace."""
+    assert normaliser_texte("donne lec- ture du procès-verbal") == "donne lecture du procès-verbal"
+    assert normaliser_texte("s'ex- cuse de ne pou- voir") == "s'excuse de ne pouvoir"
+    # Un trait d'union collé n'est pas une fin de ligne : jamais joint.
+    assert normaliser_texte("le garde-chasse et le sous-secrétaire") == "le garde-chasse et le sous-secrétaire"
+
+
 def test_guillemets_unifies():
     assert normaliser_texte("« discours »") == '"discours"'
 

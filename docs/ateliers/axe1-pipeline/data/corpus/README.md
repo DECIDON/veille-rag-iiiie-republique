@@ -14,8 +14,7 @@ enregistrement = **une intervention** d'un orateur, jamais une séance entière.
   "chambre": "chambre",
   "session": "1890",
   "seance": "1",
-  "ordre_du_jour": ["Budget de l'instruction primaire"],
-  "titre_parent": "Suite de la discussion du budget de l'instruction primaire",
+  "résumé": "Ferry expose le budget de l'instruction primaire comme la vraie dette de l'État",
   "orateur": {"nom": "J. Ferry", "role": "ministre de l'instruction publique", "groupe": null},
   "text_brut": "… texte OCR tel quel …",
   "page_jo": 245
@@ -32,8 +31,7 @@ enregistrement = **une intervention** d'un orateur, jamais une séance entière.
 | `orateur` | oui | objet | `nom` (requis, graphie telle qu'observée), plus `role` et `groupe` en option |
 | `text_brut` | oui | chaîne | texte OCR **sans nettoyage** : c'est lui qui nourrit la citation verbatim |
 | `page_jo` | oui | entier | page du Journal officiel, pour la citation |
-| `titre_parent` | non | chaîne | rubrique / titre de la discussion (métadonnée de contexte) |
-| `ordre_du_jour` | non | tableau de chaînes | rubriques de la séance (métadonnée de contexte) |
+| `résumé` | non | chaîne | court résumé de l'intervention (métadonnée de contexte, restituée à l'affichage) |
 
 ## Ce que le pipeline ajoute (ne le fournissez pas)
 
@@ -46,7 +44,9 @@ enregistrement = **une intervention** d'un orateur, jamais une séance entière.
 
 ## Règles
 
-1. Ne pré-nettoyez rien : césures, apostrophes variées, accents instables sont
+1. Ne pré-nettoyez rien : césures (même si votre export les aplaties en
+   « lec- ture » — l'étape 1 sait les rejoindre), apostrophes variées, accents
+   instables sont
    exactement ce que l'étape 1 doit digérer — votre corpus réel doit les garder.
 2. Un `id` par intervention, unique dans tout le dossier (le chargeur refuse les
    doublons).
@@ -54,3 +54,24 @@ enregistrement = **une intervention** d'un orateur, jamais une séance entière.
 4. Fichier de départ fourni : `exemple.json` (5 interventions, 2 séances) — il
    fait tourner tout le pipeline et tous les tests sans données réelles ; vous le
    retirerez quand votre corpus sera en place.
+5. Vos exports bruts (formats d'un autre jour, sans `id` ni date) ne vont **jamais**
+   dans ce dossier : le chargeur lirait un fichier sans identifiants et refuserait
+   tout le lot. Déposez-les dans `brut/` (souterrain, jamais scanné) et convertissez :
+
+   ```sh
+   uv run python outils/adaptateur_debats.py --chambre senat --date 1922-11-27
+   ```
+
+   L'adaptateur (`outils/adaptateur_debats.py`) traduit l'export « compte-rendu
+   BnF » (`orateur`/`contenu`/`position`/`résumé`/`canvasId`) vers le contrat ci-dessus :
+   le folio `/fN/` du canvas est le numéro de page du JO avec `--page-canvas`,
+   sinon `position` → `page_jo` (première page du segment, `--offset-page` si vous
+   connaissez le calage avec la page imprimée) ; les civilés « M. » sont retirées
+   des noms, et le `résumé` traverse tel quel. Une sortie par fichier brut :
+   `brut/x.json` → `x.converti.json`. Pour l'échantillon déposé ici (une seule
+   séance, la 2 du 28 novembre 1922, page = folio du canvas) :
+
+   ```sh
+   uv run python outils/adaptateur_debats.py --chambre senat --date 1922-11-28 \
+       --seance 2 --page-canvas
+   ```

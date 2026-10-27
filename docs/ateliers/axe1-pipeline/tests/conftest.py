@@ -8,6 +8,7 @@ est injoignable ; ceux marqués ``modele`` téléchargent les vrais poids.
 from __future__ import annotations
 
 import os
+import shutil
 import socket
 from dataclasses import replace
 from pathlib import Path
@@ -21,11 +22,22 @@ CORPUS_EXEMPLE = RACINE / "data" / "corpus"
 
 
 def config_sandbox(tmp_path, **surcharge) -> Config:
-    """Une configuration qui écrit tout dans le répertoire temporaire pytest."""
+    """Une configuration qui écrit tout dans le répertoire temporaire pytest.
+
+    Le corpus sous test est une copie de ``exemple.json`` seul, isolée du vrai
+    dossier ``data/corpus/`` : les tests « sur exemple » restent vrais quand le
+    corpus réel y est déposé à côté.
+    """
+    corpus = tmp_path / "corpus"
+    corpus.mkdir()
+    for fichier in ("exemple.json", "alias_orateurs.json"):
+        source = CORPUS_EXEMPLE / fichier
+        if source.exists():
+            shutil.copy(source, corpus / fichier)
     return replace(
         Config(),
         embedder="dummy",
-        corpus_dir=CORPUS_EXEMPLE,
+        corpus_dir=corpus,
         normalise_dir=tmp_path / "normalise",
         enfants_path=tmp_path / "enfants.jsonl",
         parents_path=tmp_path / "seances.jsonl",

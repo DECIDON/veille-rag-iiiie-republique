@@ -23,8 +23,13 @@ CHAMPS_REQUIS = (
 )
 
 _DATE = re.compile(r"\d{4}-\d{2}-\d{2}")
-# Césure OCR : un mot coupé par un trait d'union en fin de ligne.
-_CESURE = re.compile(r"([A-Za-zÀ-ÿà-ÿ])-[ \t\r]*\n[ \t]*(?=[A-Za-zÀ-ÿà-ÿ])")
+# Césure OCR : un mot coupé par un trait d'union en fin de ligne. La fin de
+# ligne est soit un vrai saut de ligne (« insti-\ntution »), soit — dans les
+# exports qui les ont aplatis — un simple espace (« lec- ture »). Un trait
+# d'union collé (« garde-chasse ») n'est jamais une césure.
+_CESURE = re.compile(
+    r"([A-Za-zÀ-ÿà-ÿ])-(?:[ \t\r]*\n[ \t]*|[ \t]+)(?=[A-Za-zÀ-ÿà-ÿ])"
+)
 # Variantes d'apostrophe et d'accent aigu utilisé comme apostrophe.
 _APOSTROPHES = re.compile(r"[\u2018\u2019\u201a\u02b9\u02ba\u02bb\u02bc\u02be\u2032\u00b4]")
 
