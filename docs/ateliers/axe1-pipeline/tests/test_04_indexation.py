@@ -20,12 +20,12 @@ def test_collection_creee_avec_quantification_et_sparse(client_qdrant, config_te
     etape2(config_test)
     etape3_encoder(config_test)
     n = etape4_indexer(config_test, client=client_qdrant)
-    assert n == 5
+    assert n == 165
 
     info = client_qdrant.get_collection(config_test.collection)
     assert info.config.params.sparse_vectors and "sparse" in info.config.params.sparse_vectors
     assert info.config.quantization_config.scalar.type == "int8"
-    assert info.points_count == 5
+    assert info.points_count == 165
 
 
 def test_payload_et_indices_de_filtre(client_qdrant, config_test):
@@ -42,13 +42,20 @@ def test_payload_et_indices_de_filtre(client_qdrant, config_test):
 
     assert client_qdrant.count(
         collection_name=config_test.collection, exact=True,
-    ).count == 5
+    ).count == 165
     assert client_qdrant.count(
         collection_name=config_test.collection, exact=True,
         count_filter=Filter(must=[
             FieldCondition(key="chambre", match=MatchValue(value="senat")),
         ]),
-    ).count == 2
+    ).count == 165
+    # sélectivité du filtre de payload : Tisseyre, alias réunis
+    assert client_qdrant.count(
+        collection_name=config_test.collection, exact=True,
+        count_filter=Filter(must=[
+            FieldCondition(key="orateur", match=MatchValue(value="Charles Tisseyre")),
+        ]),
+    ).count == 28
 
 
 
@@ -58,9 +65,9 @@ def test_upsert_idempotent(client_qdrant, config_test):
     etape3_encoder(config_test)
     etape4_indexer(config_test, client=client_qdrant)
     etape4_indexer(config_test, client=client_qdrant)  # seconde passe
-    assert client_qdrant.count(collection_name=config_test.collection, exact=True).count == 5
+    assert client_qdrant.count(collection_name=config_test.collection, exact=True).count == 165
 
 
 def test_point_id_deterministe():
-    assert point_id("chambre-1890-01-28-s001-i003-c01") == point_id(
-        "chambre-1890-01-28-s001-i003-c01")
+    assert point_id("senat-1922-11-28-s002-i007-c01") == point_id(
+        "senat-1922-11-28-s002-i007-c01")

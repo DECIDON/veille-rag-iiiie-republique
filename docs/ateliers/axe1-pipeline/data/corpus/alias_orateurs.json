@@ -1,5 +1,34 @@
 {
-  "Jules Ferry": ["J. Ferry", "M. Jules Ferry", "ferry", "M. Ferry"],
-  "Georges Clemenceau": ["Clemenceau", "Georges Clémenceau", "Clémenceau", "G. Clemenceau"],
-  "Albert Basly": ["Citoyen Basly", "le citoyen Basly", "Basly"]
+  "Charles Tisseyre": [
+    "Tisseyre",
+    "M. Tisseyre",
+    "M. Charles Tisseyre"
+  ],
+  "Pierre-Etienne Flandin": [
+    "M. Pierre-Etienne Flandin"
+  ],
+  "Laurent Eynac": [
+    "le sous-secrétaire d'Etat de l'aéronautique",
+    "sous-secrétaire d'Etat de l'aéronautique",
+    "Laurent Eynac, sous-secrétaire d'Etat de l'aéronautique",
+    "M. Laurent Eynac, sous-secrétaire d'Etat de l'aéronautique"
+  ],
+  "Bouilloux-Lafont": [
+    "le rapporteur",
+    "rapporteur",
+    "Bouilloux-Lafont, rapporteur",
+    "M. Bouilloux-Lafont, rapporteur"
+  ],
+  "général de Castelnau": [
+    "le général de Castelnau",
+    "M. le général de Castelnau",
+    "Castelnau"
+  ],
+  "colonel Girod": [
+    "le colonel Girod",
+    "M. le colonel Girod"
+  ],
+  "le président": [
+    "M. le président"
+  ]
 }

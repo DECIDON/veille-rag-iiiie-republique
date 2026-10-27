@@ -24,13 +24,14 @@ CORPUS_EXEMPLE = RACINE / "data" / "corpus"
 def config_sandbox(tmp_path, **surcharge) -> Config:
     """Une configuration qui écrit tout dans le répertoire temporaire pytest.
 
-    Le corpus sous test est une copie de ``exemple.json`` seul, isolée du vrai
-    dossier ``data/corpus/`` : les tests « sur exemple » restent vrais quand le
-    corpus réel y est déposé à côté.
+    Le corpus sous test est une copie du corpus fourni (``debats.converti.json``,
+    Sénat, 28 novembre 1922) seule, isolée du vrai dossier ``data/corpus/`` :
+    les tests « sur corpus fourni » restent vrais quand vos données réelles y
+    sont déposées à côté.
     """
     corpus = tmp_path / "corpus"
     corpus.mkdir()
-    for fichier in ("exemple.json", "alias_orateurs.json"):
+    for fichier in ("debats.converti.json", "alias_orateurs.json"):
         source = CORPUS_EXEMPLE / fichier
         if source.exists():
             shutil.copy(source, corpus / fichier)

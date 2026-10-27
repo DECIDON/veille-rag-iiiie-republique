@@ -93,8 +93,17 @@ def citation(index, extrait):
 Q = []
 
 
-def q(intitule, reponse, requete, methode, sources):
-    Q.append((intitule, reponse, requete, methode, sources))
+def q(intitule, reponse, requete, methode, sources, *, realiste):
+    """Ajoute une question.
+
+    Règle d'annotation : `requete` est la formulation *oracle* — les mots-clés
+    qui constituent la réponse (listes, chiffres, hapax relevés dans les sources).
+    Elle sert de plafond de comparaison, jamais de question réelle. `realiste`
+    est la formulation recherchable, dérivée de l'intitulé seul : celui qui
+    pose la question ne connaît pas encore le texte qui la fonde, et l'évaluateur
+    mesure l'écart entre les deux (le « gap lexical » du système).
+    """
+    Q.append((intitule, reponse, requete, methode, sources, realiste))
 
 
 q(
@@ -103,6 +112,7 @@ q(
     "budget général exercice 1923 travaux publics 3e section aéronautique transports aériens",
     "L'énoncé présidentiel d'ouverture contient la formule réglementaire complète : la réponse se relève mot à mot dans cette seule intervention, sans recoupement nécessaire.",
     [(7, "la suite de la discussion du projet de loi portant fixation du budget général de l'exercice 1923")],
+    realiste='ordre du jour séance section budget',
 )
 
 q(
@@ -116,6 +126,7 @@ q(
         (127, "Le sous-secrétariat d'État de l'aéronautique est représenté dans les conversations de Lausanne"),
         (146, "Notre personnel est recruté par voie de concours"),
     ],
+    realiste="sous-secrétaire d'État aéronautique tribune dossiers",
 )
 
 q(
@@ -130,6 +141,7 @@ q(
         (16, "Je voudrais aussi que les postes de météorologie fussent multipliés"),
         (17, "tous les appareils soient munis d'appareils de T. S. F."),
     ],
+    realiste='Tisseyre mesures sécurité aérienne confiance du public',
 )
 
 q(
@@ -138,6 +150,7 @@ q(
     "double poste jeune pilote messageries courriers postaux passagers altitude atterrissage décollage",
     "Tout tient dans une seule intervention (i012), la plus longue de la série de Tisseyre ; la réponse tient à la chronologie interne du paragraphe, et non à un mot isolé, ce qui en fait un bon test de granulat : une fenêtre de recherche trop courte ne conserverait qu'un des trois échelons.",
     [(12, "Le second pourrait être un jeune pilote à qui serait confiée la manœuvre de l'appareil au delà d'une certaine altitude")],
+    realiste='Tisseyre carrière jeune pilote à bord des lignes',
 )
 
 q(
@@ -146,6 +159,7 @@ q(
     "vérification des moteurs insouciance passagers personnel indépendant compagnies",
     "L'argument tient en une phrase finale (i013) ; le mot « insouciance » n'a d'autre emploi dans tout le corpus, ce qui fait de cette question un cas à rappel élevé pour peu de mots.",
     [(13, "Les pilotes acquièrent très rapidement une insouciance que j'admire, mais qui risque d'être préjudiciable aux passagers")],
+    realiste='Tisseyre vérification des moteurs compagnies',
 )
 
 q(
@@ -158,6 +172,7 @@ q(
         (14, "un petit accident qui l'obligera à atterrir n'importe où, dans n'importe quelle circonstance"),
         (15, "C'est exact."),
     ],
+    realiste="terrains d'atterrissage nombreux appareils plus sûrs",
 )
 
 q(
@@ -170,6 +185,7 @@ q(
         (10, "La route du progrès est toujours ensanglantée"),
         (21, "confiance qui restera la pierre d'achoppement de l'avenir de l'aviation"),
     ],
+    realiste='Tisseyre accidents mortels aviation de transport sûre',
 )
 
 q(
@@ -183,6 +199,7 @@ q(
         (28, "Elles ont cependant une importance politique très sérieuse"),
         (31, "Ce sont uniquement, à mon avis, les lignes coloniales, et ce sont celles-là qu'il faut soutenir de tous nos moyens"),
     ],
+    realiste='Tisseyre hiérarchie lignes métropolitaines continentales coloniales critères',
 )
 
 q(
@@ -197,6 +214,7 @@ q(
         (34, "le rapport classe comme lignes d'études : les lignes de Marseille à Alger, de Kayes à Bamako, pour l'Afrique occidentale, et de Tuléar à Antsirabé pour Madagascar"),
         (29, "c'est notre flotte de réserve, en partie tout au moins"),
     ],
+    realiste='commission des finances lignes aériennes coloniales suppression désaccord',
 )
 
 q(
@@ -211,6 +229,7 @@ q(
         (40, "Tenez compte des efforts et des sacrifices faits par les colonies pour l'infrastructure"),
         (41, "nous n'avons pas exigé de l'Afrique occidentale française la participation d'un tiers, parce que la colonie avait eu la charge de l'infrastructure"),
     ],
+    realiste='subventions coloniales condition accord Tisseyre règle périmée',
 )
 
 q(
@@ -224,6 +243,7 @@ q(
         (54, "il est parti, comme tant d'autres projets d'intérêt général, vers une maison où partent bien des choses qui ne reviennent jamais : j'ai nommé le ministère des finances"),
         (54, "ce projet a dormi quelque trois mois d'été sous le coude gauche d'un honorable fonctionnaire du ministère des finances"),
     ],
+    realiste='Flandin engagement du Gouvernement non tenu projet de loi bloqué',
 )
 
 q(
@@ -237,6 +257,7 @@ q(
         (57, "Dantzig, Koenigsberg, Memel, Revel, Riga. Koenigsberg, Moscou, exploité par une société russe de façade"),
         (102, "nous trouvions demain, devant nous, toutes les routes aériennes du monde occupées"),
     ],
+    realiste='Flandin inventaire routes aériennes étrangères place déjà prise',
 )
 
 q(
@@ -251,6 +272,7 @@ q(
         (61, "Les budgets ne sont pas les mêmes non plus!"),
         (62, "Elles dépensent toutes deux plus que nous pour leur aviation, et nous avons pourtant la menace constante de l'autre côté du Rhin"),
     ],
+    realiste='Flandin chiffres dépenses aériennes comparées riposte',
 )
 
 q(
@@ -265,6 +287,7 @@ q(
         (71, "pour lancer une fabrication de moteurs en grande série, nous savons, en France, qu'il faut six mois, et que pour lancer une fabrication de cellules, il suffit de faire trois mois"),
         (74, "six mois après, vous vous trouverez en face d'une flotte aérienne allemande de 3 000 avions, conduite par des hommes qui auront fait leur apprentissage par le vol à voile"),
     ],
+    realiste='Flandin Allemagne armée aérienne interdictions du traité de paix',
 )
 
 q(
@@ -279,6 +302,7 @@ q(
         (74, "dont la vitesse n'excède pas 170 kilomètres à l'heure, à 2 000 mètres d'altitude, et dont la charge utile ne dépasse pas 600 kilogrammes"),
         (79, "j'avais déposé, au mois de juin dernier, une demande d'interpellation sur l'application des clauses aériennes du traité de Versailles"),
     ],
+    realiste='Flandin contradiction traité de paix échec thèse française responsable',
 )
 
 q(
@@ -291,6 +315,7 @@ q(
         (75, "vous serez amené à dire à l'Allemagne : nous vous imposons, pour vos avions commerciaux, des caractéristiques auxquelles, pour les nôtres, nous nous réservons de ne pas nous conformer"),
         (76, "vous aurez donc 50 avions et pas un de plus. Voilà la véritable thèse"),
     ],
+    realiste='Flandin limitation aviation allemande contrôle technique appui étranger',
 )
 
 q(
@@ -305,6 +330,7 @@ q(
         (80, "le 31 décembre de cette année — on vous l'a dit — l'Allemagne recouvre sa liberté"),
         (83, "Je vous demande de reviser votre point de vue"),
     ],
+    realiste='Flandin refus adhérer convention aérienne internationale échéance urgente',
 )
 
 q(
@@ -319,6 +345,7 @@ q(
         (90, "c'est, pour une industrie, une grosse imprudence, si l'État ne participe pas aux risques de l'affaire"),
         (92, "Organisez la fabrication en régie intéressée."),
     ],
+    realiste='Flandin politique industrielle aéronautique française crise',
 )
 
 q(
@@ -332,6 +359,7 @@ q(
         (96, "la rançon de notre génie inventif est de ne pas toujours en tirer profit"),
         (99, "Combien de vastes desseins, combien d'initiatives fécondes et d'efforts passionnés ont été soudainement paralysés par notre esprit critique!"),
     ],
+    realiste="Flandin parallèle historique détracteurs de l'aviation autocritique nationale",
 )
 
 q(
@@ -346,6 +374,7 @@ q(
         (117, "Le sous-secrétaire d'État de l'aéronautique n'est pas autre chose que le fournisseur du ministre de la guerre"),
         (116, "Pour les moteurs, les relations sont encore plus étroites entre ces deux aéronautiques"),
     ],
+    realiste="Montjou thèse budget de l'aéronautique civile analogie navale",
 )
 
 q(
@@ -359,6 +388,7 @@ q(
         (131, "Si les lignes aériennes ne remplissent pas ces trois conditions, il ne faut pas les subventionner ; ce serait du gaspillage"),
         (128, "le port de San-Stéfano constitue une base très importante pour notre influence en Orient"),
     ],
+    realiste='Montjou conditions subvention ligne aérienne',
 )
 
 q(
@@ -372,6 +402,7 @@ q(
         (141, "la douzième direction, c'est-à-dire l'armée, envoie un représentant"),
         (142, "S'il faut que tous nos ports aériens soient achetés en double par l'État, l'un pour les civils et l'autre pour les militaires"),
     ],
+    realiste='Montjou étatisme exemple personnel',
 )
 
 q(
@@ -389,6 +420,7 @@ q(
         (156, "le ministre de la guerre qui, par ailleurs, a trop d'officiers, refuse d'en donner à l'aéronautique"),
         (162, "S'ils jouent au bridge, il vaudrait mieux les renvoyer chez eux."),
     ],
+    realiste="controverse recrutement chefs d'aérogare défenses Eynac Montjou",
 )
 
 q(
@@ -401,6 +433,7 @@ q(
         (165, "l'annonce du départ de l'aérodrome parvient à l'arrivée bien après l'appareil"),
         (135, "ces crédits vont précisément dans des organismes d'État, organismes déjà extrêmement gonflés, extrêmement complexes"),
     ],
+    realiste='Montjou services de radio météorologie fonctionnement cause',
 )
 
 q(
@@ -415,6 +448,7 @@ q(
         (130, "N'accumulons pas, dans ce but, des stocks trop importants qui seraient pour nous une cause de stagnation"),
         (138, "il y aurait des catastrophes parmi les concurrents. Mais c'est la loi générale de la concurrence industrielle"),
     ],
+    realiste='Montjou défense du principe des subventions rigueur budgétaire rapporteur',
 )
 
 q(
@@ -428,6 +462,7 @@ q(
         (107, "M. le rapporteur n'a pas dit le contraire."),
         (109, "beaucoup de critiques de M. le rapporteur sont justifiées par les faits ; mais il y en a un certain nombre que je ne saurais approuver"),
     ],
+    realiste='Bouilloux-Lafont rapporteur grand effort aérien climat de séance',
 )
 
 q(
@@ -444,6 +479,7 @@ q(
         (8, "l'intimité de cette séance du matin me permettra de vous parler presque sur le ton de la confidence"),
         (164, "C'est donc que les parties de bridge sont un repos."),
     ],
+    realiste='incidents affaires de procédure séance du matin',
 )
 
 q(
@@ -458,6 +494,7 @@ q(
         (132, "le mal dont souffre l'aviation a une cause plus élevée, plus générale : le défaut d'organisation d'ensemble"),
         (134, "L'Angleterre a institué un ministère de l'air, groupe tous les crédits, aussi bien ceux de la guerre et de la marine que des colonies"),
     ],
+    realiste='Flandin Montjou point de rencontre accord clivages de la séance',
 )
 
 RESUME_GLOBAL = (
@@ -507,12 +544,13 @@ RESUME_GLOBAL = (
 # --- criture ---------------------------------------------------------------
 
 questions = []
-for n, (intitule, reponse, requete, methode, sources) in enumerate(Q, 1):
+for n, (intitule, reponse, requete, methode, sources, realiste) in enumerate(Q, 1):
     questions.append(
         {
             "id": f"Q{n:02d}",
             "intitule": intitule,
-            "requete": requete,
+            "requete": realiste,
+            "requete_oracle": requete,
             "reponse_attendue": reponse,
             "generation": {
                 "methode": methode,
@@ -553,7 +591,9 @@ doc = {
     "usage": (
         "Vérité terrain pour l'étape 6 du pipeline (recall@k, MRR). Les `id` repris dans "
         "`generation.interventions` sont utilisables tels quels comme champs `attendus` du format "
-        "data/questions/QUERIES.md ; le champ `requete` donne une formulation en mots-clés courts."
+        "data/questions/QUERIES.md ; le champ `requete` est la formulation réaliste, dérivée de "
+        "l'intitulé seul ; `requete_oracle` reprend les mots-clés extraits de la réponse et sert "
+        "de plafond de comparaison : l'écart entre les deux mesures le gap lexical du système."
     ),
     "questions": questions,
 }

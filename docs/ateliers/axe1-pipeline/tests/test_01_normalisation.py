@@ -64,8 +64,8 @@ def test_guillemets_unifies():
 def test_texte_brut_jamais_écrasé():
     """normaliser_enregistrement ajoute text_normalise et garde text_brut intact."""
     enreg = {
-        "id": "x", "date": "1890-01-28", "chambre": "chambre", "session": "1890",
-        "seance": "1", "orateur": {"nom": "Personne"}, "page_jo": 1,
+        "id": "x", "date": "1922-11-28", "chambre": "senat", "session": "1922",
+        "seance": "2", "orateur": {"nom": "Personne"}, "page_jo": 1,
         "text_brut": "l’insti-\ntution",
     }
     enrichi = normaliser_enregistrement(enreg, {})
@@ -75,30 +75,30 @@ def test_texte_brut_jamais_écrasé():
 
 def test_alias_orateurs():
     table = charger_alias(ALIAS)
-    assert table[cle_alias("J. Ferry")] == "Jules Ferry"
-    assert table[cle_alias("Citoyen Basly")] == "Albert Basly"
+    assert table[cle_alias("Tisseyre")] == "Charles Tisseyre"
+    assert table[cle_alias("le rapporteur")] == "Bouilloux-Lafont"
 
 
 def test_nom_canonical_ajouté():
     table = charger_alias(ALIAS)
     enreg = {
-        "id": "x", "date": "1890-01-28", "chambre": "chambre", "session": "1890",
-        "seance": "1", "orateur": {"nom": "J. Ferry"}, "page_jo": 1, "text_brut": "a",
+        "id": "x", "date": "1922-11-28", "chambre": "senat", "session": "1922",
+        "seance": "2", "orateur": {"nom": "Tisseyre"}, "page_jo": 1, "text_brut": "a",
     }
     enrichi = normaliser_enregistrement(enreg, table)
-    assert enrichi["orateur"]["nom_canonique"] == "Jules Ferry"
+    assert enrichi["orateur"]["nom_canonique"] == "Charles Tisseyre"
 
 
 def test_validation_refuse_champs_manquants():
     with pytest.raises(ValueError) as erreur:
-        valider({"id": "x", "date": "1890-01-28"})
+        valider({"id": "x", "date": "1922-11-28"})
     assert "orateur" in str(erreur.value) and "text_brut" in str(erreur.value)
 
 
 def test_validation_refuse_date_non_iso():
     enreg = {
-        "id": "x", "date": "28/01/1890", "chambre": "chambre", "session": "1890",
-        "seance": "1", "orateur": {"nom": "a"}, "page_jo": 1, "text_brut": "a",
+        "id": "x", "date": "28/11/1922", "chambre": "senat", "session": "1922",
+        "seance": "2", "orateur": {"nom": "a"}, "page_jo": 1, "text_brut": "a",
     }
     with pytest.raises(ValueError):
         valider(enreg)
@@ -106,19 +106,22 @@ def test_validation_refuse_date_non_iso():
 
 def test_charger_corpus_refuse_doublons(tmp_path):
     enreg = {
-        "id": "dup", "date": "1890-01-28", "chambre": "chambre", "session": "1890",
-        "seance": "1", "orateur": {"nom": "a"}, "page_jo": 1, "text_brut": "a",
+        "id": "dup", "date": "1922-11-28", "chambre": "senat", "session": "1922",
+        "seance": "2", "orateur": {"nom": "a"}, "page_jo": 1, "text_brut": "a",
     }
     (tmp_path / "a.json").write_text(json.dumps([enreg, enreg]), encoding="utf-8")
     with pytest.raises(ValueError, match="dupliqué"):
         charger_corpus(tmp_path)
 
 
-def test_etape1_complete_sur_exemple(config_test):
+def test_etape1_complete_sur_corpus_fourni(config_test):
     n = etape1(config_test)
-    assert n == 5
+    assert n == 165
     lignes = (config_test.normalise_dir / "interventions.jsonl").read_text(
         encoding="utf-8").splitlines()
-    assert len(lignes) == 5
-    premier = json.loads(lignes[0])
-    assert "text_normalise" in premier and premier["orateur"].get("nom_canonique")
+    assert len(lignes) == 165
+    enregistres = [json.loads(l) for l in lignes]
+    assert all("text_normalise" in e and e["orateur"].get("nom_canonique")
+               for e in enregistres)
+    tisseyres = [e for e in enregistres if e["orateur"]["nom_canonique"] == "Charles Tisseyre"]
+    assert len(tisseyres) == 28  # les graphies d'origine n'en couvrent qu'une douzaine

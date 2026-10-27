@@ -2,8 +2,9 @@
 
 Le seul juge fiable hors distribution est l'évaluation interne : ~200 Q&R
 annotées à la main, dont la vérité terrain est l'intervention que la recherche
-*doit* retrouver. Ce module évalue sur un échantillon (ici, le mini-corpus
-d'exemple) avec deux métriques simples et suffisantes pour l'atelier :
+*doit* retrouver. Ce module évalue sur un échantillon (ici, les deux questions
+de QUERIES.md, extraites des 28 Q&R annotées du corpus fourni) avec deux
+métriques simples et suffisantes pour l'atelier :
 
 - ``recall@k`` : sur 100 % des questions, au moins un attendu est-il dans les
   k premiers résultats ? (rappel, mesuré par question, moyenné)
@@ -11,6 +12,8 @@ d'exemple) avec deux métriques simples et suffisantes pour l'atelier :
 
 Le format des questions est celui de ``data/questions/QUERIES.md`` (un bloc
 Markdown par question) — c'est le fichier que le binôme complétera à la main.
+Une ligne optionnelle ``question_oracle:`` autorise le bilan différentiel
+(``evaluer_compare``) : question réelle d'un côté, requête oracle de l'autre.
 """
 from __future__ import annotations
 
@@ -27,6 +30,7 @@ class Question:
     texte: str
     attendus: list[str]
     filtres: dict = field(default_factory=dict)
+    oracle: str = ""  # requête idéale (mots-clés de la réponse) : plafond, jamais question
 
 
 def parser_queries(chemin: Path) -> list[Question]:
@@ -48,9 +52,9 @@ def parser_queries(chemin: Path) -> list[Question]:
     for bloc in BLOC.split(contenu)[1:]:
         lignes = bloc.splitlines()
         identifiant = lignes[0].split("—")[0].strip() if lignes else f"q{len(questions) + 1}"
-        champs = {"question": "", "attendus": "", "filtres": ""}
+        champs = {"question": "", "question_oracle": "", "attendus": "", "filtres": ""}
         for ligne in lignes:
-            m = re.match(r"^\s*-\s*(question|attendus|filtres)\s*:\s*(.*)$", ligne)
+            m = re.match(r"^\s*-\s*(question_oracle|question|attendus|filtres)\s*:\s*(.*)$", ligne)
             if m:
                 champs[m.group(1)] = m.group(2).strip()
         if not champs["question"] or not champs["attendus"]:
@@ -61,7 +65,9 @@ def parser_queries(chemin: Path) -> list[Question]:
             if "=" in paire:
                 clef, valeur = paire.split("=", 1)
                 filtres[clef.strip()] = valeur.strip()
-        questions.append(Question(identifiant, champs["question"], attendus, filtres))
+        questions.append(Question(
+            identifiant, champs["question"], attendus, filtres, champs["question_oracle"],
+        ))
     return questions
 
 
@@ -80,24 +86,56 @@ def premier_rang(attendus: list[str], retours: list[str]) -> float:
     return 0.0
 
 
-def evaluer(questions: list[Question], recuperer) -> dict:
-    """Exécute les questions via la fonction ``recuperer(question) -> [chunk_id]``.
+def _executer(question: Question, recuperer, texte: str) -> dict:
+    """Une passe : ``recuperer(question, texte) -> [chunk_id]``, métriques seules."""
+    retours = recuperer(question, texte)
+    return {
+        "id": question.id,
+        "texte": texte,
+        "rappel": rappel_attendus(question.attendus, retours),
+        "premier_rang": premier_rang(question.attendus, retours),
+        "retours": retours,
+    }
 
-    Retourne le détail par question plus les agrégats ``recall@k`` et ``MRR``.
-    """
-    detail = []
-    for question in questions:
-        retours = recuperer(question)
-        detail.append({
-            "id": question.id,
-            "rappel": rappel_attendus(question.attendus, retours),
-            "premier_rang": premier_rang(question.attendus, retours),
-            "retours": retours,
-        })
+
+def _agreger(detail: list[dict]) -> dict:
     n = max(1, len(detail))
     return {
         "nb_questions": len(detail),
         "recall": sum(d["rappel"] for d in detail) / n,
         "mrr": sum(d["premier_rang"] for d in detail) / n,
-        "detail": detail,
     }
+
+
+def evaluer(questions: list[Question], recuperer) -> dict:
+    """Exécute les questions via la fonction ``recuperer(question, texte) -> [chunk_id]``.
+
+    Retourne le détail par question plus les agrégats ``recall@k`` et ``MRR``.
+    """
+    detail = [_executer(q, recuperer, q.texte) for q in questions]
+    return {"detail": detail, **_agreger(detail)}
+
+
+def evaluer_compare(questions: list[Question], recuperer) -> dict:
+    """Double passe : question réelle (``texte``) puis requête oracle (``oracle``).
+
+    ``reel`` et ``oracle`` sont deux bilans ``{nb_questions, recall, mrr}`` ;
+    ``ecart`` = oracle − réel, c'est-à-dire la part de la performance imputable
+    aux mots de la réponse glissés dans la question. Le bilan oracle ne porte
+    que sur les questions pourvues d'un oracle ; les autres n'y figurent pas.
+    """
+    detail = []
+    for question in questions:
+        ligne = {"id": question.id, "reel": _executer(question, recuperer, question.texte)}
+        ligne["oracle"] = (
+            _executer(question, recuperer, question.oracle) if question.oracle else None
+        )
+        detail.append(ligne)
+    reel = _agreger([l["reel"] for l in detail])
+    lignes_avec_oracle = [l for l in detail if l["oracle"]]
+    oracle = _agreger([l["oracle"] for l in lignes_avec_oracle]) if lignes_avec_oracle else None
+    ecart = (
+        {"recall": oracle["recall"] - reel["recall"], "mrr": oracle["mrr"] - reel["mrr"]}
+        if oracle else None
+    )
+    return {"detail": detail, "reel": reel, "oracle": oracle, "ecart": ecart}

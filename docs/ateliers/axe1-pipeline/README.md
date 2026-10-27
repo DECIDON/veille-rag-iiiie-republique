@@ -24,9 +24,9 @@ cd docs/ateliers/axe1-pipeline
 make setup         # uv sync : .venv + dépendances verrouillées (uv.lock)
 make up            # Qdrant mono-nœud (docker)
 make test          # tests unitaires — doivent passer sans Qdrant ni modèle
-make smoke         # pipeline complet hors-ligne (encodeur dummy) sur exemple.json
+make smoke         # pipeline complet hors-ligne (encodeur dummy) sur le corpus fourni
 make pipeline      # pipeline réel bge-m3 (télécharge ~2 Go de poids la 1re fois)
-make eval          # recall@k / MRR sur data/questions/QUERIES.md
+make eval          # recall@k / MRR, question réelle vs requête oracle
 ```
 
 Toutes les commandes Python passent par `uv run` (ou `source .venv/bin/activate`) ;
@@ -41,21 +41,29 @@ pédagogique est dans la leçon 0012.
 
 | Étape | Mise en place | Test | Vérification attendue |
 |---|---|---|---|
-| 1 | `uv run python -m atelier normaliser` | `uv run -m pytest tests/test_01_normalisation.py` | 5 lignes JSONL, `text_brut` intact + `text_normalise` |
-| 2 | `uv run python -m atelier chunker` | `uv run -m pytest tests/test_02_chunking.py` | 5 enfants, 2 parents (séances) |
+| 1 | `uv run python -m atelier normaliser` | `uv run -m pytest tests/test_01_normalisation.py` | 165 lignes JSONL, `text_brut` intact + `text_normalise` |
+| 2 | `uv run python -m atelier chunker` | `uv run -m pytest tests/test_02_chunking.py` | 165 enfants, 1 parent (séance unique) |
 | 3 | `uv run python -m atelier encoder` | `uv run -m pytest tests/test_03_encodage.py` | cache `data/vecteurs/cache.jsonl`, relance ⇒ 0 recalcul |
-| 4 | `uv run python -m atelier indexer` | `uv run -m pytest tests/test_04_indexation.py` (integration) | collection `jo_debats`, 5 points, dashboard Qdrant |
-| 5 | `uv run python -m atelier rechercher "budget ecole primaire"` | `uv run -m pytest tests/test_05_recherche.py` | top-1 = l'intervention Ferry, parent cité |
-| 6 | `uv run python -m atelier evaluer` | `uv run -m pytest tests/test_06_evaluation.py` | recall@5 et MRR affichés |
+| 4 | `uv run python -m atelier indexer` | `uv run -m pytest tests/test_04_indexation.py` (integration) | collection `jo_debats`, 165 points, dashboard Qdrant |
+| 5 | `uv run python -m atelier rechercher "budget general exercice 1923 travaux publics aeronautique" --chambre senat` | `uv run -m pytest tests/test_05_recherche.py` | top-1 = l'intervention du président ouvrant la discussion (i007), parent cité |
+| 6 | `uv run python -m atelier evaluer` | `uv run -m pytest tests/test_06_evaluation.py` | recall@5 et MRR en deux passes (question réelle, requête oracle), écart affiché |
 | 7 | `uv run python -m atelier generer "…"` (Ollama requis) | `uv run -m pytest tests/test_07_generation.py` | réponse citant les `page_jo` |
 
 ## Le corpus
 
 Le contrat d'entrée (format JSON par intervention) est décrit dans
-[`data/corpus/README.md`](data/corpus/README.md). Un mini-corpus de 5
-interventions fictives (`data/corpus/exemple.json`) permet de tout tester avant
-de déposer vos données réelles ; le jeu de questions d'évaluation se remplit
-dans [`data/questions/QUERIES.md`](data/questions/QUERIES.md).
+[`data/corpus/README.md`](data/corpus/README.md). Un corpus réel est déjà en
+place pour faire tourner tout le pipeline et tous les tests : la 2ᵉ séance du
+Sénat du 28 novembre 1922 (discussion du budget de l'aéronautique), 165
+interventions — `data/corpus/brut/debats.json` (export brut) et sa conversion
+`data/corpus/debats.converti.json` au format du contrat ; vous la remplacerez
+par vos propres données. Le jeu de questions d'évaluation se remplit
+dans [`data/questions/QUERIES.md`](data/questions/QUERIES.md) — 28 questions
+déjà annotées et ancrées verbatim attendent dans
+[`data/questions/queries.json`](data/questions/queries.json) : `requete` y est
+réaliste (dérivée de l'intitulé seul), `requete_oracle` porte les mots-clés de
+la réponse et sert de plafond. `make eval-complet` régénère
+`QUERIES.complet.md` (les 28 blocs, double passe) et l'évalue.
 
 Vos exports bruts se déposent dans `data/corpus/brut/` et se convertissent avec
 `uv run python outils/adaptateur_debats.py --chambre … --date …` — le détail du

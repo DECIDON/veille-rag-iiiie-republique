@@ -17,11 +17,11 @@ from atelier.normalisation import etape1
 
 def une_intervention(**surcharge) -> dict:
     base = {
-        "id": "chambre-1890-01-28-s001-i001",
-        "date": "1890-01-28", "chambre": "chambre", "session": "1890", "seance": "1",
-        "orateur": {"nom": "X", "nom_canonique": "X"}, "page_jo": 10,
-        "text_normalise": "Une intervention brève, documentary close.",
-        "text_brut": "Une intervention brève, documentary close.",
+        "id": "senat-1922-11-28-s002-i001",
+        "date": "1922-11-28", "chambre": "senat", "session": "1922", "seance": "2",
+        "orateur": {"nom": "X", "nom_canonique": "X"}, "page_jo": 1,
+        "text_normalise": "Une intervention brève, documentaire fermée.",
+        "text_brut": "Une intervention brève, documentaire fermée.",
     }
     return {**base, **surcharge}
 
@@ -31,8 +31,8 @@ def test_intervention_courte_un_seul_enfant():
     assert len(enfants) == 1
     enfant = enfants[0]
     assert enfant["chunk_total"] == 1
-    assert enfant["parent_id"] == "chambre-1890-01-28-s001"
-    assert enfant["intervention_id"] == "chambre-1890-01-28-s001-i001"
+    assert enfant["parent_id"] == "senat-1922-11-28-s002"
+    assert enfant["intervention_id"] == "senat-1922-11-28-s002-i001"
     assert enfant["texte"] == une_intervention()["text_normalise"]
 
 
@@ -64,28 +64,27 @@ def test_chaque_fragment_respecte_la_taille_maximale():
 def test_parent_reconstitue_la_seance():
     groupe = [
         une_intervention(),
-        une_intervention(id="chambre-1890-01-28-s001-i002", page_jo=11,
+        une_intervention(id="senat-1922-11-28-s002-i002", page_jo=2,
                          orateur={"nom": "Y", "nom_canonique": "Y"}),
     ]
     parent = seance_parent(groupe)
-    assert parent["id"] == "chambre-1890-01-28-s001"
+    assert parent["id"] == "senat-1922-11-28-s002"
     assert parent["interventions"] == [g["id"] for g in groupe]
     assert parent["intervenants"] == ["X", "Y"]
-    assert "page 10" in parent["texte_reconstitue"]
+    assert "page 1" in parent["texte_reconstitue"]
     assert parent["texte_reconstitue"].count("#") >= 2  # le texte est verbatim, pas résumé
 
 
 def test_identifiant_seance_complete_le_zero():
-    assert identifiant_seance({"chambre": "senat", "date": "1891-06-14", "seance": 2}) \
-        == "senat-1891-06-14-s002"
+    assert identifiant_seance({"chambre": "senat", "date": "1922-11-28", "seance": 2}) \
+        == "senat-1922-11-28-s002"
 
 
-def test_etape2_complete_sur_exemple(config_test):
+def test_etape2_complete_sur_corpus_fourni(config_test):
     etape1(config_test)
     n_enfants, n_parents = etape2(config_test)
-    assert n_enfants == 5       # cinq interventions courtes
-    assert n_parents == 2        # deux séances (1890 Chambre, 1891 Sénat)
+    assert n_enfants == 165      # aucune intervention ne dépasse le plafond de 1 200 tokens
+    assert n_parents == 1        # l'export ne couvre qu'une séance
     enfants = [json.loads(l) for l in
                config_test.enfants_path.read_text(encoding="utf-8").splitlines()]
-    assert {e["parent_id"] for e in enfants} == {
-        "chambre-1890-01-28-s001", "senat-1891-06-14-s002"}
+    assert {e["parent_id"] for e in enfants} == {"senat-1922-11-28-s002"}

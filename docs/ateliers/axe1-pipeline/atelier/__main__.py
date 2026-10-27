@@ -135,23 +135,42 @@ def _evaluer(config, args, evaluation) -> int:
 
     encodeur = embedders.creer(config.embedder)
     client = QdrantClient(url=config.qdrant_url)
+    modele_rerank = None  # un seul chargement du cross-encoder pour toute la session
 
-    def recuperer(q) -> list[str]:
+    def recuperer(q, texte: str) -> list[str]:
+        nonlocal modele_rerank
         candidats = recherche.recherche_hybride(
-            q.texte, encodeur, config, client, filtres=q.filtres,
+            texte, encodeur, config, client, filtres=q.filtres,
         )
         if args.no_rerank:
             final = candidats[:args.k]
         else:
-            final = recherche.reranker(q.texte, candidats, config, top_k=args.k)
+            if modele_rerank is None:
+                from sentence_transformers import CrossEncoder
+                modele_rerank = CrossEncoder(config.reranker, device="cpu")
+            final = recherche.reranker(
+                texte, candidats, config, top_k=args.k, _modele=modele_rerank,
+            )
         return [r["intervention_id"] for r in final]
 
-    bilan = evaluation.evaluer(questions, recuperer)
+    bilan = evaluation.evaluer_compare(questions, recuperer)
     for ligne in bilan["detail"]:
-        print(f"  {ligne['id']:<12} rappel={ligne['rappel']:.0f} "
-              f"premier rang={ligne['premier_rang']:.2f}")
-    print(f"questions : {bilan['nb_questions']} — "
-          f"recall@{args.k} : {bilan['recall']:.2f} — MRR : {bilan['mrr']:.2f}")
+        reel = f"rappel={ligne['reel']['rappel']:.0f} rang={ligne['reel']['premier_rang']:.2f}"
+        if ligne["oracle"]:
+            suite = (f" | oracle : rappel={ligne['oracle']['rappel']:.0f} "
+                     f"rang={ligne['oracle']['premier_rang']:.2f}")
+        else:
+            suite = " | oracle : —"
+        print(f"  {ligne['id']:<6} réel : {reel}{suite}")
+    reel, oracle = bilan["reel"], bilan["oracle"]
+    print(f"questions : {reel['nb_questions']} — "
+          f"réel : recall@{args.k} {reel['recall']:.2f}, MRR {reel['mrr']:.2f}", end="")
+    if oracle:
+        print(f" — oracle ({oracle['nb_questions']} q.) : "
+              f"recall@{args.k} {oracle['recall']:.2f}, MRR {oracle['mrr']:.2f} — "
+              f"écart : {bilan['ecart']['recall']:+.2f} / {bilan['ecart']['mrr']:+.2f}")
+    else:
+        print()
     return 0
 
 

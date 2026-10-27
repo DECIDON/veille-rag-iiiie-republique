@@ -3,8 +3,9 @@
 Les tests ``unit`` valident la formule RRF et la construction du filtre sans
 aucun service. Les tests ``integration`` exercent l'entonnoir complet (préfetche
 dense+sparse, fusion, filtre de payload) sur l'encodeur ``dummy`` — à but de
-plomberie : le dummy étant lexical, un nom propre commun doit suffire à faire
-remonter le bon document.
+plomberie : le dummy étant lexical, des mots-clés distinctifs du corpus fourni
+(« budget general exercice 1923 … ») doivent suffire à faire remonter la
+bonne intervention.
 """
 from __future__ import annotations
 
@@ -38,7 +39,7 @@ def test_rrf_sans_classement_supplementaire_sur_egalite():
 
 def test_construire_filtre_chambre_et_date():
     pytest.importorskip("qdrant_client")
-    filtre = construire_filtre({"chambre": "senat", "from": "1891-01-01", "to": "1891-12-31"})
+    filtre = construire_filtre({"chambre": "senat", "from": "1922-11-01", "to": "1922-11-30"})
     assert filtre is not None
     assert len(filtre.must) == 2
 
@@ -56,21 +57,28 @@ def test_recherche_hybride_retient_le_bon_document(client_qdrant, config_test):
     etape4_indexer(config_test, client=client_qdrant)
 
     candidats = recherche_hybride(
-        "Decazeville mineurs gendarmes arbitres",
+        "budget general exercice 1923 travaux publics aeronautique",
         creer_dummy("dummy"), config_test, client_qdrant,
     )
     ids_attendus = [c["intervention_id"] for c in candidats]
-    assert "chambre-1890-01-28-s001-i009" in ids_attendus[:3]
+    assert "senat-1922-11-28-s002-i007" in ids_attendus[:3]
 
 
 @pytest.mark.integration
 def test_filtre_de_recherche_exclut_l_autre_chambre(client_qdrant, config_test):
+    # Le corpus fourni est entièrement sénatorial : le filtre « chambre » est
+    # vide au-dessus, plein en-dessous — le pré-filtrage s'applique bien.
     etape1(config_test)
     etape2(config_test)
     etape3_encoder(config_test)
     etape4_indexer(config_test, client=client_qdrant)
 
 
+    candidats = recherche_hybride(
+        "budget", creer_dummy("dummy"), config_test, client_qdrant,
+        filtres={"chambre": "chambre"},
+    )
+    assert not candidats, "aucun point du corpus ne porte chambre=chambre"
     candidats = recherche_hybride(
         "budget", creer_dummy("dummy"), config_test, client_qdrant,
         filtres={"chambre": "senat"},

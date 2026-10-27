@@ -60,4 +60,5 @@ def charger() -> Config:
         ollama_model=os.environ.get("OLLAMA_MODEL", defauts.ollama_model),
         corpus_dir=_chemin("ATELIER_CORPUS", defauts.corpus_dir),
         normalise_dir=_chemin("ATELIER_NORMALISE", defauts.normalise_dir),
+        questions_path=_chemin("ATELIER_QUESTIONS", defauts.questions_path),
     )

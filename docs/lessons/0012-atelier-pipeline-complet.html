@@ -47,25 +47,25 @@ make test        # les tests unitaires doivent passer ici déjà, sans modèle n
   <h2>Le format d'entrée que j'attends de vous</h2>
   <p>Un fichier JSON (tableau d'objets, ou JSONL) par lot de séances ; un objet = <strong>une intervention</strong>. Le contrat complet est dans <code>data/corpus/README.md</code> ; le voici :</p>
   <pre><code>{
-  "id": "chambre-1890-01-28-s001-i003",        // unique dans tout le dossier
-  "date": "1890-01-28",                          // AAAA-MM-JJ
-  "chambre": "chambre",                          // "chambre" ou "senat", valeurs stables
-  "session": "1890",
-  "seance": "1",
-  "résumé": "Ferry expose le budget de l'instruction primaire comme la vraie dette de l'État", // court résumé de l'intervention
-  "orateur": {"nom": "J. Ferry", "role": "ministre…", "groupe": null},
+  "id": "senat-1922-11-28-s002-i007",            // unique dans tout le dossier
+  "date": "1922-11-28",                          // AAAA-MM-JJ
+  "chambre": "senat",                            // "chambre" ou "senat", valeurs stables
+  "session": "1922",
+  "seance": "2",
+  "résumé": "Le président ouvre la discussion sur le budget de l'aéronautique et des transports aériens", // court résumé de l'intervention
+  "orateur": {"nom": "M. le président", "role": "président", "groupe": null},
   "text_brut": "… texte OCR SANS aucun nettoyage …",
-  "page_jo": 245
+  "page_jo": 1
 }</code></pre>
-  <p>Deux exigences découlent directement des leçons : ne pré-nettoyez rien (les césures, apostrophes et accents instables sont précisément la matière première de l'étape 1, leçon 0001) et gardez <code>page_jo</code>, car la citation de provenance se décide dès l'entrée des données (leçon 0008). Les noms d'orateurs se règlent par le dictionnaire <code>data/corpus/alias_orateurs.json</code> au format <code>{"nom canonique": ["variantes observées"]}</code>. Un mini-corpus fictif de cinq interventions (<code>exemple.json</code>) est fourni pour que tout roule avant vos données réelles.</p>
+  <p>Deux exigences découlent directement des leçons : ne pré-nettoyez rien (les césures, apostrophes et accents instables sont précisément la matière première de l'étape 1, leçon 0001) et gardez <code>page_jo</code>, car la citation de provenance se décide dès l'entrée des données (leçon 0008). Les noms d'orateurs se règlent par le dictionnaire <code>data/corpus/alias_orateurs.json</code> au format <code>{"nom canonique": ["variantes observées"]}</code>. Un corpus réel est fourni pour que tout roule avant vos données : la 2ᵉ séance du Sénat du 28 novembre 1922, budget de l'aéronautique — 165 interventions (<code>data/corpus/brut/debats.json</code>, converti en <code>data/corpus/debats.converti.json</code>).</p>
 
   <h2>Étape 1 — Normaliser (leçon 0001)</h2>
   <p>Commande : <code>uv run python -m atelier normaliser</code>. L'étage applique les règles annoncées par la veille : décomposition Unicode NFKD (forme stable qui conserve les accents), unification des apostrophes typographiques et des espaces insécables, rejointoiement des césures OCR (« insti-↵tution » redevient « institution », et « lec- ture » aussi quand l'export a aplati le saut de ligne en espace), aplatissement des blancs ; puis il ajoute <code>orateur.nom_canonique</code> via le dictionnaire d'alias. Il ne touche jamais au <code>text_brut</code>, qui reste la source des citations verbatim.</p>
-  <p><strong>Tester :</strong> <code>uv run -m pytest tests/test_01_normalisation.py -v</code> — douze tests : apostrophes, césures, guillemets, intégrité de <code>text_brut</code>, alias, refus des enregistrements incomplets et des identifiants dupliqués. <strong>Vérifier :</strong> cinq lignes dans <code>data/normalise/interventions.jsonl</code>, chacune portant les deux versions du texte.</p>
+  <p><strong>Tester :</strong> <code>uv run -m pytest tests/test_01_normalisation.py -v</code> — douze tests : apostrophes, césures, guillemets, intégrité de <code>text_brut</code>, alias, refus des enregistrements incomplets et des identifiants dupliqués. <strong>Vérifier :</strong> cent soixante-cinq lignes dans <code>data/normalise/interventions.jsonl</code>, chacune portant les deux versions du texte.</p>
 
   <h2>Étape 2 — Découper par intervention (leçon 0002)</h2>
   <p>Commande : <code>uv run python -m atelier chunker</code>. Chaque intervention devient un granulat enfant portant <code>parent_id</code> (la séance, identifiée par chambre + date + séance) ; une intervention dépassant ~1 200 tokens estimés est sous-découpée en fragments numérotés qui partagent le parent — les frontières restent documentairement vraies avant d'être géométriques. La séance entière est reconstituée dans <code>data/parents/seances.jsonl</code>, en verbatim : c'est ce parent qui sera restitué à l'affichage, la leçon 0002 l'exige.</p>
-  <p><strong>Tester :</strong> <code>uv run -m pytest tests/test_02_chunking.py -v</code> — granulat unique pour une intervention courte, fragments numérotés au-delà du plafond, <em>aucun mot perdu</em> par la découpe, parent regroupant les intervenants. <strong>Vérifier :</strong> cinq enfants et deux parents sur l'exemple.</p>
+  <p><strong>Tester :</strong> <code>uv run -m pytest tests/test_02_chunking.py -v</code> — granulat unique pour une intervention courte, fragments numérotés au-delà du plafond, <em>aucun mot perdu</em> par la découpe, parent regroupant les intervenants. <strong>Vérifier :</strong> cent soixante-cinq enfants (aucune intervention du corpus fourni ne dépasse le plafond) et un seul parent, la séance unique.</p>
 
   <h2>Étape 3 — Encoder dense et sparse (leçon 0003)</h2>
   <p>Commande : <code>uv run python -m atelier encoder</code>. bge-m3 (MIT, 568 M de paramètres, CPU) produit par granulat un vecteur dense de 1 024 dimensions et un vecteur sparse appris ; la veille retient ce modèle précisément parce qu'un seul encodeur fournit les deux bras de l'hybride. Les vecteurs sont écrits dans un cache local keyed par empreinte (encodeur + texte) : une relance ne recalcule rien — le batch idempotent que la veille réclame pour l'indexation hors-ligne.</p>
@@ -73,21 +73,21 @@ make test        # les tests unitaires doivent passer ici déjà, sans modèle n
 
   <h2>Étape 4 — Indexer dans Qdrant (leçon 0004)</h2>
   <p>Commande : <code>uv run python -m atelier indexer</code>. La collection <code>jo_debats</code> est créée avec deux vecteurs nommés (<code>dense</code>, cosinus, quantifié <strong>int8</strong> — la division par 4 de la mémoire de la leçon 0004 ; <code>sparse</code>), et des index de payload sur <code>chambre</code>, <code>orateur</code>, <code>date</code>, <code>session</code>, <code>parent_id</code> : le pouvoir de l'historien est la restriction, et elle doit rester chère à rien. Les identifiants de points sont des UUID dérivés (v5) des identifiants de granulat : réindexer deux fois ne duplique rien.</p>
-  <p><strong>Tester :</strong> <code>uv run -m pytest -m integration -v</code> (Qdrant requis ; <code>make test-complet</code>) — collection quantifiée et sparse, index de payload présents, compte exact après deux passes. <strong>Vérifier :</strong> le tableau de bord <code>http://localhost:6333/dashboard</code> montre la collection et ses cinq points.</p>
+  <p><strong>Tester :</strong> <code>uv run -m pytest -m integration -v</code> (Qdrant requis ; <code>make test-complet</code>) — collection quantifiée et sparse, index de payload présents, compte exact après deux passes. <strong>Vérifier :</strong> le tableau de bord <code>http://localhost:6333/dashboard</code> montre la collection et ses cent soixante-cinq points.</p>
 
   <h2>Étape 5 — Rechercher : l'entonnoir (leçon 0005)</h2>
-  <p>Commande : <code>uv run python -m atelier rechercher "credit expedition madagascar" --chambre chambre</code>. Deux bras préfetchés (dense, sparse) remontent chacun 50 candidats sous le même filtre de payload ; la fusion <strong>RRF</strong> les combine par le rang (native côté serveur Qdrant, et implémentée côté client dans <code>atelier/fusion.py</code> pour être testable et extensible) ; le cross-encoder <code>bge-reranker-v2-m3</code> ne relit que les 20 survivants et rend le top-5, chaque résultat ramenant sa séance parent.</p>
-  <p><strong>Tester :</strong> <code>uv run -m pytest tests/test_05_recherche.py -v</code> — la formule RRF, le filtre construit, et (intégration) le bon document retrouvé puis l'exclusion effective de l'autre chambre. <strong>Vérifier à l'œil :</strong> le top-1 de la commande ci-dessus est l'intervention Clemenceau, avec « page JO 248 » et la séance de rattachement.</p>
+  <p>Commande : <code>uv run python -m atelier rechercher "budget general exercice 1923 travaux publics aeronautique" --chambre senat</code>. Deux bras préfetchés (dense, sparse) remontent chacun 50 candidats sous le même filtre de payload ; la fusion <strong>RRF</strong> les combine par le rang (native côté serveur Qdrant, et implémentée côté client dans <code>atelier/fusion.py</code> pour être testable et extensible) ; le cross-encoder <code>bge-reranker-v2-m3</code> ne relit que les 20 survivants et rend le top-5, chaque résultat ramenant sa séance parent.</p>
+  <p><strong>Tester :</strong> <code>uv run -m pytest tests/test_05_recherche.py -v</code> — la formule RRF, le filtre construit, et (intégration) le bon document retrouvé puis l'exclusion effective de la chambre absente du corpus. <strong>Vérifier à l'œil :</strong> le top-1 de la commande ci-dessus est l'intervention du président ouvrant la discussion (<code>…-i007</code>), avec « page JO 1 » et la séance de rattachement.</p>
 
   <h2>Étape 6 — Évaluer sur questions-réponses (le seul juge)</h2>
-  <p>Commande : <code>uv run python -m atelier evaluer</code>. Le fichier <code>data/questions/QUERIES.md</code> contient le format (une question de recherche, les identifiants d'intervention attendus, des filtres optionnels) et deux questions jouables sur l'exemple. L'évaluation affiche <code>recall@k</code> (la question est-elle rendue dans le top-k ?) et <code>MRR</code> (à quel rang apparaissent les attendus ?), puis la moyenne — les deux métriques de la veille §6.5, nDCG étant ajoutée quand le jeu comptera ses 200 questions.</p>
-  <p><strong>Tester :</strong> <code>uv run -m pytest tests/test_06_evaluation.py -v</code> — parseur du fichier et métriques sur palmarès fictifs, sans service. <strong>À faire ensemble :</strong> le fichier est un gabarit ; les Q&R du corpus réel s'écriront à quatre mains dans une autre session, car une vérité terrain annotée par un non-historien ne vaut rien (leçon 0005).</p>
+  <p>Commande : <code>uv run python -m atelier evaluer</code>. Le fichier <code>data/questions/QUERIES.md</code> contient le format (une question de recherche, les identifiants d'intervention attendus, des filtres optionnels) et deux questions jouables sur le corpus fourni ; les 28 questions-réponses annotées du même corpus attendent dans <code>data/questions/queries.json</code>. L'évaluation affiche <code>recall@k</code> (la question est-elle rendue dans le top-k ?) et <code>MRR</code> (à quel rang apparaissent les attendus ?), puis la moyenne — les deux métriques de la veille §6.5, nDCG étant ajoutée quand le jeu comptera ses 200 questions.</p>
+  <p><strong>Tester :</strong> <code>uv run -m pytest tests/test_06_evaluation.py -v</code> — parseur du fichier et métriques sur palmarès fictifs, sans service. <strong>À faire ensemble :</strong> les questions du corpus fourni sont annotées et ancrées verbatim dans <code>data/questions/queries.json</code> ; celles de <em>vos</em> corpus s'écriront à quatre mains dans une autre session, car une vérité terrain annotée par un non-historien ne vaut rien (leçon 0005).</p>
 
   <h2>Étape 7 (bonus) — Générer une synthèse citée (leçon 0006)</h2>
   <p>Ce n'est pas une étape du socle : la leçon 0006 recommande l'UX « retrieval-first ». Pour la jouer quand même : installez Ollama, tirez un modèle (~5 Go en Q4), et la commande s'insère après le rerank.</p>
   <pre><code>curl -fsSL https://ollama.com/install | sh     # Ollama (MIT)
 ollama pull qwen3:4b                            # Apache-2.0, ~5 Go en GGUF Q4
-uv run python -m atelier generer "que dit ferry sur l'ecole primaire ?"</code></pre>
+uv run python -m atelier generer "que dit montjou de l'infrastructure aeronautique a laval ?"</code></pre>
   <p>Le prompt système interdit toute information hors extraits et impose la citation de la page du Journal officiel ; si les extraits ne suffisent pas, le modèle doit répondre <code>INSUFFISANT</code>. <strong>Tester :</strong> <code>uv run -m pytest -m reseau</code> saute tant qu'Ollama n'est pas joignable, joue l'appel réel dès qu'il l'est. Latence attendue sur CPU seul : plusieurs secondes — ce que la leçon 0006 annonçait ; la recherche, elle, répond en quelques dizaines de millisecondes.</p>
 
   <h2>Vérifiez que c'est acquis</h2>
@@ -96,7 +96,7 @@ uv run python -m atelier generer "que dit ferry sur l'ecole primaire ?"</code></
     <button class="quiz-opt">La recherche lexicale et la citation verbatim l'exigent</button>
     <button class="quiz-opt">Le calcul des vecteurs denses le demande explicitement</button>
     <button class="quiz-opt">La fusion RRF des deux bras l'exige également</button>
-    <p class="quiz-fb">Le <code>text_brut</code> ne sert jamais à l'encodage : il fonde la recherche lexicale (dont les termes exacts du XIXᵉ) et garantit des citations verbatim ; le <code>text_normalise</code> seul passe dans l'embedding (leçon 0001, §1.1 de la veille).</p>
+    <p class="quiz-fb">Le <code>text_brut</code> ne sert jamais à l'encodage : il fonde la recherche lexicale (dont les termes exacts de 1922) et garantit des citations verbatim ; le <code>text_normalise</code> seul passe dans l'embedding (leçon 0001, §1.1 de la veille).</p>
   </div>
   <div class="quiz" data-answer="1">
     <p class="quiz-q">2. Pourquoi découper par intervention plutôt que par découpage sémantique automatique ?</p>
@@ -116,7 +116,7 @@ uv run python -m atelier generer "que dit ferry sur l'ecole primaire ?"</code></
   <footer class="nav">
     <p><strong>Code et tests :</strong> <a href="../ateliers/axe1-pipeline/README.md">docs/ateliers/axe1-pipeline/</a> — <strong>sources :</strong> <a href="../veille/axe1-donnees.md">veille axe 1 §8</a> (pipeline de référence), <a href="https://huggingface.co/BAAI/bge-m3">carte bge-m3</a>, <a href="https://huggingface.co/BAAI/bge-reranker-v2-m3">carte bge-reranker-v2-m3</a>, <a href="https://qdrant.tech/documentation/concepts/hybrid-search/">fusion hybride Qdrant</a>.</p>
     <p><a href="0005-retrieval-hybride-rerank.html">← Retour utile : leçon 0005 (l'entonnoir que vous venez de monter)</a></p>
-    <p class="followup">Déposez votre corpus dans <code>data/corpus/</code> au format indiqué, puis revenez dans OpenCode : la prochaine session remplit <code>data/questions/QUERIES.md</code> ensemble, et les scores de l'étape 6 deviennent la base de vos arbitrages.</p>
+    <p class="followup">L'atelier tourne déjà sur le corpus fourni ; déposez le vôtre dans <code>data/corpus/</code> au format indiqué, puis revenez dans OpenCode : la prochaine session étend <code>data/questions/QUERIES.md</code> à vos séances, et les scores de l'étape 6 deviennent la base de vos arbitrages.</p>
   </footer>
 </body>
 </html>

@@ -9,15 +9,15 @@ enregistrement = **une intervention** d'un orateur, jamais une séance entière.
 
 ```json
 {
-  "id": "chambre-1890-01-28-s001-i003",
-  "date": "1890-01-28",
-  "chambre": "chambre",
-  "session": "1890",
-  "seance": "1",
-  "résumé": "Ferry expose le budget de l'instruction primaire comme la vraie dette de l'État",
-  "orateur": {"nom": "J. Ferry", "role": "ministre de l'instruction publique", "groupe": null},
+  "id": "senat-1922-11-28-s002-i007",
+  "date": "1922-11-28",
+  "chambre": "senat",
+  "session": "1922",
+  "seance": "2",
+  "résumé": "Le président ouvre la discussion sur le budget de l'aéronautique et des transports aériens",
+  "orateur": {"nom": "M. le président", "role": "président", "groupe": null},
   "text_brut": "… texte OCR tel quel …",
-  "page_jo": 245
+  "page_jo": 1
 }
 ```
 
@@ -51,15 +51,17 @@ enregistrement = **une intervention** d'un orateur, jamais une séance entière.
 2. Un `id` par intervention, unique dans tout le dossier (le chargeur refuse les
    doublons).
 3. Des valeurs de `chambre` stables : le filtre exact s'appuie dessus.
-4. Fichier de départ fourni : `exemple.json` (5 interventions, 2 séances) — il
-   fait tourner tout le pipeline et tous les tests sans données réelles ; vous le
-   retirerez quand votre corpus sera en place.
+4. Corpus de départ fourni : `debats.converti.json`, conversion de
+   `brut/debats.json` (Sénat, 2ᵉ séance du 28 novembre 1922, budget de
+   l'aéronautique — 165 interventions, une séance) — il fait tourner tout le
+   pipeline et tous les tests ; vous le retirerez quand votre corpus sera en
+   place.
 5. Vos exports bruts (formats d'un autre jour, sans `id` ni date) ne vont **jamais**
    dans ce dossier : le chargeur lirait un fichier sans identifiants et refuserait
    tout le lot. Déposez-les dans `brut/` (souterrain, jamais scanné) et convertissez :
 
    ```sh
-   uv run python outils/adaptateur_debats.py --chambre senat --date 1922-11-27
+   uv run python outils/adaptateur_debats.py --chambre senat --date 1922-11-28
    ```
 
    L'adaptateur (`outils/adaptateur_debats.py`) traduit l'export « compte-rendu

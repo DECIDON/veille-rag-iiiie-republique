@@ -14,20 +14,21 @@ from atelier.config import Config
 
 def un_resultat(**surcharge) -> dict:
     base = {
-        "intervention_id": "chambre-1890-01-28-s001-i003",
-        "orateur": "Jules Ferry", "chambre": "chambre", "date": "1890-01-28",
-        "page_jo": 245, "texte": "l'ecole primaire est la vraie dette de l'Etat",
+        "intervention_id": "senat-1922-11-28-s002-i140",
+        "orateur": "Guy de Montjou", "chambre": "senat", "date": "1922-11-28",
+        "page_jo": 11,
+        "texte": "une des parties essentielles de l'organisation de notre aviation, c'est précisément l'infrastructure",
     }
     return {**base, **surcharge}
 
 
 def test_prompt_impose_citations_et_refus():
-    messages = construire_prompt("budget ecoles ?", [un_resultat()])
+    messages = construire_prompt("que dit Montjou de l'infrastructure aeronautique ?", [un_resultat()])
     systeme, utilisateur = messages[0]["content"], messages[1]["content"]
     assert "INSUFFISANT" in systeme
     assert "Journal officiel" in systeme
-    assert "chambre-1890-01-28-s001-i003" in utilisateur
-    assert "page JO 245" in utilisateur
+    assert "senat-1922-11-28-s002-i140" in utilisateur
+    assert "page JO 11" in utilisateur
     assert messages[1]["role"] == "user"
 
 
@@ -35,7 +36,7 @@ def test_prompt_impose_citations_et_refus():
 def test_generation_reelle():
     config = Config()
     reponse = generer(
-        "Que dit le ministre sur l'école primaire ?",
+        "Que dit Montjou de l'infrastructure aéronautique à Laval ?",
         [un_resultat()], config, timeout=60,
     )
     assert isinstance(reponse, str) and reponse
