@@ -14,6 +14,16 @@ Il implémente la variante CPU du pipeline de référence de la veille
 | 6 Évaluer | [0005](../../lessons/0005-retrieval-hybride-rerank.html) | recall@k + MRR sur Q&R annotées | `atelier/evaluation.py` |
 | 7 Générer (bonus) | [0006](../../lessons/0006-serving-llm-cpu.html) | **Ollama** (MIT) + Qwen3-4B-Instruct, API OpenAI | `atelier/generation.py` |
 
+Chaque module a sa **fiche de code** qui l'explique fonction par fonction (formule,
+piège vérifié, test qui le surveille), pour réécrire le script soi-même :
+[0013](../../lessons/0013-code-normalisation.html) normaliser ·
+[0014](../../lessons/0014-code-chunking.html) découper ·
+[0015](../../lessons/0015-code-encodage.html) encoder ·
+[0016](../../lessons/0016-code-indexation.html) indexer ·
+[0017](../../lessons/0017-code-recherche.html) rechercher ·
+[0018](../../lessons/0018-code-evaluation.html) évaluer ·
+[0019](../../lessons/0019-code-generation.html) générer.
+
 ## Démarrage rapide
 
 Prérequis : [uv](https://docs.astral.sh/uv/installation/) (Python ≥ 3.10 est

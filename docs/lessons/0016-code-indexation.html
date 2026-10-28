@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leçon 0016 — Étape 4 en code : indexer dans Qdrant</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body>
+  <p class="crumbs"><a href="../index.html">Plan du cours</a> · <a href="0012-atelier-pipeline-complet.html">Leçon 0012 (l'atelier)</a> · <a href="../ateliers/axe1-pipeline/README.md">Code de l'atelier</a> · <a href="../reference/glossaire.html">Glossaire</a></p>
+  <p class="badge axe1">Axe 1 — Les données · atelier, étape 4</p>
+  <h1>Étape 4 en code : indexer dans Qdrant, quantifié et filtrable</h1>
+  <p class="gagne">À la fin de cette fiche, vous pouvez réécrire vous-même la seconde moitié de <code>atelier/indexation.py</code> : la création de la collection (dense cosinus quantifié int8, sparse, index de payload) et l'envoi des points, dont les identifiants déterministes rendent la réindexation sans effet de bord.</p>
+
+  <div class="retenir"><strong>Le principe de l'étape.</strong> Qdrant (Apache-2.0) reçoit par point deux vecteurs nommés (<code>dense</code> et <code>sparse</code>) et un <em>payload</em> (le charge de métadonnées qui accompagne chaque point). Deux décisions de la leçon <a href="0004-bases-vectorielles-quantification.html">0004</a> y sont matérialisées : la quantification scalaire int8, qui divise la mémoire des vecteurs par 4, et les index de payload, qui rendent le pré-filtrage (« Chambre, 1880-1900, orateur X ») efficace plutôt qu'après coup. La troisième décision est propre au batch : des identifiants de points dérivés, et non attribués par le serveur, pour que réindexer deux fois ne duplique rien.</div>
+  <h2>Le service et le client</h2>
+  <p>Qdrant tourne en Docker mono-nœud (<code>make up</code> lance le <code>docker-compose.yml</code> fourni, port 6333, données dans un volume Docker). Le code ne parle au service que par le client officiel <code>qdrant-client</code> (version ≥ 1.20) ; le tableau de bord <code>http://localhost:6333/dashboard</code> permet de tout vérifier à l'œil.</p>
+  <div class="note"><strong>Attention d'inventaire.</strong> L'API du client a bougé sur cette série de versions : les types s'écrivent <code>Prefetch</code>, <code>ScalarQuantizationConfig</code>, <code>DatetimeRange</code>, et le nombre de points se lit <code>client.count(collection_name).count</code>. La note d'inventaire de l'atelier (NOTES.md) est formelle : ne « modernisez » pas ces imports sans relancer <code>make test-complet</code>, qui est le seul juge de la compatibilité.</div>
+
+  <h2>Des identifiants de points dérivés, pas inventés</h2>
+  <p>Qdrant accepte des identifiants de points au format UUID. Si le client en tirait un au hasard à chaque passe, chaque réindexation créerait des doublons. Le module dérive donc l'identifiant de l'identifiant du granulat lui-même, par un UUID de version 5 (un UUID déterministe, dérivé sans retour possible d'un espace de nom et d'une chaîne par fonction de hachage) :</p>
+  <pre><code>NAMESPACE_POINT = uuid.uuid5(uuid.NAMESPACE_URL, "atelier-axe1-jo-debats")
+
+def point_id(chunk_id: str) -&gt; str:
+    """Identifiant de point déterministe (UUID v5) → re-indexation idempotente."""
+    return str(uuid.uuid5(NAMESPACE_POINT, chunk_id))</code></pre>
+  <p>L'espace de nom est lui-même un UUID v5 calculé une fois pour toutes à partir d'une chaîne du projet ; ce double niveau est la convention usuelle pour ne jamais entrer en collision avec l'espace de nom standard <code>uuid.NAMESPACE_URL</code> lui-même. Le gain est entier : un <code>upsert</code> (envoyer en créant ou remplaçant) du granulat <code>…-i007-c01</code> touchera toujours le même point, la première fois qu'on l'envoie comme la vingtième, et le test d'idempotence (compte identique après deux passes) devient possible.</p>
+
+  <h2>Créer la collection : deux vecteurs, une quantification, cinq index</h2>
+  <p>La fonction est écrite pour être relancée : elle n'écrase rien par défaut, et elle recrée tout sur demande explicite. Les types viennent tous de <code>qdrant_client.models</code> :</p>
+  <pre><code>def creer_collection(client, config, effacer: bool = False) -&gt; None:
+    from qdrant_client.models import (
+        DatetimeIndexParams, DatetimeIndexType, Distance, KeywordIndexParams,
+        KeywordIndexType, ScalarQuantization, ScalarQuantizationConfig,
+        ScalarType, SparseVectorParams, VectorParams,
+    )
+
+    existantes = {c.name for c in client.get_collections().collections}
+    if config.collection in existantes and effacer:
+        client.delete_collection(collection_name=config.collection)
+        existantes.discard(config.collection)
+    if config.collection not in existantes:
+        client.create_collection(
+            collection_name=config.collection,
+            vectors_config={
+                # cosinus : les embeddings bge-m3 sont comparés en angle
+                "dense": VectorParams(size=config.dim, distance=Distance.COSINE),
+            },
+            sparse_vectors_config={"sparse": SparseVectorParams()},
+            # leçon 0004 : la quantification scalaire int8 divise la mémoire par 4
+            quantization_config=ScalarQuantization(
+                scalar=ScalarQuantizationConfig(type=ScalarType.INT8),
+            ),
+        )
+    for champ in ("chambre", "orateur", "parent_id", "session"):
+        client.create_payload_index(
+            collection_name=config.collection, field_name=champ,
+            field_schema=KeywordIndexParams(type=KeywordIndexType.KEYWORD),
+        )
+    client.create_payload_index(
+        collection_name=config.collection, field_name="date",
+        field_schema=DatetimeIndexParams(type=DatetimeIndexType.DATETIME),
+    )</code></pre>
+  <ul>
+    <li><strong>Deux vecteurs nommés.</strong> Une collection Qdrant peut porter plusieurs vecteurs par point ; on les nomme, et chaque bras de recherche dira lequel il interroge (<code>using="dense"</code> plus tard). Le vecteur sparse ne déclare ni dimension (elle est implicite, portée par les indices) ni distance (elle est fixée par le produit scalaire sparse).</li>
+    <li><strong>Distance cosinus.</strong> Les vecteurs de bge-m3 sont normalisés à la norme 1 à l'encodage (page <a href="0015-code-encodage.html">0015</a>) ; cosinus est la distance cohérente avec ce choix, et Qdrant peut alors optimiser en interne.</li>
+    <li><strong>Quantification scalaire int8.</strong> Chaque composante fp32 (32 bits à virgule flottante) est rangée dans un entier 8 bits par une transformation affine calibrée : la mémoire de la division par 4 annoncée par la leçon 0004, au prix d'une perte de précision mesurée par vos propres Q&amp;R, jamais par un classement public.</li>
+    <li><strong>Index de payload.</strong> Sans index, un filtre est évalué point par point après la recherche vectorielle ; avec un index mot-clé (exact) sur <code>chambre</code>, <code>orateur</code>, <code>parent_id</code> et <code>session</code>, et un index date sur <code>date</code>, Qdrant construit l'ensemble admissible <em>avant</em> de chercher : c'est le pré-filtrage qui rend le « en 1922, uniquement au Sénat » gratuit, celui-là même qui distingue un outil scientifique d'une démonstration (leçon 0009). La recréation d'un index déjà existant est sans effet, d'où la boucle non conditionnelle.</li>
+  </ul>
+
+  <h2>Le payload : tout ce que l'affichage réclamera, en un seul voyage</h2>
+  <p>Le point Qdrant embarque le texte du fragment et toutes ses métadonnées. C'est délibéré : la recherche doit pouvoir afficher un résultat citable (orateur, chambre, date, page du Journal officiel) et remonter son parent sans seconde requête ni jointure applicative.</p>
+  <pre><code>def _payload(enfant: dict) -&gt; dict:
+    return {
+        "chunk_id": enfant["id"],
+        "intervention_id": enfant["intervention_id"],
+        "parent_id": enfant["parent_id"],
+        "date": enfant["date"], "chambre": enfant["chambre"],
+        "session": enfant["session"], "seance": enfant["seance"],
+        "orateur": enfant["orateur"], "orateur_brut": enfant["orateur_brut"],
+        "role": enfant.get("role"), "groupe": enfant.get("groupe"),
+        "résumé": enfant.get("résumé"),
+        "page_jo": enfant["page_jo"],
+        "chunk_index": enfant["chunk_index"], "chunk_total": enfant["chunk_total"],
+        "texte": enfant["texte"],
+    }</code></pre>
+  <p>Le prix de ce choix est la redondance (le texte vit à la fois dans le payload Qdrant et dans <code>enfants.jsonl</code>) ; le bénéfice est une recherche qui se suffit de sa propre réponse. Sur un index de millions de chunks, on discuterait le champ <code>texte</code> (les payloads sont stockés en clair), mais la version CPU de la veille raisonne en dizaines de gigaoctets, pas en teraoctets.</p>
+
+  <h2>Envoyer les points : lots de 128 et acquittement</h2>
+  <pre><code>def etape4_indexer(config, client=None) -&gt; int:
+    from qdrant_client import QdrantClient
+    from qdrant_client.models import PointStruct, SparseVector
+
+    client = client or QdrantClient(url=config.qdrant_url)
+    creer_collection(client, config)
+
+    enfants = lire_jsonl(config.enfants_path)
+    cache = charger_cache(config.cache_path)
+    manquants = [e["id"] for e in enfants if e["id"] not in cache]
+    if manquants:
+        raise RuntimeError(
+            f"{len(manquants)} granulats sans vecteurs en cache — lancer d'abord « encoder »"
+        )
+
+    points = [
+        PointStruct(
+            id=point_id(enfant["id"]),
+            vector={
+                "dense": cache[enfant["id"]]["dense"],
+                "sparse": SparseVector(**_sparse_brut(cache[enfant["id"]]["sparse"])),
+            },
+            payload=_payload(enfant),
+        )
+        for enfant in enfants
+    ]
+    taille_lot = 128
+    for debut in range(0, len(points), taille_lot):
+        client.upsert(
+            collection_name=config.collection,
+            points=points[debut:debut + taille_lot],
+            wait=True,
+        )
+    return len(points)</code></pre>
+  <p>Quatre lectures utiles. La vérification des vecteurs manquants transforme un enchaînement raté (« j'ai lancé indexer avant encoder ») en une phrase commandable. <code>SparseVector(indices=[…], values=[…])</code> est le format d'un vecteur sparse sur le fil : deux tableaux parallèles, les identifiants de jetons et leurs poids — <code>_sparse_brut</code> convertit la carte texte → nombres du cache en ces deux tableaux. L'envoi par lots de 128 bornes la taille de chaque requête HTTP, et <code>wait=True</code> fait attendre au serveur l'acquittement de l'écriture : sans lui, le test qui suit immédiatement l'upsert pourrait compter un index pas encore appliqué — le genre de condition de course qui fait écrire « mon indexation est aléatoire » dans un billet d'humeur. Enfin le paramètre <code>client=None</code> est la même couture que pour l'encodeur : un test d'intégration injecte son propre client, la ligne de commande construit celui de la configuration.</p>
+
+  <h2>Comment le module est testé</h2>
+  <p>L'étape 4 est la première à exiger un service : ses tests portent la marque <code>integration</code> et tournent avec Qdrant démarré (<code>make test-complet</code>), dans une collection de test distincte :</p>
+  <ul>
+    <li><code>test_collection_creee_avec_quantification_et_sparse</code> relit la configuration de collection côté serveur et vérifie la quantification int8 et le vecteur sparse (accès <code>config.params.sparse_vectors</code>).</li>
+    <li><code>test_payload_et_indices_de_filtre</code> vérifie la présence des index de payload déclarés.</li>
+    <li><code>test_upsert_idempotent</code> envoie deux fois les mêmes points et compte un — la propriété « réindexer ne duplique rien », mesurée, pas supposée.</li>
+    <li><code>test_point_id_deterministe</code> vérifie que le même <code>chunk_id</code> donne le même UUID.</li>
+  </ul>
+  <p><strong>À vérifier de votre côté :</strong> après <code>uv run python -m atelier indexer</code>, le tableau de bord <code>http://localhost:6333/dashboard</code> montre la collection <code>jo_debats</code> avec 165 points ; relancez la commande et le compte reste 165.</p>
+
+  <h2>Vérifiez que c'est acquis</h2>
+  <div class="quiz" data-answer="1">
+    <p class="quiz-q">1. Que se passerait-il si <code>point_id()</code> tirait un UUID au hasard à chaque exécution ?</p>
+    <button class="quiz-opt">Chaque relance d'indexation doublerait le nombre de points de la collection.</button>
+    <button class="quiz-opt">Le cache de vecteurs se viderait, forçant un recalcul complet des vecteurs.</button>
+    <button class="quiz-opt">La distance cosinus deviendrait sensible à l'ordre des points indexés.</button>
+    <p class="quiz-fb">Un upsert ne remplace que le point de même identifiant : avec des UUID aléatoires, chaque passe <em>ajoute</em> des copies des mêmes granulats, et la recherche rendrait deux fois le même fragment. L'UUID v5 dérivé du <code>chunk_id</code> fixe l'identité du point en amont, et la relance devient sans effet — le test <code>test_upsert_idempotent</code> est là pour ce risque.</p>
+  </div>
+  <div class="quiz" data-answer="2">
+    <p class="quiz-q">2. À quoi sert l'index de payload sur le champ <code>chambre</code> ?</p>
+    <button class="quiz-opt">À filtrer avant la recherche vectorielle, non à trier les résultats ensuite.</button>
+    <button class="quiz-opt">À compresser le champ en un octé, réduisant la taille du payload.</button>
+    <button class="quiz-opt">À autoriser le tri des résultats par valeur du champ chambre.</button>
+    <p class="quiz-fb">Sans index, Qdrant évalue le filtre sur chaque point candidat après les avoir rapprochés, et le rappel s'écroule quand le filtre est sélectif. Avec l'index mot-clé, l'ensemble des points admissibles est construit <em>avant</em> la descente dans le graphe HNSW : c'est le pré-filtrage qui rend les facettes de la leçon 0009 gratuites à chaque clic.</p>
+  </div>
+  <div class="quiz" data-answer="3">
+    <p class="quiz-q">3. Pourquoi <code>wait=True</code> sur l'upsert, alors qu'il ralentit l'écriture ?</p>
+    <button class="quiz-opt">Pour que les lectures qui suivent trouvent une écriture réellement appliquée.</button>
+    <button class="quiz-opt">Pour que la quantification int8 des vecteurs se fasse avant le prochain lot.</button>
+    <button class="quiz-opt">Pour que les vecteurs sparse du point soient validés avant l'acquittement.</button>
+    <p class="quiz-fb"><code>wait=True</code> demande au serveur d'acquitter après application du point d'écriture ; sans lui, une vérification lancée juste après l'upsert peut voir un index pas encore à jour et conclure à une perte de données. Sur un gros batch, on peut relâcher cette attente et interroger le statut des tâches d'indexation asynchrones — dans l'atelier, la simplicité fiable prime.</p>
+  </div>
+
+  <footer class="nav">
+    <p><strong>Source commentée :</strong> <code>docs/ateliers/axe1-pipeline/atelier/indexation.py</code> (moitié indexation) — <strong>leçons liées :</strong> <a href="0004-bases-vectorielles-quantification.html">0004 (la théorie)</a>, <a href="0012-atelier-pipeline-complet.html">0012 (l'atelier complet)</a>.</p>
+    <p><a href="0015-code-encodage.html">← Fiche précédente : étape 3 en code</a> · <a href="0017-code-recherche.html">Fiche suivante : étape 5 en code, la recherche hybride →</a></p>
+  </footer>
+</body>
+</html>

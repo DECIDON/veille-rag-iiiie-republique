@@ -9,7 +9,7 @@
 <body>
   <p class="crumbs">Espace d'apprentissage · <a href="MISSION.md">MISSION.md</a> · <a href="RESOURCES.md">RESOURCES.md</a></p>
   <h1>Les notions techniques derrière la veille RAG</h1>
-  <p class="gagne">Dix leçons courtes (≈ 10 min chacune) et deux ateliers, résumées ici en un seul récit : le trajet réel d'un document, du <em>Journal officiel</em> OCR-isé jusqu'à l'interface facettée. Chaque station du process est détaillée et renvoie vers sa leçon.</p>
+  <p class="gagne">Dix leçons courtes (≈ 10 min chacune), deux ateliers et sept fiches de code, résumées ici en un seul récit : le trajet réel d'un document, du <em>Journal officiel</em> OCR-isé jusqu'à l'interface facettée. Chaque station du process est détaillée et renvoie vers sa leçon.</p>
 
   <h2>Le fil du pipeline</h2>
   <p>Un texte parcourt six stations — axe 1, les données : <strong>normaliser → découper → encoder → indexer → rechercher → générer</strong>. Quatre décisions l'encadrent côté service — axe 2, l'interface web : <strong>choisir son architecture, prouver la provenance, compter sans LLM, vérifier les licences</strong>. Une seule question budgétaire reste ouverte : celle de l'<a href="lessons/0011-atelier-enrichissement.html">enrichissement</a>, traitée en atelier. Le tout se juge en permanence sur les mêmes ~200 questions-réponses annotées en interne — jamais sur un classement public.</p>
@@ -37,6 +37,7 @@
 
   <h2>Atelier pratique — le pipeline complet en Python : <a href="lessons/0012-atelier-pipeline-complet.html">leçon 0012</a></h2>
   <p>Les six leçons de l'axe 1, remontées de vos mains sur la variante CPU du §8 de la veille : un JSON canonique d'interventions OCR entre dans <code>data/corpus/</code> ; la normalisation NFKD et les alias d'orateurs le nettoient sans écraser l'original ; le découpage par intervention dote chaque granulat d'un parent-séance ; <a href="https://huggingface.co/BAAI/bge-m3">bge-m3</a> l'encode dense <em>et</em> sparse sur CPU ; <a href="https://github.com/qdrant/qdrant">Qdrant</a> l'indexe en int8 avec filtres de payload ; la fusion RRF puis le <a href="https://huggingface.co/BAAI/bge-reranker-v2-m3">reranker</a> rendent un top-5 cité par page du JO, chaque étape ayant son test <code>pytest</code>. L'évaluation se joue en recall@k et MRR sur le jeu de questions-réponses (gabarit fourni, contenu à écrire ensemble) ; la génération <a href="https://github.com/ollama/ollama">Ollama</a> + Qwen3-4B n'intervient qu'en étape bonus. Kit d'exécution : <a href="ateliers/axe1-pipeline/README.md"><code>ateliers/axe1-pipeline/</code></a>.</p>
+  <p>Sept fiches de code accompagnent l'atelier : chacune explique un module Python de bout en bout — la formule, le piège vérifié, le test qui le surveille — pour qu'un développeur puisse réécrire le script lui-même : <a href="lessons/0013-code-normalisation.html">0013 normaliser</a>, <a href="lessons/0014-code-chunking.html">0014 découper</a>, <a href="lessons/0015-code-encodage.html">0015 encoder</a>, <a href="lessons/0016-code-indexation.html">0016 indexer</a>, <a href="lessons/0017-code-recherche.html">0017 rechercher</a>, <a href="lessons/0018-code-evaluation.html">0018 évaluer</a>, <a href="lessons/0019-code-generation.html">0019 générer</a>.</p>
 
   <h2>Axe 2 — L'interface web : quatre décisions</h2>
 

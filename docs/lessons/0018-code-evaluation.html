@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leçon 0018 — Étape 6 en code : évaluer sur questions annotées</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body>
+  <p class="crumbs"><a href="../index.html">Plan du cours</a> · <a href="0012-atelier-pipeline-complet.html">Leçon 0012 (l'atelier)</a> · <a href="../ateliers/axe1-pipeline/README.md">Code de l'atelier</a> · <a href="../reference/glossaire.html">Glossaire</a></p>
+  <p class="badge axe1">Axe 1 — Les données · atelier, étape 6</p>
+  <h1>Étape 6 en code : le parseur de questions, les métriques, le double bilan</h1>
+  <p class="gagne">À la fin de cette fiche, vous pouvez réécrire vous-même <code>atelier/evaluation.py</code> : le parseur du fichier de questions, les deux métriques (recall@k et MRR), le double passage question réelle contre requête oracle, et la petite couture qui rend le tout testable sans Qdrant ni modèle.</p>
+
+  <div class="retenir"><strong>Le principe de l'étape.</strong> Hors de la distribution du corpus, aucun classement public ne prédit la qualité de votre recherche : le seul juge est l'évaluation interne sur questions-réponses annotées à la main (veille §6.5). Le module ne « fait pas la recherche » : il reçoit une fonction <code>recuperer(question, texte) → [intervention_id]</code> que la ligne de commande lui injecte, joue les questions, compte les deux métriques. Cette inversion (l'évaluation commande, la recherche exécute) est ce qui permet de tester les métriques sur des palmarès fictifs, sans service.</div>
+
+  <h2>Le fichier de questions est du Markdown, pas une base de données</h2>
+  <p>Le jeu vit dans <code>data/questions/QUERIES.md</code>, un bloc Markdown par question, parce que le binôme qui l'annotera est un historien et non une interface. Le format voulu, tel que documenté dans l'en-tête du fichier :</p>
+  <pre><code>## Q1 — quel texte ouvre la discussion (Sénat, 1922)
+- question: ordre du jour séance section budget
+- question_oracle: budget general exercice 1923 travaux publics 3e section aeronautique
+- attendus: senat-1922-11-28-s002-i007
+- filtres: chambre=senat; from=1922-11-01; to=1922-11-30</code></pre>
+  <p>Quatre champs, chacun avec une raison d'être là. <code>question</code> est ce que taperait le chercheur : des mots-clés courts, dérivés du besoin <em>seul</em>. <code>question_oracle</code> est optionnel : la requête idéale telle que la connaît quelqu'un qui a déjà lu la réponse ; elle ne sert jamais de question, seulement de plafond de comparaison. <code>attendus</code> porte un ou plusieurs identifiants d'<em>intervention</em> (et non de granulat : l'évaluation compare sur <code>intervention_id</code>, pour que le découpage en fragments ne casse pas la vérité terrain). <code>filtres</code> applique les mêmes clés que la recherche. Le parseur tient en une fonction ; trois détails le rendent robuste au fichier réel :</p>
+  <pre><code>BLOC = re.compile(r"^##\s+", re.MULTILINE)
+
+@dataclass
+class Question:
+    id: str
+    texte: str
+    attendus: list[str]
+    filtres: dict = field(default_factory=dict)
+    oracle: str = ""
+
+def parser_queries(chemin: Path) -&gt; list[Question]:
+    contenu = Path(chemin).read_text(encoding="utf-8")
+    hors_barrieres, dans_barriere = [], False
+    for ligne in contenu.splitlines():
+        if ligne.lstrip().startswith("```"):
+            dans_barriere = not dans_barriere       # les gabarits entre ``` sont ignorés
+            continue
+        if not dans_barriere:
+            hors_barrieres.append(ligne)
+    contenu = "\n".join(hors_barrieres)
+    questions: list[Question] = []
+    for bloc in BLOC.split(contenu)[1:]:
+        lignes = bloc.splitlines()
+        identifiant = lignes[0].split("—")[0].strip() if lignes else f"q{len(questions) + 1}"
+        champs = {"question": "", "question_oracle": "", "attendus": "", "filtres": ""}
+        for ligne in lignes:
+            m = re.match(r"^\s*-\s*(question_oracle|question|attendus|filtres)\s*:\s*(.*)$", ligne)
+            if m:
+                champs[m.group(1)] = m.group(2).strip()
+        if not champs["question"] or not champs["attendus"]:
+            continue                                 # bloc commentaire ou exemple non validé
+        attendus = [a.strip() for a in champs["attendus"].split(",") if a.strip()]
+        filtres: dict = {}
+        for paire in (f.strip() for f in champs["filtres"].split(";") if f.strip()):
+            if "=" in paire:
+                clef, valeur = paire.split("=", 1)
+                filtres[clef.strip()] = valeur.strip()
+        questions.append(Question(
+            identifiant, champs["question"], attendus, filtres, champs["question_oracle"],
+        ))
+    return questions</code></pre>
+  <ul>
+    <li>Le fichier documente son propre gabarit en blocs de code <code>```markdown</code> ; le parseur bascule un drapeau à chaque barrière et ignore tout ce qui est entre barrières — la documentation reste dans le fichier sans polluer l'évaluation.</li>
+    <li>La découpe des blocs se fait sur les titres <code>##</code> ; l'identifiant de la question est ce qui précède le premier « — » du titre.</li>
+    <li>Un bloc sans <code>question:</code> ou sans <code>attendus:</code> est silencieusement ignoré : c'est ce qui permet au gabarit à copier (« ## Q_ — description du cas ») de rester dans le fichier.</li>
+  </ul>
+
+  <h2>Deux métriques, deux questions différentes</h2>
+  <p>Le module ne calcule pour l'atelier ni nDCG (prévue quand le jeu approchera les 200 questions, selon la veille §6.5) ni aucune moyenne de scores : deux scalaires suffisent à piloter les arbitrages de l'atelier.</p>
+  <pre><code>def rappel_attendus(attendus: list[str], retours: list[str]) -&gt; float:
+    """1.0 si au moins un attendu figure dans les retours, sinon 0.0."""
+    ensemble_attendus = set(attendus)
+    return 1.0 if ensemble_attendus &amp; set(retours) else 0.0
+
+def premier_rang(attendus: list[str], retours: list[str]) -&gt; float:
+    """MRR : 1 / rang du premier attendu retrouvé, 0 si aucun."""
+    ensemble = set(attendus)
+    for rang, identifiant in enumerate(retours, start=1):
+        if identifiant in ensemble:
+            return 1.0 / rang
+    return 0.0</code></pre>
+  <p>Le <strong>recall@k</strong> par question est binaire : la vérité terrain est-elle dans les k premiers ? Sa moyenne sur les questions répond à « le système est-il utilisable ? ». Le <strong>MRR</strong> (Mean Reciprocal Rank : moyenne de l'inverse du rang du premier attendu) répond à « à quelle place ? » : 1 si premier, 0,5 si second, 0,2 si cinquième. Le symbole <code>&amp;</code> sur deux ensembles est leur intersection. Ces deux fonctions prennent des listes d'identifiants et rien d'autre : elles s'appellent donc sur un palmarès fictif dans un test unitaire, ce qui est tout l'objet du module.</p>
+
+  <h2>Un seul point d'ancrage : la fonction injectée</h2>
+  <p><code>evaluer</code> et <code>evaluer_compare</code> ne connaissent ni Qdrant, ni encodeur, ni cross-encoder. Leur unique paramètre comportemental est <code>recuperer(question, texte) → [intervention_id]</code> :</p>
+  <pre><code>def _executer(question: Question, recuperer, texte: str) -&gt; dict:
+    retours = recuperer(question, texte)
+    return {
+        "id": question.id, "texte": texte,
+        "rappel": rappel_attendus(question.attendus, retours),
+        "premier_rang": premier_rang(question.attendus, retours),
+        "retours": retours,
+    }
+
+def evaluer(questions: list[Question], recuperer) -&gt; dict:
+    detail = [_executer(q, recuperer, q.texte) for q in questions]
+    return {"detail": detail, **_agreger(detail)}   # rappel et mrr moyennés</code></pre>
+  <p>La ligne de commande fabrique cette fonction fermée (une fonction qui capture son contexte) dans <code>_evaluer</code>, et c'est là que le pipeline réel apparaît :</p>
+  <pre><code>def recuperer(q, texte: str) -&gt; list[str]:
+    nonlocal modele_rerank
+    candidats = recherche.recherche_hybride(
+        texte, encodeur, config, client, filtres=q.filtres,
+    )
+    if args.no_rerank:
+        final = candidats[:args.k]
+    else:
+        if modele_rerank is None:                    # chargement unique du cross-encoder
+            from sentence_transformers import CrossEncoder
+            modele_rerank = CrossEncoder(config.reranker, device="cpu")
+        final = recherche.reranker(texte, candidats, config, top_k=args.k,
+                                   _modele=modele_rerank)
+    return [r["intervention_id"] for r in final]     # la comparaison se fait sur ce champ</code></pre>
+  <p>Notez le mot <code>nonlocal</code> et sa raison : <code>modele_rerank</code> vit dans la fonction englobante <code>_evaluer</code>, le mot-clé dit à Python d'utiliser cette variable-là et non d'en créer une locale ; le cross-encoder (quelques secondes de chargement) n'est donc chargé qu'une fois pour les 28 questions. Notez aussi que la fonction retourne des <code>intervention_id</code> extraits des payloads : un attendu peut être retrouvé par n'importe lequel des fragments de son intervention.</p>
+
+  <h2>Le double bilan : question réelle contre requête oracle</h2>
+  <p>Une question annotée par quelqu'un qui connaît la réponse triche malgré elle : elle contient les mots de la réponse, et une recherche qui la réussit ne prouve rien. Le module quantifie ce biais plutôt que de le nier :</p>
+  <pre><code>def evaluer_compare(questions: list[Question], recuperer) -&gt; dict:
+    """Double passe : question réelle (``texte``) puis requête oracle (``oracle``)."""
+    detail = []
+    for question in questions:
+        ligne = {"id": question.id, "reel": _executer(question, recuperer, question.texte)}
+        ligne["oracle"] = (
+            _executer(question, recuperer, question.oracle) if question.oracle else None
+        )
+        detail.append(ligne)
+    reel = _agreger([l["reel"] for l in detail])
+    lignes_avec_oracle = [l for l in detail if l["oracle"]]
+    oracle = _agreger([l["oracle"] for l in lignes_avec_oracle]) if lignes_avec_oracle else None
+    ecart = (
+        {"recall": oracle["recall"] - reel["recall"], "mrr": oracle["mrr"] - reel["mrr"]}
+        if oracle else None
+    )
+    return {"detail": detail, "reel": reel, "oracle": oracle, "ecart": ecart}</code></pre>
+  <p>L'<code>ecart</code> (oracle moins réel) est le fameux « gap lexical » : il mesure la part de la performance imputable aux mots de la réponse glissés dans la question. Un écart fort dit que le système vit de la coïncidence lexicale et qu'il faudra travailler le rappel (plus de candidats, query rewriting, autre encodeur) ; un écart faible dit que la recherche tient sur le sens. Le bilan oracle ne porte que sur les questions qui ont un oracle — les autres n'entrent que dans le bilan réel —, et c'est <code>_agreger</code> (somme des binaires, divisée par le nombre de lignes) qui produit les deux paires <code>{nb_questions, recall, mrr}</code> que la commande imprime, question par question puis en résumé.</p>
+
+  <h2>Comment le module est testé</h2>
+  <p><code>tests/test_06_evaluation.py</code>, hors-ligne et sans service : <code>test_parser_des_blocs</code> (le fichier réel du kit se parse), <code>test_question_realiste_sans_fuite</code> (le champ <code>question</code> d'une Q&amp;R du corpus ne contient pas les mots de l'oracle — le garde-fou du biais est aussi une donnée de test), <code>test_rappel_binaire</code> et <code>test_premier_rang</code> (les métriques sur palmarès fictifs), <code>test_bilan_aggegre_les_questions</code>, <code>test_compare_double_passe_et_ecart</code> (le mécanisme complet avec une fonction <code>recuperer</code> factice qui renvoie un palmarès écrit à l'avance).</p>
+  <p><strong>À vérifier de votre côté :</strong> <code>uv run python -m atelier evaluer</code> affiche une ligne par question (rappel et rang inverse des deux passes, écart) puis le résumé <code>réel : recall@5 …, MRR … — oracle (…) : … — écart : …</code>.</p>
+
+  <h2>Vérifiez que c'est acquis</h2>
+  <div class="quiz" data-answer="1">
+    <p class="quiz-q">1. Pourquoi <code>evaluation.py</code> reçoit-il une fonction <code>recuperer</code> au lieu d'appeler <code>recherche_hybride</code> lui-même ?</p>
+    <button class="quiz-opt">Pour tester les métriques et le bilan sans Qdrant, sans encodeur, sans service.</button>
+    <button class="quiz-opt">Pour permettre de changer de moteur de recherche sans rien réécrire ici.</button>
+    <button class="quiz-opt">Pour que l'ordre des questions puisse changer selon le moteur appelé.</button>
+    <p class="quiz-fb">C'est la couture (le « seam ») du module : la logique de notation est pure et testable sur palmarès fictifs ; l'accouplement à Qdrant et au rerank vit dans la commande <code>_evaluer</code>, qui injecte la vraie fonction. Le deuxième bénéfice énoncé est réel mais secondaire : le premier est la testabilité, exigence de tout l'atelier.</p>
+  </div>
+  <div class="quiz" data-answer="2">
+    <p class="quiz-q">2. Que mesure l'écart entre les scores de la passe oracle et de la passe réelle ?</p>
+    <button class="quiz-opt">La part du succès due aux mots de la réponse déjà présents dans la question.</button>
+    La perte de performance que le rerank inflige au système sur le corpus réel.
+    La vitesse de réponse séparant la passe réelle de la passe oracle du corpus.
+    <p class="quiz-fb">La requête oracle porte les mots-clés de la réponse : elle fixe le plafond atteignable par un système lexical. L'écart oracle-réel est ce que le système concède à l'absence de ces mots — le « gap lexical » qui décide s'il faut travailler le rappel avant l'interface.</p>
+  </div>
+  <div class="quiz" data-answer="3">
+    <p class="quiz-q">3. Un attendu apparaît en 4ᵉ position : que valent les deux métriques pour cette question ?</p>
+    <button class="quiz-opt">Rappel 1, MRR 0,25 : la réponse est dans le top-5, mais à la 4ᵉ place.</button>
+    <button class="quiz-opt">Rappel 0,25, MRR 1 : le rang se répartit entre les deux métriques calculées.</button>
+    <button class="quiz-opt">Rappel 1, MRR 0 : seul le premier rang compte dans le calcul de la métrique.</button>
+    <p class="quiz-fb">Le rappel par question est binaire : un attendu dans les k retours vaut 1, où qu'il soit dans le top-k. Le MRR vaut l'inverse du rang du premier attendu : 1/4 = 0,25. C'est justement parce que les deux mesurent des choses différentes (présence, position) qu'on les affiche côte à côte.</p>
+  </div>
+
+  <footer class="nav">
+    <p><strong>Source commentée :</strong> <code>docs/ateliers/axe1-pipeline/atelier/evaluation.py</code> et la fonction <code>_evaluer</code> de <code>atelier/__main__.py</code> — <strong>leçons liées :</strong> <a href="0005-retrieval-hybride-rerank.html">0005 (les métriques)</a>, <a href="0012-atelier-pipeline-complet.html">0012 (l'atelier complet)</a>.</p>
+    <p><a href="0017-code-recherche.html">← Fiche précédente : étape 5 en code</a> · <a href="0019-code-generation.html">Fiche suivante : étape 7 en code, la génération citée →</a></p>
+  </footer>
+</body>
+</html>

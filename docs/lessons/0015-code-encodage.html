@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leçon 0015 — Étape 3 en code : encoder dense et sparse</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body>
+  <p class="crumbs"><a href="../index.html">Plan du cours</a> · <a href="0012-atelier-pipeline-complet.html">Leçon 0012 (l'atelier)</a> · <a href="../ateliers/axe1-pipeline/README.md">Code de l'atelier</a> · <a href="../reference/glossaire.html">Glossaire</a></p>
+  <p class="badge axe1">Axe 1 — Les données · atelier, étape 3</p>
+  <h1>Étape 3 en code : encoder dense et sparse, avec un cache idempotent</h1>
+  <p class="gagne">À la fin de cette fiche, vous pouvez réécrire vous-même <code>atelier/embedders.py</code> et la fonction <code>etape3_encoder</code> de <code>atelier/indexation.py</code> : un encodeur qui sort de chaque granulat un vecteur dense de 1 024 dimensions <em>et</em> un vecteur sparse appris, et un cache qui ne recalcule jamais deux fois le même texte.</p>
+
+  <div class="retenir"><strong>Le principe de l'étape.</strong> bge-m3 (MIT, 568 M de paramètres, conçu pour tourner sur CPU) fournit les deux bras de l'hybride dans un seul modèle : un vecteur <em>dense</em> (une liste de 1 024 nombres, qui capture le sens et la paraphrase) et un vecteur <em>sparse</em> appris (une carte « identifiant de jeton → poids lexical » qui joue le rôle d'un BM25 appris, fidèle au terme exact). L'encodage étant la partie chère de la chaîne, chaque vecteur est mis en cache sous une empreinte de (encodeur + texte) : le batch est idempotent et repreneable, comme l'exige la veille §7.</div>
+
+  <h2>Le contrat que tous les encodeurs respectent</h2>
+  <p>Le module définit deux classes et une fabrique. Les deux classes exposent le même petit contrat — c'est un <em>seam</em> (une couture) : la suite du pipeline ne connaît que ces quatre membres, jamais l'implémentation.</p>
+  <ul>
+    <li><code>nom</code> : une chaîne, intégrée à l'empreinte du cache (changer d'encodeur invalide tout le cache, et c'est voulu).</li>
+    <li><code>dim</code> : la dimension des vecteurs denses (1 024 pour bge-m3 comme pour le dummy).</li>
+    <li><code>encode_dense(textes: list[str]) -> list[list[float]]</code> : un vecteur normalisé par texte.</li>
+    <li><code>encode_sparse(textes: list[str]) -> list[dict[int, float]]</code> : une carte jeton → poids, vide de tout zéro.</li>
+  </ul>
+  <pre><code>def creer(nom: str, device: str | None = None):
+    """Fabrique l'encodeur demandé (``bge-m3`` ou ``dummy``)."""
+    if nom == "dummy":
+        return DummyEmbedder()
+    if nom == "bge-m3":
+        return BgeM3Embedder(device=device)
+    raise ValueError(f"encodeur inconnu : {nom!r} (attendu « bge-m3 » ou « dummy »)")</code></pre>
+
+  <h2><code>DummyEmbedder</code> : la plomberie hors-ligne</h2>
+  <p>Le premier encodeur n'a aucune valeur sémantique : c'est un sac de mots haché, déterministe, sans téléchargement. Il sert aux tests d'intégration et au <code>make smoke</code>, jamais à une mesure de qualité. Sa lecture est instructive parce qu'il remplit le même contrat que le vrai modèle :</p>
+  <pre><code>_MOTS = re.compile(r"[0-9a-zà-ÿ]+")
+
+class DummyEmbedder:
+    nom = "dummy"; dim = 1024
+
+    @staticmethod
+    def _hachage(mot: str) -&gt; int:
+        return int.from_bytes(
+            hashlib.blake2b(mot.encode("utf-8"), digest_size=8).digest(), "big",
+        )
+
+    def encode_dense(self, textes):
+        vecteurs = []
+        for texte in textes:
+            v = [0.0] * self.dim
+            for mot in _MOTS.findall(texte.lower()):
+                h = self._hachage(mot)
+                v[h % self.dim] += 1.0 if (h &gt;&gt; 63) else -1.0   # signe = bit de poids fort
+            norme = math.sqrt(sum(c * c for c in v)) or 1.0
+            vecteurs.append([c / norme for c in v])
+        return vecteurs</code></pre>
+  <p>Chaque mot est haché en un entier de 64 bits ; le modulo <code>dim</code> choisit la case du vecteur dense, et le bit de poids fort (<code>h &gt;&gt; 63</code>) donne le signe, afin que deux mots différents ne s'additionnent pas toujours dans la même direction. La division finale par la norme euclidienne produit des vecteurs de norme 1, comparables par cosinus — la même propriété que les vrais embeddings. Côté sparse, le même hachage compte les occurrences sous l'identifiant <code>h % 2³¹</code>. Le but n'est pas la ressemblance avec bge-m3 : c'est de faire rouler cache, indexation, fusion et filtres à coût nul.</p>
+
+  <h2><code>BgeM3Embedder</code> : pourquoi pas <code>sentence-transformers</code> ?</h2>
+  <div class="note"><strong>Piège vérifié sur le terrain.</strong> On s'attend à charger bge-m3 par <code>SentenceTransformer("BAAI/bge-m3")</code>. Cela ne donne que la partie <strong>dense</strong> : la classe des modèles sparse de la bibliothèque (<code>SparseEncoder</code>, réservée à SPLADE &amp; co) ignore la tête sparse de bge-m3, tout simplement parce qu'elle ne figure pas dans le fichier <code>modules.json</code> du dépôt. Le nom <code>SparseTextEmbeddingModel</code> que la première version de l'atelier importait n'a jamais existé dans <code>sentence-transformers</code> — l'import échouait en <code>ImportError</code>. Conséquence : le module charge le modèle <em>en direct</em> avec <code>transformers</code> et applique lui-même la formule officielle de la référence FlagEmbedding (BAAI), ce qui charge deux fois moins de poids en mémoire (2,3 Go au lieu de 4,6).</div>
+  <p>Le constructeur télécharge et prépare trois objets, avec un <em>import différé</em> pour que les tests unitaires n'exigent ni <code>torch</code> ni les poids :</p>
+  <pre><code>class BgeM3Embedder:
+    nom = "bge-m3"; dim = 1024
+    MODELE = "BAAI/bge-m3"
+    TETE_SPARSE = "sparse_linear.pt"
+    MAX_JETONS = 512          # les granulats font ≤ 1 200 tokens ; garde-fou mémoire
+
+    def __init__(self, device: str | None = None) -&gt; None:
+        import torch
+        from huggingface_hub import hf_hub_download
+        from transformers import AutoModel, AutoTokenizer
+
+        self._device = device or ("cuda" if torch.cuda.is_available() else "cpu")
+        self._tokeniseur = AutoTokenizer.from_pretrained(self.MODELE)
+        self._modele = AutoModel.from_pretrained(self.MODELE).to(self._device).eval()
+        # Tête sparse : un simple Linear(1 024 → 1) livré avec les poids.
+        tete = torch.nn.Linear(self._modele.config.hidden_size, 1)
+        tete.load_state_dict(
+            torch.load(hf_hub_download(self.MODELE, self.TETE_SPARSE), map_location="cpu"),
+        )
+        self._tete_sparse = tete.to(self._device).eval()
+        self._speciaux = frozenset(id_ for id_ in (...) if id_ is not None)  # cls/eos/pad/unk</code></pre>
+  <p>Trois gestes demandent une explication. <code>.eval()</code> place le réseau en mode évaluation : les comportements propres à l'entraînement (abandon aléatoire de neurones dit <em>dropout</em>, mise à jour des statistiques de normalisation) se figent, sans quoi deux encodages du même texte pourraient donner deux vecteurs différents. <code>torch.no_grad</code> (plus bas) désactive le suivi des gradients, les calculs intermédiaires servant à l'apprentissage — l'atelier n'apprend rien, il infère. La tête sparse n'est <em>qu'une</em> couche linéaire de 1 024 entrées vers 1 sortie, soit ~4 kilo-octets : le fichier <code>sparse_linear.pt</code> du dépôt HuggingFace en fournit les poids, et c'est tout ce qu'il faut pour pondérer chaque jeton.</p>
+
+  <h2>La passe unique qui alimente les deux bras</h2>
+  <p>Les deux méthodes d'encodage partagent une même passe du transformeur, car un granulat ne doit traverser le modèle qu'une fois :</p>
+  <pre><code>def _passe(self, textes: list[str]):
+    """Une passe du transformeur : états cachés, ids des jetons, poids lexicaux."""
+    torch = self._torch
+    encodage = self._tokeniseur(
+        textes, padding=True, truncation=True,
+        max_length=self.MAX_JETONS, return_tensors="pt",
+    ).to(self._device)
+    with torch.no_grad():
+        etats = self._modele(**encodage).last_hidden_state
+        # poids par jeton : ReLU(Linear(h)) — la formule de la référence
+        poids = torch.relu(self._tete_sparse(etats)).squeeze(-1)   # [lot, longueur]
+    return etats, encodage["input_ids"], poids</code></pre>
+  <ul>
+    <li><code>padding=True</code> remplit les textes courts pour qu'ils tiennent dans le même tenseur rectangulaire que le lot ; <code>truncation=True</code> borne chaque texte à 512 jetons et plafonne la mémoire. Le commentaire du module note que les granulats de l'atelier tiennent sous ce plafond ; si <em>vos</em> granulats approchaient la limite de 1 200 tokens estimés de l'étape 2, la troncature couperait leur fin sans avertir — à ce stade, relevez <code>MAX_JETONS</code> au prix de la mémoire, ou baissez <code>max_tokens_chunk</code>, et vérifiez sur un échantillon.</li>
+    <li><code>last_hidden_state</code> est la suite des représentations contextuelles produites par la dernière couche : une matrice de <code>longueur × 1 024</code> par texte, où chaque ligne correspond à un jeton.</li>
+    <li>Le choix de <code>no_grad</code> plutôt que d'<code>inference_mode</code> est délibéré, et le commentaire du code le dit : les tenseurs produits dans un bloc <code>inference_mode</code> deviennent inutilisables par certaines opérations en dehors du bloc ; <code>no_grad</code> leur laisse leur statut de tenseurs ordinaires.</li>
+  </ul>
+  <p>Le bras dense est le plus simple des deux : il prend la ligne du jeton <code>CLS</code> (le jeton spécial de tête, position 0, dont le transformeur fait une résumé du texte entier) puis normalise à la norme L2 — c'est exactement la configuration <code>modules.json</code> que <code>sentence-transformers</code> applique à ce modèle :</p>
+  <pre><code>def encode_dense(self, textes, batch_size: int = 16):
+    vecteurs = []
+    for debut in range(0, len(textes), batch_size):
+        etats, _, _ = self._passe(list(textes)[debut:debut + batch_size])
+        denses = torch.nn.functional.normalize(etats[:, 0], p=2, dim=1)  # CLS + L2
+        vecteurs.extend([[float(x) for x in ligne] for ligne in denses])
+    return vecteurs</code></pre>
+  <p>La normalisation L2 (division par la longueur du vecteur) n'est pas un ornement : la collection Qdrant est déclarée en distance cosinus, et deux vecteurs normalisés se comparent par un simple produit scalaire. La boucle par lots de 16 borne l'empreinte mémoire : un passage de 40 000 granulats d'un coup exploserait la RAM.</p>
+  <p>Le bras sparse applique la formule de la référence FlagEmbedding, que le module reproduit à la main : poids par jeton <code>ReLU(Linear(h))</code>, maximum conservé par identifiant de jeton lorsque le jeton revient plusieurs fois, jetons spéciaux exclus :</p>
+  <pre><code>def encode_sparse(self, textes, batch_size: int = 16):
+    plonges = []
+    for debut in range(0, len(textes), batch_size):
+        _, ids, poids = self._passe(list(textes)[debut:debut + batch_size])
+        for ligne_ids, ligne_poids in zip(ids.tolist(), poids.tolist()):
+            v: dict[int, float] = {}
+            for indice, p in zip(ligne_ids, ligne_poids):
+                if indice in self._speciaux:
+                    continue                     # cls/eos/pad/unk exclus
+                if p &gt; v.get(indice, 0.0):
+                    v[indice] = p                # max par identifiant de jeton
+            plonges.append(v)
+    return plonges</code></pre>
+  <p>La référence officielle fait cette réduction avec un <code>scatter_reduce</code> « amax » sur tenseur ; l'atelier la fait dans un dictionnaire Python pour deux raisons documentées dans le code : le <code>scatter_reduce</code> s'est révélé un no-op silencieux sur un build particulier de <code>torch</code>, et un dictionnaire sparse évite d'allouer un tenseur dense de 250 002 dimensions (la taille du vocabulaire) par ligne. Un incident de ce genre — une fonction qui ne plante pas mais ne fait rien — est précisément ce qu'un test de contrat vient surveiller (plus bas).</p>
+
+  <h2>Le cache : une empreinte, un ajout, aucune recomputation</h2>
+  <p>La fonction d'étape vit dans <code>indexation.py</code> (le même fichier qui enverra les vecteurs à Qdrant). Son mécanisme tient en une idée : un vecteur n'est recalculé que si son empreinte a changé, et l'empreinte mêle l'encodeur et le texte :</p>
+  <pre><code>def _empreinte(texte: str, nom_encodeur: str) -&gt; str:
+    return hashlib.sha256(f"{nom_encodeur}\x00{texte}".encode("utf-8")).hexdigest()
+
+def etape3_encoder(config, embedder=None) -&gt; int:
+    enfants = lire_jsonl(config.enfants_path)
+    embedder = embedder or _emb.creer(config.embedder)
+    cache = charger_cache(config.cache_path)          # dict id → entrée
+
+    a_encoder = [
+        e for e in enfants
+        if cache.get(e["id"], {}).get("empreinte")
+        != _empreinte(e["texte"], embedder.nom)       # nouveau ou modifié
+    ]
+    for debut in range(0, len(a_encoder), config.batch):
+        morceau = a_encoder[debut:debut + config.batch]
+        textes = [e["texte"] for e in morceau]
+        denses = embedder.encode_dense(textes)
+        sparse = embedder.encode_sparse(textes)
+        for enfant, dense, plong in zip(morceau, denses, sparse):
+            cache[enfant["id"]] = {
+                "id": enfant["id"],
+                "empreinte": _empreinte(enfant["texte"], embedder.nom),
+                "dense": dense,
+                "sparse": {str(k): float(v) for k, v in plong.items()},
+            }
+        print(f"encodé {min(debut + config.batch, len(a_encoder))}/{len(a_encoder)}")
+    # … réécriture complète du fichier cache.jsonl …
+    return len(a_encoder)</code></pre>
+  <p>Quatre conséquences en découlent, à comprendre avant de copier. L'octet <code>\x00</code> séparant l'encodeur du texte rend l'empreinte non ambiguë (sans lui, un encodeur nommé « bge- » et un texte commençant par « m3 » produiraient la même empreinte qu'un encodeur « bge-m3 » sur un texte vide). Le sélecteur <code>cache.get(…).get("empreinte") != …</code> traite le granulat jamais vu et le granulat dont le texte a changé par le même chemin — c'est ce qui rend la relance correcte après une modification du corpus, sans tout rejouer. Le fichier est réécrit intégralement à la fin, et non appendu : c'est simple, et cela purge les entrées orphelines ; à l'échelle des millions de chunks réels, on remplacerait ce geste par un append suivi d'un compactage périodique, ce que le fichier JSONL permet sans format binaire. Enfin le JSON n'admettant que des chaînes comme clés, les identifiants de jetons du sparse sont écrits <code>str(k)</code> et reconvertis à la lecture.</p>
+  <p>Le cache est volontairement un fichier texte et non une base : il se relit avec un éditeur, se diagnostique à la ligne, et la base vectorielle Qdrant reste la seule source de vérité indexée.</p>
+
+  <h2>Comment le module est testé</h2>
+  <p><code>tests/test_03_encodage.py</code> (hors-ligne, encodeur dummy) vérifie le contrat plutôt que l'implémentation, ce qui laisse les deux classes libres d'évoluer :</p>
+  <ul>
+    <li><code>test_dense_dimension_et_norme</code> : dimension 1 024 et norme 1 à 10⁻⁵ près.</li>
+    <li><code>test_dense_deterministe_et_distinct</code> : même texte deux fois donne même vecteur, deux textes différents donnent des vecteurs différents.</li>
+    <li><code>test_sparse_ids_positifs_et_poids_strictement_positifs</code> : le squelette du contrat sparse.</li>
+    <li><code>test_cache_idempotent</code> : deux passes d'<code>etape3_encoder</code> d'affilée recalculent 0 vecteur à la seconde.</li>
+    <li><code>test_contrat_bge_m3</code>, marqué <code>-m modele</code> : rejoue le même contrat sur les vrais poids (~2,3 Go téléchargés une fois). C'est le test qui aurait attrapé le <code>scatter_reduce</code> muet.</li>
+  </ul>
+  <p><strong>À vérifier de votre côté :</strong> après <code>uv run python -m atelier encoder</code>, le fichier <code>data/vecteurs/cache.jsonl</code> existe avec 165 lignes ; une seconde exécution affiche <code>0 vecteurs calculés</code>.</p>
+
+  <h2>Vérifiez que c'est acquis</h2>
+  <div class="quiz" data-answer="1">
+    <p class="quiz-q">1. Pourquoi le module charge-t-il bge-m3 en direct avec <code>transformers</code> au lieu de <code>sentence-transformers</code> ?</p>
+    <button class="quiz-opt">Car la tête sparse, absente du <code>modules.json</code>, y reste tout simplement inaccessible.</button>
+    <button class="quiz-opt">Car <code>sentence-transformers</code> ne sait pas charger la partie dense de ce modèle.</button>
+    <button class="quiz-opt">Car le mode évaluation n'existe que dans <code>transformers</code>, pas dans l'autre.</button>
+    <p class="quiz-fb"><code>sentence-transformers</code> charge très bien le dense de bge-m3, mais sa classe sparse (<code>SparseEncoder</code>, pour SPLADE &amp; co) ignore la tête sparse de ce modèle, absente de son <code>modules.json</code>. Le chargement direct reproduit exactement la même configuration dense (pooling CLS, normalisation L2) et applique à la main la tête sparse de la référence FlagEmbedding, avec un seul chargement des poids à la clé.</p>
+  </div>
+  <div class="quiz" data-answer="2">
+    <p class="quiz-q">2. Que garantit l'empreinte <code>sha256(encodeur + texte)</code> du cache ?</p>
+    <button class="quiz-opt">Que deux runs successifs produisent des vecteurs identiques, poids identiques.</button>
+    <button class="quiz-opt">Qu'un texte modifié ou un encodeur changé force le seul recalcul nécessaire.</button>
+    <button class="quiz-opt">Que l'indexation Qdrant se fait en un seul lot, sans doublons.</button>
+    <p class="quiz-fb">Le cache est keyed (indexé) par empreinte : tant que l'encodeur et le texte ne bougent pas, le vecteur en cache reste valide ; si l'un change, l'empreinte change et le granulat rejoint la file de recalcul — et lui seul. C'est la définition même d'un batch idempotent et repreneable (veille §7).</p>
+  </div>
+  <div class="quiz" data-answer="3">
+    <p class="quiz-q">3. Pourquoi le vecteur sparse omet-il les jetons spéciaux (cls, eos, pad, unk) ?</p>
+    <button class="quiz-opt">Car leur poids appris est toujours négatif dans la tête sparse du modèle.</button>
+    <button class="quiz-opt">Car Qdrant rejette à l'upsert tout identifiant de jeton marqué spécial.</button>
+    <button class="quiz-opt">Car ils portent la longueur ou le remplissage, non un sens lexical à retrouver.</button>
+    <p class="quiz-fb">Un poids sparse sert à retrouver un <em>terme</em>. Or <code>cls</code> marque la tête de la séquence, <code>pad</code> remplit le bourrage, <code>eos</code> la termine : ils traduisent la géométrie du lot, pas le vocabulaire. La référence FlagEmbedding les écarte, la reproduction de la formule les écarte ; les conserver ajouterait du bruit au bras lexical.</p>
+  </div>
+
+  <footer class="nav">
+    <p><strong>Source commentée :</strong> <code>docs/ateliers/axe1-pipeline/atelier/embedders.py</code> et <code>etape3_encoder</code> dans <code>atelier/indexation.py</code> — <strong>leçons liées :</strong> <a href="0003-embeddings-dense-sparse.html">0003 (la théorie)</a>, <a href="0012-atelier-pipeline-complet.html">0012 (l'atelier complet)</a>.</p>
+    <p><a href="0014-code-chunking.html">← Fiche précédente : étape 2 en code</a> · <a href="0016-code-indexation.html">Fiche suivante : étape 4 en code, indexer dans Qdrant →</a></p>
+  </footer>
+</body>
+</html>

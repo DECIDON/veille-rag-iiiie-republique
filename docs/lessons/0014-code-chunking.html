@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leçon 0014 — Étape 2 en code : découper par intervention</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body>
+  <p class="crumbs"><a href="../index.html">Plan du cours</a> · <a href="0012-atelier-pipeline-complet.html">Leçon 0012 (l'atelier)</a> · <a href="../ateliers/axe1-pipeline/README.md">Code de l'atelier</a> · <a href="../reference/glossaire.html">Glossaire</a></p>
+  <p class="badge axe1">Axe 1 — Les données · atelier, étape 2</p>
+  <h1>Étape 2 en code : découper par intervention, reconstituer la séance</h1>
+  <p class="gagne">À la fin de cette fiche, vous pouvez réécrire vous-même <code>atelier/chunking.py</code> : le script qui transforme les interventions normalisées en granulats indexables (les <em>enfants</em>) et en séances reconstituées (les <em>parents</em>), conformément au pattern parent-document de la leçon <a href="0002-chunking-parent-document.html">0002</a>.</p>
+
+  <div class="retenir"><strong>Le principe de l'étape.</strong> L'unité de découpage n'est pas géométrique mais documentaire : une intervention égale un granulat, quitte à sous-découper les interventions fleuves en fragments numérotés. La séance entière est de son côté reconstituée en verbatim dans un fichier de parents, et seule la restitution affichera ce parent : on encode petit pour la précision du vecteur, on restitue large pour le contexte de la réponse.</div>
+
+  <h2>Entrées et sorties</h2>
+  <p>Le module lit <code>data/normalise/interventions.jsonl</code> (produit par l'<a href="0013-code-normalisation.html">étape 1</a>) et écrit deux fichiers : <code>data/enfants/enfants.jsonl</code>, un enregistrement par granulat indexable, et <code>data/parents/seances.jsonl</code>, un enregistrement par séance. Tout le module ne dépend que de la bibliothèque standard (<code>re</code> et <code>collections.OrderedDict</code>) plus des deux fonctions JSONL importées de l'étape 1 :</p>
+  <pre><code>from .normalisation import lire_jsonl, ecrire_jsonl</code></pre>
+
+  <h2>Compter les tokens sans tokenizer</h2>
+  <p>Le plafond de taille d'un granulat se compte en <em>tokens</em> (les morceaux de mots que l'encodeur avalera), mais installer un tokenizer HuggingFace pour estimer une taille serait disproportionné. Le module retient un compteur de mots majoré de 30 %, suffisant pour encadrer la taille et sans dépendance :</p>
+  <pre><code>def estimer_tokens(texte: str) -&gt; int:
+    """Estime des tokens par les mots (×1,3) ; suffisant pour encadrer la taille."""
+    return max(1, round(len(texte.split()) * 1.3))</code></pre>
+  <p>Le facteur 1,3 vient d'une observation simple : les tokeniseurs sous-word découpent les mots longs en plusieurs pièces, mais jamais moins d'une pièce par mot ; majorer le nombre de mots de 30 % donne une borne haute raisonnable pour du français. Ce n'est pas un comptage exact, et le module n'en demande pas davantage : le plafond de 1 200 tokens est une marge, pas une fenêtre glissante.</p>
+
+  <h2>Découper : paragraphes, puis phrases, puis mots</h2>
+  <p>La fonction <code>decouper_texte</code> applique un ordre de préférence explicite : garder des paragraphes entiers autant que possible, replier sur les phrases si un paragraphe dépasse le plafond, et ne couper « en monotone » (au mot près) qu'en dernier recours pour une phrase interminable. Les deux petites fonctions utilitaires définissent ce qu'est un paragraphe et ce qu'est une phrase :</p>
+  <pre><code>def _paragraphes(texte: str) -&gt; list[str]:
+    return [p.strip() for p in re.split(r"\n\s*\n", texte) if p.strip()]
+
+def _phrases(texte: str) -&gt; list[str]:
+    return [p.strip() for p in re.split(r"(?&lt;=[.!?…:;])\s+", texte) if p.strip()]</code></pre>
+  <p>Un paragraphe est ce que sépare une ligne vide (deux sauts de ligne, avec d'éventuels blancs entre les deux). Une phrase est ce qui suit un blanc après une ponctuation forte ; l'expression régulière <code>(?&lt;=[.!?…:;])\s+</code> utilise une <em>réserve</em> (le terme anglais est <em>lookbehind</em>, notée <code>(?&lt;=…)</code>) : elle découpe avant le blanc uniquement si le caractère qui précède ce blanc est l'un de <code>. ! ? … : ;</code>. La ponctuation reste donc collée à sa phrase, ce qui rend les fragments relisibles.</p>
+  <p>Voici la fonction complète ; lisez-la comme une machine à états avec un tampon <code>courant</code> et une fonction de vidage <code>basculer</code> :</p>
+  <pre><code>def decouper_texte(texte: str, max_tokens: int) -&gt; list[str]:
+    if estimer_tokens(texte) &lt;= max_tokens:
+        return [texte]                      # cas fréquent : rien à faire
+    fragments: list[str] = []
+    courant: list[str] = []
+
+    def basculer() -&gt; None:                 # vide le tampon dans les fragments
+        nonlocal courant
+        if courant:
+            fragments.append("\n\n".join(courant))
+            courant = []
+
+    for para in _paragraphes(texte):
+        if estimer_tokens(para) &lt;= max_tokens:
+            # le paragraphe tient-il dans le tampon déjà rempli ?
+            if estimer_tokens("\n\n".join([*courant, para])) &gt; max_tokens:
+                basculer()
+            courant.append(para)
+            continue
+        basculer()                          # sinon on vide, puis on découpe le paragraphe
+        morceau: list[str] = []
+        for phrase in _phrases(para):
+            if morceau and estimer_tokens(" ".join([*morceau, phrase])) &gt; max_tokens:
+                fragments.append(" ".join(morceau))
+                morceau = [phrase]
+            else:
+                morceau.append(phrase)
+        if morceau:
+            fragments.append(" ".join(morceau))
+    basculer()
+
+    finaux: list[str] = []                  # dernier recours : phrases interminables
+    for frag in fragments:
+        if estimer_tokens(frag) &lt;= max_tokens:
+            finaux.append(frag)
+            continue
+        mots = frag.split()
+        taille = max(50, int(max_tokens / 1.3))
+        for i in range(0, len(mots), taille):
+            finaux.append(" ".join(mots[i:i + taille]))
+    return finaux</code></pre>
+  <p>Trois points de détail méritent l'attention. La jointure du tampon se fait avec <code>"\n\n"</code> entre paragraphes et avec un simple espace entre phrases : le fragment reste une suite naturelle de texte, pas un collage. Le <em>tampon</em> (ici la liste <code>courant</code>, vidée par <code>basculer()</code>) permet d'accumuler plusieurs petits paragraphes dans un même fragment plutôt que d'en produire une dizaine de minuscules. Enfin le dernier recours découpe au mot près avec <code>taille = max(50, int(max_tokens / 1.3))</code> : on divise par 1,3 pour revenir de l'estimation aux mots, et le plancher de 50 mots évite une dégénérescence (une phrase dont chaque mot dépasserait l'estimation produirait des fragments d'un mot).</p>
+  <p>Cet ordre de préférence est un choix éditorial, et non une complexité gratuite : chaque niveau supplémentaire casse une frontière (paragraphe, puis phrase) que le texte offrait gratuitement. Le test <code>test_decoupe_ne_perd_aucun_mot</code> interdit justement l'accident le plus grave de tout découpage : qu'un mot disparaisse entre deux fragments.</p>
+
+  <h2>De l'intervention au granulat enfant</h2>
+  <p>Le parent d'une intervention se déduit de trois de ses champs — chambre, date, numéro de séance — et l'identifiant du parent se met au format où le numéro de séance est complété à gauche par des zéros (le terme anglais est <em>zero padding</em>), afin que le tri lexicographique des identifiants coïncide avec leur ordre chronologique :</p>
+  <pre><code>def identifiant_seance(enreg: dict) -&gt; str:
+    """Identifiant déterministe du parent : chambre, date, numéro de séance."""
+    return f"{enreg['chambre']}-{enreg['date']}-s{str(enreg['seance']).zfill(3)}"
+    # ex. « senat-1922-11-28-s002 »</code></pre>
+  <p>Chaque intervention devient alors un ou plusieurs granulats, dont l'identifiant porte un numéro de fragment (<code>-c01</code>, <code>-c02</code>…) et qui hérite de toutes les métadonnées utiles au filtrage et à la citation :</p>
+  <pre><code>def enficher(enreg: dict, max_tokens: int = 1200) -&gt; list[dict]:
+    parent = identifiant_seance(enreg)
+    fragments = decouper_texte(enreg["text_normalise"], max_tokens)
+    enfants = []
+    for rang, fragment in enumerate(fragments, start=1):
+        enfants.append({
+            "id": f"{enreg['id']}-c{rang:02d}",
+            "intervention_id": enreg["id"],          # la vérité terrain compare ici
+            "parent_id": parent,
+            "chunk_index": rang, "chunk_total": len(fragments),
+            "texte": fragment,
+            "date": enreg["date"], "chambre": enreg["chambre"],
+            "session": enreg["session"], "seance": enreg["seance"],
+            "orateur": enreg["orateur"].get("nom_canonique", enreg["orateur"]["nom"]),
+            "orateur_brut": enreg["orateur"]["nom"],
+            "role": enreg["orateur"].get("role"),
+            "groupe": enreg["orateur"].get("groupe"),
+            "résumé": enreg.get("résumé"),
+            "page_jo": enreg["page_jo"],
+        })
+    return enfants</code></pre>
+  <p>Notez deux champs jumeaux : <code>orateur</code> porte le nom canonique (celui sur lequel on filtre et on compte) et <code>orateur_brut</code> le nom observé (celui que l'historien peut vouloir auditer). Notez aussi que le fragment encodé est tiré de <code>text_normalise</code> — décision de l'étape 1 — alors que la citation affichée viendra du parent, construit lui sur <code>text_brut</code>.</p>
+
+  <h2>Le parent : la séance reconstituée en verbatim</h2>
+  <p>Le pattern parent-document de la leçon 0002 promet que la réponse ramène la séance entière. Le module tient cette promesse sans framework : il regroupe les interventions par <code>parent_id</code> et les recoud en un document, dans l'ordre du fichier d'entrée, chacun préfacé par son orateur et sa page :</p>
+  <pre><code>def seance_parent(interventions: list[dict]) -&gt; dict:
+    premiere = interventions[0]
+    texte = "\n\n".join(
+        f"### {e['orateur'].get('nom_canonique', e['orateur']['nom'])} — "
+        f"page {e['page_jo']}\n\n{e['text_brut']}"        # verbatim : text_brut
+        for e in interventions
+    )
+    return {
+        "id": identifiant_seance(premiere),
+        "date": premiere["date"], "chambre": premiere["chambre"],
+        "session": premiere["session"], "seance": premiere["seance"],
+        "intervenants": sorted({
+            e["orateur"].get("nom_canonique", e["orateur"]["nom"]) for e in interventions
+        }),
+        "interventions": [e["id"] for e in interventions],
+        "texte_reconstitue": texte,
+    }
+
+def etape2(config) -&gt; tuple[int, int]:
+    interventions = lire_jsonl(config.normalise_dir / "interventions.jsonl")
+    enfants: list[dict] = []
+    par_seance: "OrderedDict[str, list[dict]]" = OrderedDict()
+    for enreg in interventions:
+        enfants.extend(enficher(enreg, config.max_tokens_chunk))
+        par_seance.setdefault(identifiant_seance(enreg), []).append(enreg)
+    parents = [seance_parent(groupe) for groupe in par_seance.values()]
+    ecrire_jsonl(enfants, config.enfants_path)
+    ecrire_jsonl(parents, config.parents_path)
+    return len(enfants), len(parents)</code></pre>
+  <p>Le choix d'un <code>OrderedDict</code> (dictionnaire à ordre d'insertion) plutôt que d'un <code>dict</code> ordinaire est une assurance d'écriture : sur Python 3.7 et plus récents les deux se valent, mais le type annonce l'intention — les séances sont écrites dans l'ordre de leur première apparition, et le fichier de parents est reproductible à corpus constant. Le parent n'est jamais indexé dans la base vectorielle : il vit sur disque, et la recherche ne fait que le rattacher à ses enfants (page <a href="0017-code-recherche.html">0017</a>).</p>
+
+  <h2>Comment le module est testé</h2>
+  <p><code>tests/test_02_chunking.py</code>, exécuté par <code>uv run -m pytest tests/test_02_chunking.py -v</code>, affirme les comportements du contrat :</p>
+  <ul>
+    <li><code>test_intervention_courte_un_seul_enfant</code> : une intervention sous le plafond produit un granulat unique, <code>chunk_total = 1</code>.</li>
+    <li><code>test_intervention_longe_plusieurs_enfants_numerotes</code> : au-dessus du plafond, les fragments sont numérotés et partagent le <code>parent_id</code>.</li>
+    <li><code>test_chaque_fragment_respecte_la_taille_maximale</code> et <code>test_decoupe_ne_perd_aucun_mot</code> : la taille est bornée, rien ne se perd.</li>
+    <li><code>test_parent_reconstitue_la_seance</code> : le parent regroupe les intervenants et l'inventaire des interventions.</li>
+    <li><code>test_identifiant_seance_complete_le_zero</code> : « s002 » et non « s2 ».</li>
+    <li><code>test_etape2_complete_sur_corpus_fourni</code> : 165 enfants et un seul parent sur le corpus d'exemple.</li>
+  </ul>
+  <p><strong>À vérifier de votre côté :</strong> après <code>uv run python -m atelier chunker</code>, <code>data/enfants/enfants.jsonl</code> compte 165 lignes et <code>data/parents/seances.jsonl</code> une seule (le corpus fourni est une séance unique, aucune intervention ne dépasse le plafond).</p>
+
+  <h2>Vérifiez que c'est acquis</h2>
+  <div class="quiz" data-answer="1">
+    <p class="quiz-q">1. Pourquoi l'estimation des tokens est-elle un simple compteur de mots majoré de 30 % ?</p>
+    <button class="quiz-opt">Elle borne la taille sans dépendre d'un tokenizer, l'exactitude n'est pas requise.</button>
+    <button class="quiz-opt">Elle imite au mot près le tokenizer de bge-m3, son but est la précision.</button>
+    <button class="quiz-opt">Elle accélère l'encodage, car les tokens réduisent le nombre de passes.</button>
+    <p class="quiz-fb">Le plafond de 1 200 tokens est une marge de sécurité sur la taille des granulats, pas une fenêtre de tokenizer : une borne haute au 30 % suffit, et elle évite d'importer <code>transformers</code> dans une étape qui doit rester testable hors-ligne, sans dépendance ni poids.</p>
+  </div>
+  <div class="quiz" data-answer="2">
+    <p class="quiz-q">2. Pourquoi <code>decouper_texte</code> préfère-t-il les paragraphes, puis les phrases, puis les mots ?</p>
+    <button class="quiz-opt">Parce que chaque niveau inférieur casse une frontière que le texte offrait.</button>
+    <button class="quiz-opt">Parce que les phrases se tokenisent mieux que les paragraphes entiers.</button>
+    <button class="quiz-opt">Parce que l'indexation Qdrant refuserait les fragments de taille trop courte.</button>
+    <p class="quiz-fb">Le découpage géométrique n'intervient qu'en dernier recours, pour une phrase interminable. Un fragment qui s'arrête sur une frontière de paragraphe reste un tout lisible pour le cross-encoder comme pour l'œil ; c'est la traduction en code de la règle « frontières documentairement vraies avant d'être géométriques » (leçon 0002).</p>
+  </div>
+  <div class="quiz" data-answer="3">
+    <p class="quiz-q">3. Pourquoi le texte du parent est-il construit sur <code>text_brut</code> et celui des enfants sur <code>text_normalise</code> ?</p>
+    <button class="quiz-opt">Parce que les parents ne sont jamais encodés : la restitution reste verbatim.</button>
+    <button class="quiz-opt">Parce que le texte normalisé est parfois plus long que le texte brut.</button>
+    <button class="quiz-opt">Parce que Qdrant ignore les champs texte des enregistrements des parents.</button>
+    <p class="quiz-fb">Les enfants sont la matière de l'embedding et doivent rencontrer la saisie de l'utilisateur (étape 1) ; le parent n'est jamais encodé, il est restitué à l'affichage, et une citation scientifique se doit verbatim — c'est-à-dire conforme à la page imprimée, accents et capitales d'origine inclus.</p>
+  </div>
+
+  <footer class="nav">
+    <p><strong>Source commentée :</strong> <code>docs/ateliers/axe1-pipeline/atelier/chunking.py</code> — <strong>leçons liées :</strong> <a href="0002-chunking-parent-document.html">0002 (la théorie)</a>, <a href="0012-atelier-pipeline-complet.html">0012 (l'atelier complet)</a>.</p>
+    <p><a href="0013-code-normalisation.html">← Fiche précédente : étape 1 en code</a> · <a href="0015-code-encodage.html">Fiche suivante : étape 3 en code, encoder dense et sparse →</a></p>
+  </footer>
+</body>
+</html>

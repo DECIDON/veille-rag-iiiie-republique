@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leçon 0017 — Étape 5 en code : la recherche hybride et le rerank</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body>
+  <p class="crumbs"><a href="../index.html">Plan du cours</a> · <a href="0012-atelier-pipeline-complet.html">Leçon 0012 (l'atelier)</a> · <a href="../ateliers/axe1-pipeline/README.md">Code de l'atelier</a> · <a href="../reference/glossaire.html">Glossaire</a></p>
+  <p class="badge axe1">Axe 1 — Les données · atelier, étape 5</p>
+  <h1>Étape 5 en code : l'entonnoir, de la question au parent restitué</h1>
+  <p class="gagne">À la fin de cette fiche, vous pouvez réécrire vous-même <code>atelier/fusion.py</code> et <code>atelier/recherche.py</code> : deux bras prefetch sous le même filtre, fusion RRF (par Qdrant ou par votre propre fonction), rerank cross-encoder sur les survivants, et rattachement du parent-séance.</p>
+
+  <div class="retenir"><strong>Le principe de l'étape.</strong> La leçon <a href="0005-retrieval-hybride-rerank.html">0005</a> décrit un entonnoir : chaque étage est moins cher et plus exigeant que le précédent. Les deux bras (dense et sparse) remontent chacun 50 candidats sous le même filtre ; la fusion <strong>RRF</strong> (Reciprocal Rank Fusion) les combine <em>par le rang</em> et n'en garde que 20 ; le cross-encoder ne relit que ces 20 paires (question, fragment) et rend le top-5 ; enfin chaque résultat ramène sa séance parent. Les scores des deux bras ne se comparent pas — c'est le rang qui sert de dénominateur commun.</div>
+
+  <h2>La fusion RRF, en vingt lignes testables</h2>
+  <p>Qdrant sait fusionner lui-même ses bras prefetchs. L'atelier implémente pourtant la fusion en Python (<code>atelier/fusion.py</code>) pour trois raisons : rendre le mécanisme testable sans service, documenter la formule, et pouvoir fusionner plus tard un troisième bras qui ne viendrait pas de Qdrant (un BM25 d'OpenSearch, par exemple). La formule et son unique fonction :</p>
+  <pre><code>score(doc) = Σ  1 / (k + rang(source, doc))      k = 60 par convention
+
+def rrf(classements: list[list[str]], k: int = 60) -&gt; list[tuple[str, float]]:
+    """Fusionne des classements (listes d'identifiants, du mieux noté au moins
+    bien noté) et retourne [(id, score_rrf), …] trié par score décroissant."""
+    scores: dict[str, float] = {}
+    for classement in classements:
+        for rang, doc_id in enumerate(classement, start=1):
+            scores[doc_id] = scores.get(doc_id, 0.0) + 1.0 / (k + rang)
+    return sorted(scores.items(), key=lambda kv: (-kv[1], kv[0]))</code></pre>
+  <p>Lisons la formule plutôt que le code. Un document classé 1ᵉʳ dans un bras marque <code>1/(60+1) ≈ 0,0164</code> ; classé 50ᵉ dans l'autre, il marque <code>1/(60+50) ≈ 0,0091</code> ; et ces contributions <em>s'additionnent</em>, si bien qu'un document medium des deux bras déborde un champion isolé d'un seul bras. C'est exactement la vertu annoncée : la fusion récompense l'accord des deux recherches plutôt que la performance isolée de l'une d'elles. La constante <code>k = 60</code> est la convention du papier d'origine de RRF ; elle aplatit les écarts de tête de classement, ce qui évite qu'une première place sur un seul bras écrase tout le reste. Le tri final départage à score égal par l'identifiant croissant, afin que la sortie soit déterministe alors que la table de hachage des scores ne l'est pas.</p>
+
+  <h2>Construire le filtre de payload</h2>
+  <p>La ligne de commande accepte des options simples (<code>--chambre</code>, <code>--orateur</code>, <code>--from</code>, <code>--to</code>, <code>--session</code>) que <code>construire_filtre</code> traduit en objets du client. Un dictionnaire Python simple sert de langage intermédiaire entre la commande et la requête, et les fonctions d'évaluation réutiliseront ce même dictionnaire (page <a href="0018-code-evaluation.html">0018</a>) :</p>
+  <pre><code>def construire_filtre(filtres: dict):
+    from qdrant_client.models import (
+        DatetimeRange, FieldCondition, Filter, MatchValue,
+    )
+    conditions = []
+    if "chambre" in filtres:
+        conditions.append(FieldCondition(key="chambre", match=MatchValue(value=filtres["chambre"])))
+    if "orateur" in filtres:
+        conditions.append(FieldCondition(key="orateur", match=MatchValue(value=filtres["orateur"])))
+    if "session" in filtres:
+        conditions.append(FieldCondition(key="session", match=MatchValue(value=str(filtres["session"]))))
+    if "from" in filtres or "to" in filtres:
+        conditions.append(FieldCondition(
+            key="date",
+            range=DatetimeRange(gte=filtres.get("from"), lte=filtres.get("to")),
+        ))
+    return Filter(must=conditions) if conditions else None</code></pre>
+  <p>Le mot <code>must</code> signifie la conjonction : toutes les conditions doivent être vraies. Une plage bornée inférieurement seulement (<code>--from</code> sans <code>--to</code>) s'écrit naturellement, <code>DatetimeRange</code> acceptant les bornes manquantes. Sans condition, la fonction retourne <code>None</code> et la requête n'est pas filtrée ; le test <code>test_construire_filtre_vide_retourne_none</code> surveille précisément cette absence : un <code>Filter(must=[])</code> vide n'a pas partout la même signification qu'une absence de filtre.</p>
+
+  <h2>Les deux bras, puis la fusion — côté serveur d'abord</h2>
+  <p>Chaque bras est un <code>Prefetch</code> : une sous-requête dont Qdrant garde la liste avant de fusionner. La seule différence entre les deux est l'encodage de la question et le nom du vecteur interrogé :</p>
+  <pre><code>def _requete_bras(quest_id: str, question: str, embedder, config, filtre):
+    from qdrant_client.models import Prefetch
+    if quest_id == "dense":
+        vecteur = embedder.encode_dense([question])[0]
+        return Prefetch(
+            query=vecteur, using="dense", limit=config.top_prefetch, filter=filtre,
+        )
+    from qdrant_client.models import SparseVector
+    plonges = embedder.encode_sparse([question])[0]
+    return Prefetch(
+        query=SparseVector(indices=list(map(int, plonges)), values=list(plonges.values())),
+        using="sparse", limit=config.top_prefetch, filter=filtre,
+    )
+
+def recherche_hybride(question, embedder, config, client,
+                      filtres=None, fusion="serveur"):
+    from qdrant_client.models import Fusion, FusionQuery
+    filtre = construire_filtre(filtres or {})
+    bras = [_requete_bras(n, question, embedder, config, filtre) for n in ("dense", "sparse")]
+
+    if fusion == "serveur":
+        reponse = client.query_points(
+            collection_name=config.collection,
+            prefetch=bras,
+            query=FusionQuery(fusion=Fusion.RRF),
+            limit=config.top_fusion,
+            with_payload=True,
+        )
+        return [p.payload for p in reponse.points]</code></pre>
+  <p>Le filtre est passé <em>dans chaque bras prefetch</em> : Qdrant ne retient que les points admissibles avant de rapprocher les vecteurs, ce qui est la promesse du pré-filtrage vu à l'<a href="0016-code-indexation.html">étape 4</a>. Un seul appel réseau fait tout l'étage : deux ANN concurrentes, fusion RRF serveur, tronçage à <code>top_fusion = 20</code>. L'option <code>--fusion locale</code> de la ligne de commande emprunte l'autre chemin, visible dans le même module :</p>
+  <pre><code>    # Fusion locale : deux ANN séparées puis RRF côté client (atelier.fusion).
+    classements, payloads = [], {}
+    for bras_q in bras:
+        reponse = client.query_points(
+            collection_name=config.collection,
+            query=bras_q.query, using=bras_q.using,
+            query_filter=filtre, limit=config.top_prefetch, with_payload=True,
+        )
+        classements.append([p.payload["chunk_id"] for p in reponse.points])
+        for p in reponse.points:
+            payloads[p.payload["chunk_id"]] = p.payload
+    fusionnes = rrf(classements, k=config.rrf_k)
+    return [payloads[d] for d, _ in fusionnes[:config.top_fusion]]</code></pre>
+  <p>Les deux chemins doivent converger, et cette convergence est un test en soi (ici, deux tests d'intégration vérifient que le bon document ressort des deux manières). La version locale est plus bavarde en réseau mais rend la fusion observable et modifiable — c'est le « seam » revendiqué par l'en-tête du module.</p>
+
+  <h2>Le rerank : relire 20 paires, pas 15 millions</h2>
+  <pre><code>def reranker(question, candidats, config, top_k=None, _modele=None):
+    """Rerank cross-encoder sur les candidats fusionnés ; tri par score rerank."""
+    from sentence_transformers import CrossEncoder
+    modele = _modele or CrossEncoder(config.reranker, device="cpu")
+    paires = [(question, c["texte"]) for c in candidats]
+    scores = modele.predict(paires)
+    classes = sorted(zip(candidats, scores), key=lambda cs: -cs[1])
+    final = []
+    for candidat, score in classes:
+        copie = dict(candidat)
+        copie["score_rerank"] = float(score)
+        final.append(copie)
+    return final[:top_k or config.top_rerank]</code></pre>
+  <p>Un cross-encoder n'encode pas deux objets séparés : il lit la question et le fragment <em>ensemble</em> et produit un score de pertinence — c'est ce qui le rend nettement plus juste et nettement plus cher qu'un bi-encodeur, d'où l'entonnoir qui ne lui livre que 20 candidats. Le paramètre <code>_modele</code> permet à l'appelant de passer un modèle déjà chargé : le chargement de <code>bge-reranker-v2-m3</code> coûte quelques secondes, et l'évaluation (étape 6) le charge une fois pour ses 28 questions plutôt qu'une fois par question. Le score brut est conservé dans <code>score_rerank</code> : un audit de réponse doit pouvoir dire pourquoi tel fragment est premier.</p>
+
+  <h2>Restituer le parent, afficher la preuve</h2>
+  <pre><code>def charger_parents(chemin) -&gt; dict[str, dict]:
+    if not Path(chemin).exists():
+        return {}
+    return {p["id"]: p for p in lire_jsonl(chemin)}
+
+def restituer_parents(resultats, parents):
+    """Attache le parent (séance reconstituée) à chaque résultat, sans le dupliquer."""
+    for resultat in resultats:
+        resultat["parent"] = parents.get(resultat.get("parent_id") or "")
+    return resultats</code></pre>
+  <p>Le parent n'est pas copié dans chaque résultat mais référencé depuis une table chargée une fois depuis <code>data/parents/seances.jsonl</code> : cinq résultats d'une même séance ne pèsent pas cinq fois la séance. L'affichage (<code>afficher</code>) met alors en forme une réponse « retrieval-first » : rang, orateur, chambre, date, <strong>page du Journal officiel</strong>, identifiant du granulat, extrait tronqué à 320 caractères, score de rerank signé, et le parent avec son compte d'interventions. Rien dans cet affichage n'a été généré par un modèle : chaque caractère est une donnée de l'index — c'est l'UX défendue par la leçon 0006.</p>
+  <p>La commande complète relie ces quatre fonctions, dans l'ordre de l'entonnoir :</p>
+  <pre><code>encodeur = embedders.creer(config.embedder)
+client = QdrantClient(url=config.qdrant_url)
+candidats = recherche.recherche_hybride(args.question, encodeur, config, client,
+                                        filtres=_filtres(args), fusion=args.fusion)
+resultats = (candidats[:config.top_rerank] if args.no_rerank
+             else recherche.reranker(args.question, candidats, config))
+resultats = recherche.restituer_parents(
+    resultats, recherche.charger_parents(config.parents_path),
+)
+print(recherche.afficher(resultats))</code></pre>
+
+  <h2>Comment le module est testé</h2>
+  <ul>
+    <li><code>test_rrf_le_document_present_dans_les_deux_bras_gagne</code>, <code>test_rrf_score_exact</code> et <code>test_rrf_sans_classement_supplementaire_sur_egalite</code> : la formule, mesurée sur des palmarès fictifs, sans service.</li>
+    <li><code>test_construire_filtre_chambre_et_date</code> et <code>test_construire_filtre_vide_retourne_none</code> : le langage intermédiaire du filtre.</li>
+    <li>Marqués <code>integration</code> : <code>test_recherche_hybride_retient_le_bon_document</code> (la question du budget aéronautique retrouve l'intervention d'ouverture) et <code>test_filtre_de_recherche_exclut_l_autre_chambre</code> (un filtre <code>chambre=chambre</code> ne remonte rien, puisque le corpus fourni est sénatorial).</li>
+  </ul>
+  <p><strong>À vérifier de votre côté :</strong> <code>uv run python -m atelier rechercher "budget general exercice 1923 travaux publics aeronautique" --chambre senat</code> rend en premier l'intervention du président ouvrant la discussion (<code>…-i007</code>), avec « page JO 1 » et le parent <code>senat-1922-11-28-s002</code>.</p>
+
+  <h2>Vérifiez que c'est acquis</h2>
+  <div class="quiz" data-answer="1">
+    <p class="quiz-q">1. Pourquoi fusionner par le rang (RRF) plutôt que par une somme des scores des deux bras ?</p>
+    <button class="quiz-opt">Car les scores d'un cosinus dense et d'un produit scalaire sparse ne se comparent pas.</button>
+    <button class="quiz-opt">Car la fusion par rang demande moins de calcul que la fusion par score pondéré.</button>
+    <button class="quiz-opt">Car les scoreurs denses produisent parfois des scores négatifs sur un tel corpus.</button>
+    <p class="quiz-fb">Le premier bras rend des cosinus entre −1 et 1, le second des produits scalaires sparse sans borne : les additionner reviendrait à additionner des grandeurs sans unité commune. Le rang, lui, est la seule grandeur que les deux bras expriment dans la même unité ; RRF s'en sert comme dénominateur commun (veille §6.2).</p>
+  </div>
+  <div class="quiz" data-answer="2">
+    <p class="quiz-q">2. Le cross-encoder ne relit que 20 candidats. Pourquoi pas les 50 de chaque bras, ou le top-5 directement ?</p>
+    <button class="quiz-opt">Car son coût par paire est hors de portée du premier étage, et le top-5 est fragile.</button>
+    <button class="quiz-opt">Car Qdrant limite lui-même la taille de chaque prefetch, et le rerank vient après.</button>
+    <button class="quiz-opt">Car le modèle est de petite taille et sa fenêtre attention est bornée.</button>
+    <p class="quiz-fb">Un bi-encodeur précalcule les vecteurs et compare en millisecondes ; un cross-encoder relit la paire complète à la requête, ce qui est impensable sur 15 M de chunks mais anodin sur 20. Quant au top-5 sans marge : si un attendu sort 9ᵉ de la fusion, le rerank ne peut pas le voir ; 20 lui laisse une chance de le remonter — c'est la logique de l'entonnoir, rappel d'abord, précision ensuite (leçon 0005).</p>
+  </div>
+  <div class="quiz" data-answer="3">
+    <p class="quiz-q">3. Pourquoi le résultat renvoie-t-il son parent depuis un fichier, et non depuis la base vectorielle ?</p>
+    <button class="quiz-opt">Car le parent n'est pas encodé : il est restitué pour le contexte, jamais recherché.</button>
+    <button class="quiz-opt">Car Qdrant refuse de stocker deux vecteurs nommés sur un même point.</button>
+    <button class="quiz-opt">Car la séance entière dépasserait la longueur maximale autorisée d'un payload.</button>
+    <p class="quiz-fb">Encoder la séance entière noierait dans un vecteur unique le sens de 165 interventions ; le pattern parent-document encode l'enfant et restitue le parent (leçon 0002). Le fichier de parents vit sur disque, et l'étape 2 l'y a écrit en verbatim ; la recherche ne fait que le rattacher au résultat.</p>
+  </div>
+
+  <footer class="nav">
+    <p><strong>Source commentée :</strong> <code>docs/ateliers/axe1-pipeline/atelier/fusion.py</code> et <code>atelier/recherche.py</code> — <strong>leçons liées :</strong> <a href="0005-retrieval-hybride-rerank.html">0005 (la théorie)</a>, <a href="0012-atelier-pipeline-complet.html">0012 (l'atelier complet)</a>.</p>
+    <p><a href="0016-code-indexation.html">← Fiche précédente : étape 4 en code</a> · <a href="0018-code-evaluation.html">Fiche suivante : étape 6 en code, évaluer sur Q&amp;R annotées →</a></p>
+  </footer>
+</body>
+</html>

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leçon 0019 — Étape 7 en code : générer une synthèse citée</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body>
+  <p class="crumbs"><a href="../index.html">Plan du cours</a> · <a href="0012-atelier-pipeline-complet.html">Leçon 0012 (l'atelier)</a> · <a href="../ateliers/axe1-pipeline/README.md">Code de l'atelier</a> · <a href="../reference/glossaire.html">Glossaire</a></p>
+  <p class="badge axe1">Axe 1 — Les données · atelier, étape 7 (bonus)</p>
+  <h1>Étape 7 en code : soixante lignes d'appel LLM, et trois garde-fous</h1>
+  <p class="gagne">À la fin de cette fiche, vous pouvez réécrire vous-même <code>atelier/generation.py</code> : le prompt qui interdit d'inventer, l'appel à l'API compatible OpenAI d'Ollama avec la bibliothèque standard seule, et les trois garde-fous CPU sans lesquels la commande semble gelée.</p>
+
+  <div class="retenir"><strong>Le principe de l'étape.</strong> Conformément à la leçon <a href="0006-serving-llm-cpu.html">0006</a>, la génération est un bonus : elle décore un retrieval qui tient déjà seul. Le module est minuscule parce que toute l'intelligence est ailleurs : il assemble un prompt qui impose la citation des extraits, poste une requête JSON à une API <em>compatible OpenAI</em> (le dénominateur commun de l'écosystème, qui rend Ollama et vLLM interchangeables), et borne la réponse. Le code n'utilise aucune dépendance : <code>json</code> et <code>urllib.request</code> suffisent pour un appel HTTP.</div>
+
+  <h2>Le prompt système : trois interdits, un mot de sortie</h2>
+  <pre><code>SYSTEME = (
+    "Tu réponds exclusivement à partir des extraits fournis. Tu cites chaque "
+    "information entre crochets avec l'identifiant d'intervention et la page du "
+    "Journal officiel. Si les extraits ne permettent pas de répondre, tu réponds "
+    "exactement : INSUFFISANT. N'invente jamais de date, de nom ou de page."
+)
+
+def construire_prompt(question: str, resultats: list[dict]) -&gt; list[dict]:
+    extraits = []
+    for rang, r in enumerate(resultats, start=1):
+        entete = (
+            f"[{rang}] intervention {r['intervention_id']}, {r['orateur']}, "
+            f"{r['chambre']}, {r['date']}, page JO {r['page_jo']}"
+        )
+        extraits.append(entete + "\n" + r["texte"])
+    contenu = (
+        "Extraits :\n\n" + "\n\n".join(extraits)
+        + "\n\nQuestion : " + question
+    )
+    return [
+        {"role": "system", "content": SYSTEME},
+        {"role": "user", "content": contenu},
+    ]</code></pre>
+  <p>Le message système est le règlement du système : il fixe le contrat avant la conversation. Trois clauses comptent. <em>Exclusivement à partir des extraits</em> interdit la culture générale du modèle — sur un corpus OCR du XIXᵉ siècle, ce que le modèle « sait » de la IIIᵉ République vient de manuels, pas de vos pages. <em>Citer entre crochets identifiant et page</em> rend chaque affirmation de la réponse auditable d'un coup d'œil — c'est la provenance de la leçon 0008, jusque dans la syntaxe d'une phrase. <em>Répondre exactement INSUFFISANT</em> donne au refus une forme reconnaissable par un programme : une interface peut tester la chaîne exacte et proposer alors les extraits eux-mêmes, plutôt que de laisser le modèle combler le vide par de la vraisemblance. L'en-tête de chaque extrait (intervention, orateur, chambre, date, page) est là pour que la citation exigée soit matériellement disponible sous les yeux du modèle : un prompt ne peut pas faire citer ce qu'il ne donne pas.</p>
+
+  <h2>L'appel : du JSON sur HTTP, avec la bibliothèque standard</h2>
+  <pre><code>def generer(question, resultats, config, timeout: int = 300) -&gt; str:
+    corps = json.dumps({
+        "model": config.ollama_model,
+        "messages": construire_prompt(question, resultats),
+        "temperature": 0.2,
+        "stream": False,
+        "think": False,
+        "max_tokens": config.ollama_max_tokens,
+        "options": {"num_ctx": config.ollama_num_ctx},
+    }).encode("utf-8")
+    requete = urllib.request.Request(
+        config.ollama_url.rstrip("/") + "/v1/chat/completions",
+        data=corps,
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    with urllib.request.urlopen(requete, timeout=timeout) as reponse:
+        donnees = json.loads(reponse.read().decode("utf-8"))
+    return donnees["choices"][0]["message"]["content"].strip()</code></pre>
+  <p>L'URL n'est pas l'API native d'Ollama (<code>/api/chat</code>) mais sa face compatible OpenAI (<code>/v1/chat/completions</code>) : le corps de la requête et la structure de la réponse sont alors ceux du protocole OpenAI, et la seule ligne à changer pour passer d'Ollama (développement CPU) à vLLM (production GPU) est l'URL de base. La <code>temperature</code> de 0,2 écrase l'aléa : une synthèse documentaire doit être reproductible, pas inventivée. <code>stream: False</code> attend la réponse entière : l'atelier imprime un bloc, une interface web streamerait les tokens, mais le garde-fou du paragraphe suivant en dépend — sans flux, le client ne voit rien pendant toute la génération.</p>
+
+  <h2>Les trois garde-fous CPU, gagnés à la suite d'un échec</h2>
+  <div class="note"><strong>Piège vérifié sur le terrain (leçon 0006, « le piège du tag »).</strong> La première version de cette étape restait muette puis expirait. Cause mesurée : le tag Ollama <code>qwen3:4b</code> sert aujourd'hui <strong>Qwen3-4B-Thinking-2507</strong> (digest <code>359d7dd…</code>, identique à <code>qwen3:4b-thinking</code>), une variante dont le raisonnement est inarrêtable — <code>/api/show</code> déclare <code>thinking: values [true], default true</code> — et dont le champ <code>think: false</code> est ignoré. En <code>stream: False</code> sur CPU (~7 tokens/s), la commande émettait silencieusement des milliers de tokens de raisonnement invisible : 2 391 tokens en 3 minutes 10. Le kit utilise donc <code>qwen3:4b-instruct</code> (variante hybride, qui honore <code>think: false</code>) et trois champs de la requête portent la leçon.</div>
+  <ul>
+    <li><code>"think": False</code> — désactive le raisonnement interne (les tokens de chaîne de pensée que le modèle s'écrit à lui-même avant de répondre) sur les variantes hybrides. Sans ce drapeau, ces tokens invisibles consomment la fenêtre et le temps.</li>
+    <li><code>"max_tokens": 500</code> (constante <code>ollama_max_tokens</code> de la configuration) — borne la réponse, et borne surtout le raisonnement résiduel si le modèle ignorait le drapeau : la boucle ne peut plus diverger sans limite.</li>
+    <li><code>"options": {"num_ctx": 8192}</code> — agrandit la fenêtre de contexte : trois enfants de ~1 200 tokens plus le prompt atteignent la fenêtre serveur par défaut (4 096 tokens), et une requête trop longue pour le contexte est tronquée côté serveur, sans erreur pour le client — le genre de dégradation silencieuse qu'on préfère explicite.</li>
+  </ul>
+  <p>Avec ces trois réglages et le bon tag, la chaîne complète a été vérifiée de bout en bout : 1 min 43 à froid sur CPU pour la question de l'exemple (mesure Ollama 0.40.12), à comparer des dizaines de millisecondes de la recherche seule — la génération reste l'étage lent, et c'est pourquoi elle est bonus.</p>
+
+  <h2>Le branchement : rerank d'abord, génération ensuite</h2>
+  <pre><code>candidats = recherche.recherche_hybride(args.question, encodeur, config, client)
+resultats = recherche.reranker(args.question, candidats, config, top_k=args.k)
+reponse = generation.generer(args.question, resultats, config)
+print(reponse)
+print("\n— sources —")
+for r in resultats:
+    print(f"  [{r['intervention_id']}] {r['orateur']}, page JO {r['page_jo']}")</code></pre>
+  <p>La commande <code>generer</code> réutilise l'entonnoir de l'étape 5 sans y toucher : le LLM reçoit le top-3 reranké, jamais davantage, et la liste des sources est imprimée depuis les payloads, pas depuis le texte du modèle — la trace de provenance ne dépend pas de la bonne volonté de la génération.</p>
+
+  <h2>Comment le module est testé</h2>
+  <ul>
+    <li><code>test_prompt_impose_citations_et_refus</code> (unitaire, hors-ligne) : le message système contient l'interdit hors extraits, l'exigence de citation et le mot INSUFFISANT ; le message utilisateur contient l'identifiant, la page et le texte de chaque extrait.</li>
+    <li><code>test_generation_reelle</code>, marqué <code>-m reseau</code> : saute tant qu'Ollama n'est pas joignable, joue le vrai appel (question, trois extraits, réponse non vide) dès qu'il l'est — <code>uv run -m pytest -m reseau</code>.</li>
+  </ul>
+  <p><strong>À vérifier de votre côté :</strong> après <code>ollama pull qwen3:4b-instruct</code>, la commande <code>uv run python -m atelier generer "que dit montjou de l'infrastructure aeronautique a laval ?"</code> rend une synthèse dont chaque information porte un crochet de citation, suivie de la liste des sources avec leurs pages du Journal officiel.</p>
+
+  <h2>Vérifiez que c'est acquis</h2>
+  <div class="quiz" data-answer="1">
+    <p class="quiz-q">1. Pourquoi taper sur <code>/v1/chat/completions</code> plutôt que sur l'API native d'Ollama ?</p>
+    <button class="quiz-opt">Parce que le protocole compatible OpenAI rend Ollama et vLLM interchangeables.</button>
+    <button class="quiz-opt">Parce que l'API native d'Ollama ne connaît pas le champ temperature.</button>
+    <button class="quiz-opt">Parce que la face compatible est seule à accepter le champ think.</button>
+    <p class="quiz-fb"><code>/v1/chat/completions</code> est le protocole rendu public par OpenAI, devenu le dénominateur commun de l'écosystème : Ollama l'expose, vLLM l'expose, et passer du développement CPU à la production GPU ne coûte plus qu'un changement d'URL (leçon 0006). Les deux autres affirmations sont fausses : l'API native connaît la temperature, et <code>think</code> est un champ additionnel qu'Ollama accepte sur les deux faces.</p>
+  </div>
+  <div class="quiz" data-answer="2">
+    <p class="quiz-q">2. Le mot <code>INSUFFISANT</code> impose au modèle une réponse exacte. Pour qui est écrite cette contrainte ?</p>
+    <button class="quiz-opt">Pour le programme : une interface teste la chaîne exacte et bascule sur les extraits.</button>
+    <button class="quiz-opt">Pour le chercheur : le mot signalerait la limite du corpus d'un coup d'œil.</button>
+    <button class="quiz-opt">Pour le modèle : une sortie courte lui évite d'inventer une date ou un nom.</button>
+    <p class="quiz-fb">Le lecteur profite du refus (une absence de réponse vaut mieux qu'une réponse fausse), mais la forme exacte sert d'abord la machine : testable par <code>==</code>, elle permet à l'interface d'afficher alors les extraits en mode retrieval-first au lieu d'un texte. Une consigne du genre « dis poliment que tu ne sais pas » serait invisible pour un programme.</p>
+  </div>
+  <div class="quiz" data-answer="3">
+    <p class="quiz-q">3. Le test <code>-m reseau</code> saute quand Ollama est absent, au lieu d'échouer. Pourquoi ce choix ?</p>
+    <button class="quiz-opt">Pour que <code>make test</code> reste vert sur une machine sans service ni poids.</button>
+    <button class="quiz-opt">Pour que l'échec ne soit jamais imputable au code de génération.</button>
+    <button class="quiz-opt">Pour que le test serve de documentation exécutable de l'API utilisée.</button>
+    <p class="quiz-fb">La pyramide de tests de l'atelier distingue les marques : l'unitaire doit tourner partout (<code>make test</code>), l'intégration demande Qdrant, le test réseau demande Ollama vivant. Une dépendance externe absente n'est pas une régression du code : sauter avec un motif explicite garde la suite utile sur toutes les machines, et <code>make test-complet</code> exclut ces marques par nom.</p>
+  </div>
+
+  <footer class="nav">
+    <p><strong>Source commentée :</strong> <code>docs/ateliers/axe1-pipeline/atelier/generation.py</code> et la fonction <code>_generer</code> de <code>atelier/__main__.py</code> — <strong>leçons liées :</strong> <a href="0006-serving-llm-cpu.html">0006 (le serving et le piège du tag)</a>, <a href="0012-atelier-pipeline-complet.html">0012 (l'atelier complet)</a>.</p>
+    <p><a href="0018-code-evaluation.html">← Fiche précédente : étape 6 en code</a> · <a href="0012-atelier-pipeline-complet.html">Retour à l'atelier complet (0012)</a></p>
+  </footer>
+</body>
+</html>

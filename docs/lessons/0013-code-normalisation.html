@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Leçon 0013 — Étape 1 en code : normaliser le corpus</title>
+  <link rel="stylesheet" href="../assets/lesson.css">
+  <script src="../assets/quiz.js" defer></script>
+</head>
+<body>
+  <p class="crumbs"><a href="../index.html">Plan du cours</a> · <a href="0012-atelier-pipeline-complet.html">Leçon 0012 (l'atelier)</a> · <a href="../ateliers/axe1-pipeline/README.md">Code de l'atelier</a> · <a href="../reference/glossaire.html">Glossaire</a></p>
+  <p class="badge axe1">Axe 1 — Les données · atelier, étape 1</p>
+  <h1>Étape 1 en code : normaliser le corpus, fonction par fonction</h1>
+  <p class="gagne">À la fin de cette fiche, vous pouvez réécrire vous-même <code>atelier/normalisation.py</code> et la charpente qui l'accueille : le script qui lit un corpus JSON d'interventions OCR et écrit, ligne par ligne, le fichier <code>data/normalise/interventions.jsonl</code> que toutes les étapes suivantes consommeront.</p>
+
+  <div class="retenir"><strong>Le principe de l'étape.</strong> La normalisation produit un second texte, <code>text_normalise</code>, obtenu par règles déterministes, et elle laisse <code>text_brut</code> parfaitement intact : le texte brut nourrit la recherche lexicale et garantit des citations verbatim, le texte normalisé seul passera dans l'embedding (leçon <a href="0001-postocr-normalisation.html">0001</a>). Aucune bibliothèque tierce n'intervient ici — uniquement la bibliothèque standard de Python —, ce qui fait de ce module le plus portable et le plus testable de tout l'atelier.</div>
+
+  <h2>La charpente commune à toutes les étapes</h2>
+  <p>Avant la première règle de nettoyage, trois petits fichiers rendent le reste possible. Vous les écrivez une fois pour toute l'atelier.</p>
+  <p><strong>1. Le squelette du paquet.</strong> Le répertoire <code>atelier/</code> n'est un <em>paquet</em> (répertoire de modules Python importables) que parce qu'il contient un fichier <code>__init__.py</code>, et celui-ci ne porte que deux constantes de version. Comme le projet n'est pas installé (le fichier <code>pyproject.toml</code> porte <code>package = false</code>), la commande <code>uv run python -m atelier normaliser</code> exécute <code>atelier/__main__.py</code> depuis le répertoire de l'atelier, et les imports relatifs comme <code>from . import normalisation</code> résolvent dans ce même répertoire. Vous n'avez donc rien à installer d'autre que les dépendances pour que tout fonctionne.</p>
+  <p><strong>2. <code>config.py</code>, toute la configuration en un objet immutable.</strong> Un <em>dataclass</em> (classe dont Python génère le constructeur) gelé par <code>@dataclass(frozen=True)</code> déclare les chemins et les réglages ; la fonction <code>charger()</code> en recopie un exemplaire avec les variables d'environnement appliquées, et le reste du code ne manipule que cet objet :</p>
+  <pre><code>RACINE = Path(__file__).resolve().parent.parent   # dossier de l'atelier
+DATA = RACINE / "data"
+
+@dataclass(frozen=True)
+class Config:
+    qdrant_url: str = "http://localhost:6333"
+    collection: str = "jo_debats"
+    embedder: str = "bge-m3"        # "dummy" = plomberie hors-ligne
+    dim: int = 1024                 # dimension des vecteurs de bge-m3
+    max_tokens_chunk: int = 1200    # étape 2
+    top_prefetch: int = 50          # étape 5 : candidats par bras
+    top_fusion: int = 20            # étape 5 : survivants après RRF
+    top_rerank: int = 5             # étapes 5-6 : résultats finaux
+    rrf_k: int = 60                 # constante k de la fusion RRF
+    batch: int = 16                 # étape 3 : textes par passe
+    corpus_dir: Path = field(default_factory=lambda: DATA / "corpus")
+    normalise_dir: Path = field(default_factory=lambda: DATA / "normalise")
+    # … enfants_path, parents_path, cache_path, questions_path …
+
+def charger() -&gt; Config:
+    defauts = Config()
+    return replace(
+        defauts,
+        qdrant_url=os.environ.get("ATELIER_QDRANT_URL", defauts.qdrant_url),
+        embedder=os.environ.get("ATELIER_EMBEDDER", defauts.embedder),
+        # … chaque variable ATELIER_* ou OLLAMA_* avec son défaut …
+    )</code></pre>
+  <p>Trois décisions méritent d'être comprises avant d'être copiées. Le gel (<code>frozen=True</code>) rend toute modification accidentelle impossible en cours d'exécution. Les chemins sont déclarés avec <code>field(default_factory=lambda: …)</code>, ce qui évalue le chemin à chaque construction de l'objet plutôt qu'à la définition de la classe — la précaution est gratuite et elle garde la porte ouverte à une configuration dont la racine changerait. Enfin, <code>charger()</code> applique les variables d'environnement <em>en un seul endroit</em> : un module qui a besoin du réglage reçoit un objet <code>Config</code>, jamais il ne lit <code>os.environ</code> lui-même, et un test peut donc injecter une configuration factice.</p>
+  <p><strong>3. <code>__main__.py</code>, la répartition des commandes.</strong> Le module construit un <code>argparse.ArgumentParser</code>, déclare une sous-commande par étape, puis important le module demandé <em>seulement quand la commande le réclame</em> :</p>
+  <pre><code>sous = parser.add_subparsers(dest="commande")
+sous.add_parser("normaliser", help="étape 1 — corpus JSON → interventions normalisées")
+# … chunker, encoder, indexer, rechercher, evaluer, generer …
+args = parser.parse_args(argv)
+config = _config.charger()
+
+if args.commande == "normaliser":
+    from . import normalisation            # import différé
+    n = normalisation.etape1(config)
+    print(f"{n} interventions normalisées → …")
+    return 0</code></pre>
+  <p>L'<em>import différé</em> (écrire l'<code>import</code> dans le <code>if</code> plutôt qu'en tête de fichier) n'est pas une coquetterie : la commande <code>normaliser</code> ne doit jamais échouer parce que <code>qdrant-client</code> ou <code>torch</code> (les bibliothèques lourdes des étapes 4 et 3) manquent. La fonction appelée porte un nom uniforme, <code>etape1</code>, <code>etape2</code>… : elle prend la configuration, écrit ses fichiers et renvoie le nombre d'enregistrements produits, ce qui est tout ce que la ligne de commande a besoin de savoir.</p>
+
+  <h2>Le contrat d'entrée et sa validation</h2>
+  <p>Le module fixe d'abord ce qu'un enregistrement valide doit contenir. Un objet JSON représentant une intervention doit porter ces champs, sous peine de refus :</p>
+  <pre><code>CHAMPS_REQUIS = (
+    "id", "date", "chambre", "session", "seance", "orateur", "text_brut", "page_jo",
+)
+_DATE = re.compile(r"\d{4}-\d{2}-\d{2}")
+
+def valider(enreg: dict) -&gt; None:
+    manquants = [c for c in CHAMPS_REQUIS if c not in enreg or enreg[c] in (None, "")]
+    if manquants:
+        apercu = json.dumps(enreg, ensure_ascii=False)[:160]
+        raise ValueError(f"enregistrement invalide (champs requis absents : "
+                         f"{', '.join(manquants)}) — {apercu}")
+    orateur = enreg["orateur"]
+    if not isinstance(orateur, dict) or not orateur.get("nom"):
+        raise ValueError(f"champ « orateur » attendu comme objet avec une clé « nom » : {orateur}")
+    if not _DATE.fullmatch(str(enreg["date"])):
+        raise ValueError(f"champ « date » attendu au format AAAA-MM-JJ : {enreg['date']}")</code></pre>
+  <p>Deux détails de fabrication rendent l'erreur exploitable le jour où un export de 40 000 lignes sera mal formé : le message cite les champs manquants <em>et</em> un aperçu de 160 caractères de l'enregistrement fautif, et la date est vérifiée par expression régulière (mot à mot : quatre chiffres, deux chiffres, deux chiffres, séparés par des tirets) parce que tout le filtrage par plage de dates repose sur un tri lexicographique correct, ce que seul garantit le format ISO <code>AAAA-MM-JJ</code>. La validation refuse aussi l'identifiant vide, parce qu'un identifiant absent est exactement aussi grave qu'un identifiant faux : il casse la citation de provenance.</p>
+  <p>Le chargement accepte deux écritures — un fichier <code>.json</code> contenant un tableau ou un objet unique, et un fichier <code>.jsonl</code> (JSON Lines) contenant un enregistrement par ligne — et il refuse tout identifiant rencontré deux fois :</p>
+  <pre><code>def charger_corpus(dossier: Path) -&gt; list[dict]:
+    enregistrements: list[dict] = []
+    for chemin in sorted(dossier.glob("*.json")):
+        if chemin.name == "alias_orateurs.json":
+            continue                       # ce fichier-là n'est pas du corpus
+        données = json.loads(chemin.read_text(encoding="utf-8").strip())
+        if isinstance(données, list):
+            enregistrements.extend(données)
+        elif isinstance(données, dict):
+            enregistrements.append(données)
+    # … mêmes règles pour *.jsonl, une ligne = un json.loads …
+    vus: set[str] = set()
+    for enreg in enregistrements:
+        identifiant = enreg.get("id")
+        if identifiant in vus:
+            raise ValueError(f"identifiant dupliqué dans le corpus : {identifiant}")
+        vus.add(identifiant)
+    return enregistrements</code></pre>
+  <p>Le tri des chemins (<code>sorted(glob(…))</code>) rend l'ordre des fichiers déterministe, donc la sortie reproductible. Le refus des doublons se fait ici, à l'entrée, plutôt qu'à l'indexation : l'étape 4 dérivera l'identifiant du point Qdrant à partir de cet <code>id</code>, et deux interventions portant le même identifiant écriraient l'une sur l'autre en silence, sans aucun moyen de le remarquer plus tard.</p>
+
+  <h2><code>normaliser_texte</code> : sept règles, dans un ordre qui compte</h2>
+  <p>Cœur du module, la fonction applique sept transformations dans un ordre précis ; chaque règle prépare la suivante.</p>
+  <pre><code>def normaliser_texte(texte: str) -&gt; str:
+    t = texte
+    # 1. toutes les variantes d'espace deviennent l'espace ASCII
+    for espace in ("\u00a0", "\u202f", "\u200a", … , "\u2000"):
+        t = t.replace(espace, " ")
+    # 2. suppression des traits d'union mous (artefacts d'import Word/OCR)
+    t = t.replace("\u00ad", "")
+    # 3. rejointoiement des césures : « insti-\ntution » → « institution »
+    t = _CESURE.sub(r"\1", t)
+    # 4. unification des apostrophes sur l'apostrophe ASCII
+    t = _APOSTROPHES.sub("'", t)
+    # 5. unification des guillemets (les français « … » perdent leurs espaces)
+    t = re.sub(r"\u00ab[ \u00a0]*", '"', t)
+    t = re.sub(r"[ \u00a0]*\u00bb", '"', t)
+    # 6. NFKD puis NFC (voir le paragraphe ci-dessous)
+    t = unicodedata.normalize("NFKD", t)
+    t = unicodedata.normalize("NFC", t)
+    # 7. aplatissement des blancs
+    t = re.sub(r"[ \t]+", " ", t)
+    t = re.sub(r" ?\n ?", "\n", t)
+    t = re.sub(r"\n{3,}", "\n\n", t)
+    return t.strip()</code></pre>
+  <p>La règle 3 mérite une lecture attentive, car c'est la seule dont l'écriture est délicate. Une césure OCR est un mot coupé par un trait d'union en fin de ligne ; selon l'outil d'export, la fin de ligne est restée un vrai saut de ligne (« insti-↵tution ») ou a été aplatie en un simple espace (« lec- ture »). L'expression régulière doit rattraper les deux sans jamais coller les mots d'un trait d'union légitime :</p>
+  <pre><code>_CESURE = re.compile(
+    r"([A-Za-zÀ-ÿà-ÿ])-(?:[ \t\r]*\n[ \t]*|[ \t]+)(?=[A-Za-zÀ-ÿà-ÿ])"
+)</code></pre>
+  <ul>
+    <li><code>([A-Za-zÀ-ÿà-ÿ])</code> capture la lettre qui précède le trait d'union, et sera réinjectée par <code>\1</code> dans la substitution.</li>
+    <li><code>(?:[ \t\r]*\n[ \t]*|[ \t]+)</code> est un groupe non capturant à deux branches : une fin de ligne (spaces et retour chariot tolérés autour) ou au moins un espace ou une tabulation. Un trait d'union <em>collé</em> à la lettre suivante, comme dans « garde-chasse », ne correspond donc jamais au motif, et les composés légitimes survivent.</li>
+    <li><code>(?=[A-Za-zÀ-ÿà-ÿ])</code> est une <em>avance</em> (le terme anglais est <em>lookahead</em>) : elle exige qu'une lettre suive, sans la consommer. Le motif ne rejointe donc jamais un trait d'union suivi d'une ponctuation ou d'un chiffre. La règle assume en revanche sa limite : une césure est par définition un trait d'union suivi d'une lettre, et un composé écrit avec espace dans un export aplati (« garde- chasse ») est indiscernable d'une vraie césure. Sur un corpus OCR, l'hypothèse de la césure est la plus fréquente, et une soudure occasionnelle coûte moins qu'un mot scindé introuvable par les deux recherches.</li>
+  </ul>
+  <p>La règle 6, maintenant, est la seule qui n'est pas une simple substitution. Un même caractère affiché peut exister sous plusieurs suites de points de code Unicode : un « é » peut être un seul caractère précomposé ou un « e » suivi d'un accent aigu combinant ; une ligature « ﬁ » peut exister en un seul caractère de compatibilité. La bibliothèque standard offre deux formes de normalisation : <strong>NFKD</strong> (décomposition, forme « K » pour compatibilité, « D » pour décomposée) décompose tout ce qui peut l'être, ligatures comprises, et <strong>NFC</strong> (forme stable recomposée) recompose ensuite les accents en caractères précomposés, lisibles et comparables en Python comme en JSON. L'enchaînement NFKD→NFC est donc le geste standard : plier les compatibilités indésirables, rendre aux accents leur forme canonique. Une normalisation à une seule forme aurait un défaut : garder la forme décomposée (NFD seul) rend le texte illisible dans un éditeur et fausse la comparaison avec la saisie clavier de l'utilisateur.</p>
+  <p>Les règles 1, 4, 5 et 7 relèvent du même principe : l'OCR d'un journal du XIXᵉ siècle produit plusieurs signes graphiquement identiques (dix variantes d'apostrophe, douze variantes d'espace, les guillemets français avec leurs espaces insécables). Tout ce qui est encodé différemment de la saisie de l'utilisateur ne sera jamais retrouvé par aucune des deux recherches, lexicale ou vectorielle ; l'unification n'est donc pas un détail cosmétique, c'est la condition de la rencontre.</p>
+
+  <h2>Les alias d'orateurs : la métadonnée, pas la correction</h2>
+  <p>Le fichier <code>data/corpus/alias_orateurs.json</code> est un dictionnaire <code>{"nom canonique": ["variantes observées"]}</code>. Deux fonctions le rendent utilisable. La première fabrique une <em>clé de comparaison</em> robuste : minuscules, accents supprimés, apostrophes supprimées, ponctuation réduite à des tirets.</p>
+  <pre><code>def cle_alias(nom: str) -&gt; str:
+    n = normaliser_texte(nom).replace("'", "")
+    n = unicodedata.normalize("NFD", n.lower())
+    n = "".join(c for c in n if not unicodedata.combining(c))   # retire les accents
+    n = re.sub(r"[^a-z0-9]+", "-", n)
+    return n.strip("-")
+
+def charger_alias(chemin: Path) -&gt; dict[str, str]:
+    if not chemin.exists():
+        return {}
+    table_brute = json.loads(chemin.read_text(encoding="utf-8"))
+    table: dict[str, str] = {}
+    for canonique, variantes in table_brute.items():
+        for variante in [canonique, *(variantes or [])]:
+            table[cle_alias(variante)] = canonique
+    return table</code></pre>
+  <p>La suppression des accents s'appuie sur une propriété d'Unicode : la forme <strong>NFD</strong> sépare une lettre accentuée en la lettre de base plus un caractère <em>combinant</em> (l'accent, qui ne s'affiche que combiné à sa lettre) ; filtrer les caractères combinants laisse donc les lettres nues. La clé obtenue traite « Jean Jaurès », « Jean Jaures » et « JAURES, Jean » comme la même personne, pour peu que ces variantes figurent dans le dictionnaire.</p>
+  <p>La seconde fonction retourne <code>{clé: nom canonique}</code>, et l'enrichissement n'est qu'un regard dans cette table, avec repli sur le nom observé :</p>
+  <pre><code>def normaliser_enregistrement(enreg: dict, alias: dict[str, str]) -&gt; dict:
+    valider(enreg)
+    orateur = dict(enreg["orateur"])            # copie : on ne mute pas l'entrée
+    nom = str(orateur["nom"])
+    orateur["nom_canonique"] = alias.get(cle_alias(nom), nom)
+    return {
+        **enreg,
+        "orateur": orateur,
+        "text_normalise": normaliser_texte(str(enreg["text_brut"])),
+    }</code></pre>
+  <p>Notez le geste d'architecture, exactement celui de la leçon 0001 : l'alias ne réécrit jamais le texte de l'intervention, il ajoute une <strong>métadonnée filtrable</strong> (<code>nom_canonique</code>) à côté du nom observé. Un historien qui veut compter les prises de parole de Jaurès filtrera sur la métadonnée unifiée, et non sur une chaîne de caractères incertaine ; la variante d'OCR reste visible et auditable.</p>
+
+  <h2>La sortie JSONL, réutilisée par toutes les étapes</h2>
+  <p>Le module expose deux fonctions de lecture-écriture que les étapes 2, 3, 4 et 5 importeront telles quelles :</p>
+  <pre><code>def ecrire_jsonl(enregistrements: list[dict], chemin: Path) -&gt; None:
+    chemin.parent.mkdir(parents=True, exist_ok=True)
+    with chemin.open("w", encoding="utf-8") as flux:
+        for enreg in enregistrements:
+            flux.write(json.dumps(enreg, ensure_ascii=False) + "\n")
+
+def lire_jsonl(chemin: Path) -&gt; list[dict]:
+    if not Path(chemin).exists():
+        raise FileNotFoundError(f"{chemin} absent — lancer l'étape qui le produit d'abord")
+    return [json.loads(ligne) for ligne in
+            Path(chemin).read_text(encoding="utf-8").splitlines() if ligne.strip()]
+
+def etape1(config) -&gt; int:
+    bruts = charger_corpus(config.corpus_dir)
+    alias = charger_alias(config.corpus_dir / "alias_orateurs.json")
+    enrichis = [normaliser_enregistrement(e, alias) for e in bruts]
+    ecrire_jsonl(enrichis, config.normalise_dir / "interventions.jsonl")
+    return len(enrichis)</code></pre>
+  <p>Trois raisons au format JSONL (une ligne, un enregistrement) plutôt qu'un grand tableau : un fichier d'un million d'interventions se lit à la ligne près sans tout charger en mémoire, une ligne se relit même si le fichier est tronqué, et <code>ensure_ascii=False</code> écrit les accents en UTF-8 lisibles plutôt qu'en séquences <code>\u00e9</code> illisibles à l'œil. Le point d'entrée <code>etape1</code> montre le gabarit que toute étape de l'atelier respectera : lire en amont, transformer en mémoire par une fonction pure (une fonction dont le résultat ne dépend que de ses arguments), écrire en aval, renvoyer le compte.</p>
+
+  <h2>Comment le module est testé</h2>
+  <p><code>tests/test_01_normalisation.py</code> contient treize tests, exécutés hors-ligne par <code>uv run -m pytest tests/test_01_normalisation.py -v</code>. Les noms disent l'affirmation, et c'est vous qui les écrirez si vous refaites le module :</p>
+  <ul>
+    <li><code>test_apostrophes_unifiees_accentes_conservés</code> et <code>test_apostrophe_aigu_devenue_ascii</code> vérifient la règle 4 ; <code>test_tilde_et_espaces_insécables</code> la règle 1.</li>
+    <li><code>test_césure_rejointée_pas_les_vrais_tirets</code> et <code>test_césure_aplatis_en_espace_rejointée</code> exercent les deux branches de <code>_CESURE</code>.</li>
+    <li><code>test_texte_brut_jamais_écrasé</code> compare l'enregistrement de sortie au corpus d'entrée : le moindre changement dans <code>text_brut</code> fait échouer le test.</li>
+    <li><code>test_alias_orateurs</code> et <code>test_nom_canonical_ajouté</code> exercent la table d'alias ; <code>test_validation_refuse_champs_manquants</code>, <code>test_validation_refuse_date_non_iso</code> et <code>test_charger_corpus_refuse_doublons</code> vérifient les refus.</li>
+    <li><code>test_etape1_complete_sur_corpus_fourni</code> relance tout le module sur le corpus d'exemple.</li>
+  </ul>
+  <p><strong>À vérifier de votre côté :</strong> après <code>uv run python -m atelier normaliser</code>, le fichier <code>data/normalise/interventions.jsonl</code> compte 165 lignes (le corpus fourni), et chaque ligne porte à la fois <code>text_brut</code> et <code>text_normalise</code>.</p>
+
+  <h2>Vérifiez que c'est acquis</h2>
+  <div class="quiz" data-answer="1">
+    <p class="quiz-q">1. Pourquoi la normalisation enchaîne-t-elle NFKD puis NFC plutôt que de s'arrêter à NFKD ?</p>
+    <button class="quiz-opt">NFKD décompose tout, NFC rend les accents précomposés, lisibles et comparables à la saisie.</button>
+    <button class="quiz-opt">NFKD supprime les accents du texte, NFC les restaure à la toute fin.</button>
+    <button class="quiz-opt">NFKD sert aux espaces, NFC sert aux apostrophes, les deux sont indépendantes.</button>
+    <p class="quiz-fb">NFKD plie les ligatures et les espaces de compatibilité mais laisse les accents décomposés ; NFC recompose les accents en caractères précomposés. Sans cette seconde passe, « é » du corpus et « é » du clavier de l'utilisateur seraient deux suites de points de code différentes, et aucune recherche ne les reconcilierait.</p>
+  </div>
+  <div class="quiz" data-answer="2">
+    <p class="quiz-q">2. Pourquoi l'alias d'un orateur ajoute-t-il <code>nom_canonique</code> sans corriger le texte ni le champ <code>orateur.nom</code> ?</p>
+    <button class="quiz-opt">Pour aller plus vite : corriger le texte en plus des métadonnées coûterait deux boucles.</button>
+    <button class="quiz-opt">Parce que l'alias est une métadonnée de filtrage, pas une réécriture de la source.</button>
+    <button class="quiz-opt">Parce que les embeddings denses ignorent systématiquement les noms des orateurs.</button>
+    <p class="quiz-fb">L'historien filtre sur la métadonnée unifiée (« tous les discours de Jaurès, sous quelque graphie que l'OCR l'ait rendue ») et la source reste auditable telle quelle. Écraser le texte reviendrait à corriger le document, ce que la leçon 0001 refuse : seul <code>text_normalise</code> est transformé, et jamais <code>text_brut</code>.</p>
+  </div>
+  <div class="quiz" data-answer="3">
+    <p class="quiz-q">3. Que se passerait-il si le module tolérait deux interventions portant le même <code>id</code> ?</p>
+    <button class="quiz-opt">Rien de grave : la recherche retrouverait les deux interventions confondues.</button>
+    <button class="quiz-opt">Le test d'étape 2 relèverait le doublon plus loin dans le pipeline.</button>
+    <button class="quiz-opt">L'étape 4 les écrirait sous le même point Qdrant, l'une sur l'autre, sans bruit.</button>
+    <p class="quiz-fb">L'identifiant de point Qdrant est dérivé de l'<code>id</code> par UUID v5 (page <a href="0016-code-indexation.html">0016</a>) : deux interventions homoglyphes occuperaient le même point, la seconde écraserait la première, et aucune alerte ne serait jamais émise. Le refus à l'entrée coûte trois lignes ; le découvrir après coup coûte une ré-indexation.</p>
+  </div>
+
+  <footer class="nav">
+    <p><strong>Source commentée :</strong> <code>docs/ateliers/axe1-pipeline/atelier/normalisation.py</code> et <code>config.py</code>, <code>__main__.py</code> — <strong>leçons liées :</strong> <a href="0001-postocr-normalisation.html">0001 (la théorie)</a>, <a href="0012-atelier-pipeline-complet.html">0012 (l'atelier complet)</a>.</p>
+    <p><a href="0014-code-chunking.html">Fiche suivante : étape 2 en code, découper par intervention →</a></p>
+  </footer>
+</body>
+</html>
