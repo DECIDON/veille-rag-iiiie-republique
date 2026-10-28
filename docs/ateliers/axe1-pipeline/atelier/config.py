@@ -22,7 +22,12 @@ class Config:
     embedder: str = "bge-m3"  # "bge-m3" (référence) ou "dummy" (plomberie, hors-ligne)
     reranker: str = "BAAI/bge-reranker-v2-m3"
     ollama_url: str = "http://localhost:11434"
-    ollama_model: str = "qwen3:4b"
+    # qwen3:4b-instruct (hybride, raisonnement désactivable) et non qwen3:4b :
+    # ce dernier tag sert aujourd'hui la variante « Thinking 2507 » dont le
+    # raisonnement est inarrêtable → minutes de latence invisible sur CPU.
+    ollama_model: str = "qwen3:4b-instruct"
+    ollama_max_tokens: int = 500     # borne la réponse (et le raisonnement)
+    ollama_num_ctx: int = 8192       # 3 enfants de ~1 200 tokens + marge
 
     # --- dimensions du pipeline -------------------------------------------
     dim: int = 1024               # dimension des vecteurs denses de bge-m3

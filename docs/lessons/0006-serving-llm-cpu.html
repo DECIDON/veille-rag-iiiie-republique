@@ -20,13 +20,17 @@
   <p>En fp16 (flottant sur 2 octets), les poids occupent environ <strong>2 octets par paramètre</strong> : un modèle de 8 milliards de paramètres demande donc environ 16 Go. En GGUF Q4_K_M (quantification 4 bits), chaque paramètre occupe 0,5 à 0,6 octet, et un modèle de 8 milliards de paramètres tient dans environ 5 Go de RAM. C'est ce qui rend une exécution uniquement sur CPU envisageable, mais seulement dans la bande des modèles de 8 milliards de paramètres au plus.</p>
   <p><strong>Mixture-of-Experts</strong> (un modèle à multiples sous-réseaux spécialisés) : Qwen3-30B-A3B (Apache-2.0) possède 30 B de paramètres, mais seuls <strong>~3 B sont actifs par token</strong> — le calcul « ne coûte » que les 3 B actifs. La veille retient ce modèle comme le meilleur compromis qualité/CPU.</p>
 
+  <h2>Le piège du tag : une variante « Thinking » consomme la latence en silence</h2>
+  <p>Le nom sous lequel on tire un modèle chez Ollama — son <strong>tag</strong>, par exemple <code>qwen3:4b</code> — ne précise pas la variante servie, et toutes les variantes ne se comportent pas de la même façon sur CPU. Dans l'atelier 0012, l'étape 7 est restée muette trois minutes avant d'expirer ; les journaux du serveur montraient une requête terminée en erreur après 3 minutes 10 secondes, avec 2 391 tokens générés à environ 7 tokens/s. Le tag <code>qwen3:4b</code> sert en réalité <strong>Qwen3-4B-Thinking-2507</strong>, la variante dont <code>GET /api/show</code> (le point d'entrée qui décrit les capacités d'un modèle installé) déclare la capacité <code>thinking</code> avec des valeurs autorisées réduites à <code>[true]</code> et un défaut à <code>true</code>. Sur une telle variante, la requête <code>think: false</code> est silencieusement ignorée : le modèle développe un raisonnement complet avant sa réponse, et la réponse n'est envoyée qu'une fois ce raisonnement terminé puisque la requête n'est pas en flux (<code>stream: false</code>). Le client, lui, ne voit rien pendant tout ce temps.</p>
+  <p>La parade occupe deux lignes de configuration. Elle consiste à tirer la variante hybride <code>qwen3:4b-instruct</code>, de même taille (2,5 Go), qui honore <code>think: false</code>, et à l'indiquer au client. L'atelier applique les deux : le modèle par défaut de <code>atelier/config.py</code> est <code>qwen3:4b-instruct</code>, et <code>atelier/generation.py</code> envoie <code>think: false</code>, <code>max_tokens</code> (la borne haute des tokens de réponse) et <code>options.num_ctx</code> (la taille de la fenêtre de contexte — Ollama la fixe par défaut à 4 096 jetons, l'atelier la relève à 8 192). Avant d'accuser le réseau ou le serveur, la commande <code>ollama ps</code> et les journaux du service répondent à la question : ils affichent la variante chargée, le contexte alloué et le débit mesuré en tokens/s.</p>
+
   <h2>En CPU, on repense l'expérience d'usage au lieu de la réduire</h2>
   <div class="qa">
     <p class="q">Pourquoi la variante CPU recommande « l'UX retrieval-first » et un mode « sans LLM » ?</p>
     <p class="r">Parce que sur CPU, tout fonctionne <em>sauf la génération</em> : l'encodage et le rerank tournent sur CPU avec des modèles de 0,6 B au plus, mais un petit LLM ajoute des dizaines de secondes de latence et ne sert surtout qu'à reformuler. Le service rend alors d'abord la recherche hybride, les facettes et les extraits surlignés, de façon déterministe et auditable ; la synthèse par LLM devient une simple option. Cf. <a href="../veille/axe1-donnees.md">axe1 §5 et §8</a>.</p>
   </div>
 
-  <div class="retenir"><strong>À retenir.</strong> L'API compatible OpenAI est la seule interface qui compte. La quantification Q4 descend à environ 0,5 octet par paramètre. Un MoE 30B-A3B se paie comme un modèle de 3 B actifs. En CPU, on sert la recherche en premier.</div>
+  <div class="retenir"><strong>À retenir.</strong> L'API compatible OpenAI est la seule interface qui compte. La quantification Q4 descend à environ 0,5 octet par paramètre. Un MoE 30B-A3B se paie comme un modèle de 3 B actifs. Avant de mesurer un débit, vérifiez la variante que sert le tag : une variante « Thinking » ignore <code>think: false</code> et paie son raisonnement avant de répondre. En CPU, on sert la recherche en premier.</div>
 
   <h2>Vérifiez que c'est acquis</h2>
   <div class="quiz" data-answer="2">
@@ -43,9 +47,16 @@
     <button class="quiz-opt">Pour interchanger Ollama et vLLM sans rien changer</button>
     <p class="quiz-fb">C'est la leçon d'intégration de l'axe 2 (§4) : Dify, RAGFlow, Onyx, Open WebUI acceptent vLLM/Ollama tels quels précisément parce qu'ils parlent tous ce dialecte unique.</p>
   </div>
+  <div class="quiz" data-answer="2">
+    <p class="quiz-q">3. Une commande de génération reste muette trois minutes puis échoue, alors qu'<code>ollama ps</code> montre le modèle chargé à 100 % CPU. Que vérifier en premier ?</p>
+    <button class="quiz-opt">Si la base vectorielle renvoie suffisamment de candidats pour remplir le prompt</button>
+    <button class="quiz-opt">Si le tag servi autorise <code>think: false</code>, en interrogeant <code>GET /api/show</code></button>
+    <button class="quiz-opt">Si le port du serveur est ouvert, avec un appel à <code>/api/tags</code></button>
+    <p class="quiz-fb">Un tag comme <code>qwen3:4b</code> peut servir une variante « Thinking » dont le raisonnement est inarrêtable : <code>think: false</code> est alors ignoré et des milliers de tokens invisibles s'écoulent avant la réponse. <code>GET /api/show</code> expose les valeurs autorisées de <code>thinking</code> ; une variante hybride comme <code>qwen3:4b-instruct</code> accepte <code>think: false</code>. Si le serveur répondait en erreur, le port est nécessairement ouvert, ce qui disqualifie la troisième réponse.</p>
+  </div>
 
   <footer class="nav">
-    <p><strong>Source principale :</strong> <a href="../veille/axe1-donnees.md">votre veille, axe 1 §5</a> ; <a href="https://docs.vllm.ai/en/latest/getting_started/installation/cpu.html">vLLM — backend CPU</a>.</p>
+    <p><strong>Source principale :</strong> <a href="../veille/axe1-donnees.md">votre veille, axe 1 §5</a> ; <a href="https://docs.vllm.ai/en/latest/getting_started/installation/cpu.html">vLLM — backend CPU</a> ; <a href="https://docs.ollama.com/capabilities/thinking">Ollama — capacité thinking</a> et sa page de tags <a href="https://ollama.com/library/qwen3/tags">qwen3</a> (mesures atelier 0012 sur Ollama 0.40.12, octobre 2026).</p>
     <p><a href="0007-turnkey-vs-stack-composee.html">→ Axe 2, leçon 0007 : turnkey ou stack composée</a></p>
     <p class="followup">Un point flou ? Demandez à l'agent dans OpenCode.</p>
   </footer>

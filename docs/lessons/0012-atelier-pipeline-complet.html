@@ -84,11 +84,11 @@ make test        # les tests unitaires doivent passer ici déjà, sans modèle n
   <p><strong>Tester :</strong> <code>uv run -m pytest tests/test_06_evaluation.py -v</code> — parseur du fichier et métriques sur palmarès fictifs, sans service. <strong>À faire ensemble :</strong> les questions du corpus fourni sont annotées et ancrées verbatim dans <code>data/questions/queries.json</code> ; celles de <em>vos</em> corpus s'écriront à quatre mains dans une autre session, car une vérité terrain annotée par un non-historien ne vaut rien (leçon 0005).</p>
 
   <h2>Étape 7 (bonus) — Générer une synthèse citée (leçon 0006)</h2>
-  <p>Ce n'est pas une étape du socle : la leçon 0006 recommande l'UX « retrieval-first ». Pour la jouer quand même : installez Ollama, tirez un modèle (~5 Go en Q4), et la commande s'insère après le rerank.</p>
+  <p>Ce n'est pas une étape du socle : la leçon 0006 recommande l'UX « retrieval-first ». Pour la jouer quand même : installez Ollama, tirez la variante hybride du modèle (~2,5 Go en Q4), et la commande s'insère après le rerank.</p>
   <pre><code>curl -fsSL https://ollama.com/install | sh     # Ollama (MIT)
-ollama pull qwen3:4b                            # Apache-2.0, ~5 Go en GGUF Q4
+ollama pull qwen3:4b-instruct                   # Apache-2.0, ~2,5 Go en GGUF Q4 — variante hybride, pas qwen3:4b (thinking-only, voir leçon 0006)
 uv run python -m atelier generer "que dit montjou de l'infrastructure aeronautique a laval ?"</code></pre>
-  <p>Le prompt système interdit toute information hors extraits et impose la citation de la page du Journal officiel ; si les extraits ne suffisent pas, le modèle doit répondre <code>INSUFFISANT</code>. <strong>Tester :</strong> <code>uv run -m pytest -m reseau</code> saute tant qu'Ollama n'est pas joignable, joue l'appel réel dès qu'il l'est. Latence attendue sur CPU seul : plusieurs secondes — ce que la leçon 0006 annonçait ; la recherche, elle, répond en quelques dizaines de millisecondes.</p>
+  <p>Le prompt système interdit toute information hors extraits et impose la citation de la page du Journal officiel ; si les extraits ne suffisent pas, le modèle doit répondre <code>INSUFFISANT</code>. <strong>Tester :</strong> <code>uv run -m pytest -m reseau</code> saute tant qu'Ollama n'est pas joignable, joue l'appel réel dès qu'il l'est. Latence attendue sur CPU seul : de l'ordre de la minute à froid — ce que la leçon 0006 annonçait, à condition d'avoir tiré la variante hybride ; avec le tag <code>qwen3:4b</code> (thinking-only), elle se compte en minutes et le délai est invisible (leçon 0006, « piège du tag ») ; la recherche, elle, répond en quelques dizaines de millisecondes.</p>
 
   <h2>Vérifiez que c'est acquis</h2>
   <div class="quiz" data-answer="1">

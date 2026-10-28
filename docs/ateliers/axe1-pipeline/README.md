@@ -12,7 +12,7 @@ Il implémente la variante CPU du pipeline de référence de la veille
 | 4 Indexer | [0004](../../lessons/0004-bases-vectorielles-quantification.html) | **Qdrant** (Apache-2.0), int8 + sparse | `atelier/indexation.py` |
 | 5 Rechercher | [0005](../../lessons/0005-retrieval-hybride-rerank.html) | hybride RRF + **bge-reranker-v2-m3** | `atelier/recherche.py`, `atelier/fusion.py` |
 | 6 Évaluer | [0005](../../lessons/0005-retrieval-hybride-rerank.html) | recall@k + MRR sur Q&R annotées | `atelier/evaluation.py` |
-| 7 Générer (bonus) | [0006](../../lessons/0006-serving-llm-cpu.html) | **Ollama** (MIT) + Qwen3-4B, API OpenAI | `atelier/generation.py` |
+| 7 Générer (bonus) | [0006](../../lessons/0006-serving-llm-cpu.html) | **Ollama** (MIT) + Qwen3-4B-Instruct, API OpenAI | `atelier/generation.py` |
 
 ## Démarrage rapide
 
@@ -77,7 +77,7 @@ mapping est dans [`data/corpus/README.md`](data/corpus/README.md), règle 5.
 | `ATELIER_COLLECTION` | `jo_debats` | collection |
 | `ATELIER_EMBEDDER` | `bge-m3` | `dummy` = plomberie hors-ligne (jamais pour mesurer) |
 | `ATELIER_RERANKER` | `BAAI/bge-reranker-v2-m3` | cross-encoder d'étage final |
-| `OLLAMA_URL` / `OLLAMA_MODEL` | `http://localhost:11434` / `qwen3:4b` | bonus 7 |
+| `OLLAMA_URL` / `OLLAMA_MODEL` | `http://localhost:11434` / `qwen3:4b-instruct` | bonus 7 — la variante hybride, seule à honorer `think: false` (voir leçon 0006, piège du tag) |
 
 ## Tests
 

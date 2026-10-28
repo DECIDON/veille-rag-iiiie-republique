@@ -46,6 +46,14 @@ def generer(question: str, resultats: list[dict], config, timeout: int = 300) ->
         "messages": construire_prompt(question, resultats),
         "temperature": 0.2,
         "stream": False,
+        # Garde-fous CPU (leçon 0006) : sans eux, un Qwen3 « Thinking » émet
+        # des milliers de tokens de raisonnement invisibles (stream=False) à
+        # ~7 tokens/s sur CPU, et la commande semble gelée. ``think: false``
+        # n'est honoré que par les variantes hybrides (qwen3:4b-instruct) ;
+        # sur qwen3:4b (digest 359d7dd…, thinking-only) il est ignoré.
+        "think": False,
+        "max_tokens": config.ollama_max_tokens,
+        "options": {"num_ctx": config.ollama_num_ctx},  # défaut serveur : 4096
     }).encode("utf-8")
     requete = urllib.request.Request(
         config.ollama_url.rstrip("/") + "/v1/chat/completions",
